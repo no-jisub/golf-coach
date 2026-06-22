@@ -11,6 +11,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
+from utils.guide_skeleton import draw_guide_skeleton
 from utils.pose_drawer import draw_pose_landmarks
 
 
@@ -282,6 +283,7 @@ def main():
             last_timestamp_ms = get_video_timestamp_ms(start_time, last_timestamp_ms)
             result = landmarker.detect_for_video(mp_image, last_timestamp_ms)
             current_stage = STAGE_CONFIGS[current_stage_index]
+            draw_guide_skeleton(frame, current_stage["key"])
 
             if result.pose_landmarks:
                 landmarks = result.pose_landmarks[0]
