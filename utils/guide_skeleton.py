@@ -1,7 +1,7 @@
 import cv2
 
 
-# MediaPipe pose index 중 현재 앱에서 쓰는 주요 관절만 기준 스켈레톤으로 그립니다.
+NOSE = 0
 LEFT_SHOULDER = 11
 RIGHT_SHOULDER = 12
 LEFT_ELBOW = 13
@@ -16,6 +16,8 @@ LEFT_ANKLE = 27
 RIGHT_ANKLE = 28
 
 GUIDE_CONNECTIONS = [
+    (NOSE, LEFT_SHOULDER),
+    (NOSE, RIGHT_SHOULDER),
     (LEFT_SHOULDER, RIGHT_SHOULDER),
     (LEFT_SHOULDER, LEFT_ELBOW),
     (LEFT_ELBOW, LEFT_WRIST),
@@ -31,10 +33,11 @@ GUIDE_CONNECTIONS = [
 ]
 
 
-# 좌표는 0~1 정규화 값입니다. x는 화면 가로, y는 피드백 패널을 제외한 세로 영역 기준입니다.
-# 정면 웹캠에서 따라 하기 쉬운 단순 가이드 형태로 잡았습니다.
+# 0~1 normalized guide pose coordinates.
+# These coordinates are both the visual guide and the current scoring reference.
 GUIDE_POSES = {
     "address": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.26),
         RIGHT_SHOULDER: (0.57, 0.26),
         LEFT_ELBOW: (0.45, 0.40),
@@ -49,6 +52,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "takeaway": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.26),
         RIGHT_SHOULDER: (0.57, 0.26),
         LEFT_ELBOW: (0.38, 0.38),
@@ -63,6 +67,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "backswing": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.26),
         RIGHT_SHOULDER: (0.57, 0.26),
         LEFT_ELBOW: (0.34, 0.24),
@@ -77,6 +82,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "top": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.27),
         RIGHT_SHOULDER: (0.57, 0.25),
         LEFT_ELBOW: (0.37, 0.15),
@@ -91,6 +97,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "downswing": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.26),
         RIGHT_SHOULDER: (0.57, 0.26),
         LEFT_ELBOW: (0.39, 0.34),
@@ -105,6 +112,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "impact": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.27),
         RIGHT_SHOULDER: (0.57, 0.25),
         LEFT_ELBOW: (0.43, 0.42),
@@ -119,6 +127,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "follow_through": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.26),
         RIGHT_SHOULDER: (0.57, 0.26),
         LEFT_ELBOW: (0.52, 0.32),
@@ -133,6 +142,7 @@ GUIDE_POSES = {
         RIGHT_ANKLE: (0.65, 0.92),
     },
     "finish": {
+        NOSE: (0.50, 0.12),
         LEFT_SHOULDER: (0.43, 0.25),
         RIGHT_SHOULDER: (0.57, 0.27),
         LEFT_ELBOW: (0.55, 0.17),
@@ -149,15 +159,60 @@ GUIDE_POSES = {
 }
 
 
-def guide_point_to_pixel(point, image_width, guide_top, guide_height):
-    """정규화된 가이드 좌표를 실제 화면 좌표로 변환합니다."""
-    x = int(point[0] * image_width)
-    y = int(guide_top + point[1] * guide_height)
+def default_guide_point_to_pixel(point, image_width, guide_top, guide_height):
+    """Convert guide coordinates to the default centered screen guide."""
+    return int(point[0] * image_width), int(guide_top + point[1] * guide_height)
+
+
+def landmark_to_pixel(landmark, image_width, image_height):
+    """Convert a MediaPipe landmark to a pixel coordinate."""
+    return int(landmark.x * image_width), int(landmark.y * image_height)
+
+
+def get_user_anchor(user_landmarks, image_width, image_height):
+    """Use the user's shoulder center and width as the adaptive guide anchor."""
+    if user_landmarks is None:
+        return None
+
+    left_shoulder = user_landmarks[LEFT_SHOULDER]
+    right_shoulder = user_landmarks[RIGHT_SHOULDER]
+    if getattr(left_shoulder, "visibility", 1.0) < 0.5:
+        return None
+    if getattr(right_shoulder, "visibility", 1.0) < 0.5:
+        return None
+
+    left_point = landmark_to_pixel(left_shoulder, image_width, image_height)
+    right_point = landmark_to_pixel(right_shoulder, image_width, image_height)
+    shoulder_width = abs(right_point[0] - left_point[0])
+    if shoulder_width < 20:
+        return None
+
+    shoulder_mid = (
+        int((left_point[0] + right_point[0]) / 2),
+        int((left_point[1] + right_point[1]) / 2),
+    )
+    return shoulder_mid, shoulder_width
+
+
+def guide_point_to_user_pixel(point, guide_pose, user_anchor):
+    """Convert guide coordinates to the user's current shoulder position and scale."""
+    shoulder_mid, user_shoulder_width = user_anchor
+    guide_left = guide_pose[LEFT_SHOULDER]
+    guide_right = guide_pose[RIGHT_SHOULDER]
+    guide_shoulder_mid = (
+        (guide_left[0] + guide_right[0]) / 2,
+        (guide_left[1] + guide_right[1]) / 2,
+    )
+    guide_shoulder_width = abs(guide_right[0] - guide_left[0]) or 0.14
+    scale = user_shoulder_width / guide_shoulder_width
+
+    x = int(shoulder_mid[0] + (point[0] - guide_shoulder_mid[0]) * scale)
+    y = int(shoulder_mid[1] + (point[1] - guide_shoulder_mid[1]) * scale)
     return x, y
 
 
-def draw_guide_skeleton(frame, stage_key):
-    """현재 단계에서 따라 할 보조 스켈레톤을 화면 중앙에 그립니다."""
+def draw_guide_skeleton(frame, stage_key, user_landmarks=None):
+    """Draw the current stage guide, adapting to the user's position and size when possible."""
     guide_pose = GUIDE_POSES.get(stage_key)
     if not guide_pose:
         return
@@ -166,21 +221,34 @@ def draw_guide_skeleton(frame, stage_key):
     feedback_panel_height = 180
     guide_top = 20
     guide_height = max(image_height - feedback_panel_height - 40, 120)
+    user_anchor = get_user_anchor(user_landmarks, image_width, image_height)
 
     overlay = frame.copy()
     line_color = (255, 180, 40)
     point_color = (255, 240, 120)
+    head_color = (80, 220, 255)
+
+    def to_pixel(point):
+        if user_anchor is not None:
+            return guide_point_to_user_pixel(point, guide_pose, user_anchor)
+        return default_guide_point_to_pixel(point, image_width, guide_top, guide_height)
 
     for start_idx, end_idx in GUIDE_CONNECTIONS:
-        start = guide_pose[start_idx]
-        end = guide_pose[end_idx]
-        start_point = guide_point_to_pixel(start, image_width, guide_top, guide_height)
-        end_point = guide_point_to_pixel(end, image_width, guide_top, guide_height)
-        cv2.line(overlay, start_point, end_point, line_color, 5)
+        cv2.line(
+            overlay,
+            to_pixel(guide_pose[start_idx]),
+            to_pixel(guide_pose[end_idx]),
+            line_color,
+            5,
+        )
 
-    for point in guide_pose.values():
-        pixel = guide_point_to_pixel(point, image_width, guide_top, guide_height)
-        cv2.circle(overlay, pixel, 8, point_color, -1)
-        cv2.circle(overlay, pixel, 10, line_color, 2)
+    for index, point in guide_pose.items():
+        pixel = to_pixel(point)
+        if index == NOSE:
+            cv2.circle(overlay, pixel, 18, head_color, 3)
+            cv2.circle(overlay, pixel, 7, head_color, -1)
+        else:
+            cv2.circle(overlay, pixel, 8, point_color, -1)
+            cv2.circle(overlay, pixel, 10, line_color, 2)
 
     cv2.addWeighted(overlay, 0.45, frame, 0.55, 0, frame)

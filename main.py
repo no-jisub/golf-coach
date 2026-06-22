@@ -220,6 +220,17 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
             result_color,
             2,
         )
+        score = latest_feedback.get("metrics", {}).get("guide_score")
+        if score is not None:
+            cv2.putText(
+                frame,
+                f"Guide score: {score}",
+                (30, 250),
+                cv2.FONT_HERSHEY_SIMPLEX,
+                0.8,
+                (255, 255, 255),
+                2,
+            )
 
 
 def reset_analysis_state():
@@ -283,10 +294,10 @@ def main():
             last_timestamp_ms = get_video_timestamp_ms(start_time, last_timestamp_ms)
             result = landmarker.detect_for_video(mp_image, last_timestamp_ms)
             current_stage = STAGE_CONFIGS[current_stage_index]
-            draw_guide_skeleton(frame, current_stage["key"])
 
             if result.pose_landmarks:
                 landmarks = result.pose_landmarks[0]
+                draw_guide_skeleton(frame, current_stage["key"], landmarks)
                 draw_pose_landmarks(frame, landmarks)
 
                 now = time.monotonic()
@@ -305,6 +316,7 @@ def main():
                 status_text = "Pose detected"
                 status_color = (0, 255, 0)
             else:
+                draw_guide_skeleton(frame, current_stage["key"])
                 pose_samples.clear()
                 latest_feedback = None
                 status_text = "No pose detected"
