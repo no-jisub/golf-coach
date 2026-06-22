@@ -4,6 +4,7 @@ import numpy as np
 
 from utils.guide_skeleton import (
     GUIDE_POSES,
+    get_calibrated_guide_pixels,
     NOSE,
     LEFT_SHOULDER,
     RIGHT_SHOULDER,
@@ -162,17 +163,19 @@ def distance(point_a, point_b):
 
 
 def normalize_pose(points):
-    """위치와 크기 영향을 줄이기 위해 어깨 중심/어깨 너비 기준으로 좌표를 정규화합니다."""
+    """가로는 어깨 너비, 세로는 어깨-발목 높이 기준으로 좌표를 정규화합니다."""
     shoulder_mid = midpoint(points[LEFT_SHOULDER], points[RIGHT_SHOULDER])
     shoulder_width = abs(points[LEFT_SHOULDER][0] - points[RIGHT_SHOULDER][0])
+    ankle_mid = midpoint(points[LEFT_ANKLE], points[RIGHT_ANKLE])
+    body_height = abs(ankle_mid[1] - shoulder_mid[1])
 
-    if shoulder_width < 0.01:
+    if shoulder_width < 0.01 or body_height < 0.01:
         return None
 
     return {
         index: (
             (point[0] - shoulder_mid[0]) / shoulder_width,
-            (point[1] - shoulder_mid[1]) / shoulder_width,
+            (point[1] - shoulder_mid[1]) / body_height,
         )
         for index, point in points.items()
     }
@@ -271,13 +274,111 @@ def build_guide_feedback(stage_key, points):
     return make_result(stage_key, passed, messages, metrics)
 
 
-def analyze_stage_pose(stage_key, landmark_samples):
+def get_average_pixel_points(landmark_samples, image_width, image_height):
+    """여러 프레임의 관절 좌표를 화면 픽셀 기준으로 평균냅니다."""
+    normalized_points = get_average_points(landmark_samples)
+    if normalized_points is None:
+        return None
+
+    return {
+        index: (point[0] * image_width, point[1] * image_height)
+        for index, point in normalized_points.items()
+    }
+
+
+def normalize_screen_points(points, calibration_profile):
+    """고정된 캘리브레이션 위치와 크기를 기준으로 화면 좌표를 정규화합니다."""
+    shoulder_mid = calibration_profile["shoulder_mid"]
+    shoulder_width = calibration_profile["shoulder_width"]
+    body_height = shoulder_width * calibration_profile["body_ratio"]
+
+    if shoulder_width < 1 or body_height < 1:
+        return None
+
+    return {
+        index: (
+            (point[0] - shoulder_mid[0]) / shoulder_width,
+            (point[1] - shoulder_mid[1]) / body_height,
+        )
+        for index, point in points.items()
+    }
+
+
+def build_calibrated_guide_feedback(stage_key, landmark_samples, calibration_profile, image_width, image_height):
+    """고정된 보조 스켈레톤 화면 위치를 기준으로 사용자 자세를 판정합니다."""
+    user_points = get_average_pixel_points(landmark_samples, image_width, image_height)
+    guide_points = get_calibrated_guide_pixels(stage_key, calibration_profile)
+    if user_points is None or guide_points is None:
+        return make_result(
+            stage_key,
+            False,
+            ["주요 관절이 충분히 보이지 않습니다. 고정된 보조 스켈레톤 위치에 전신을 맞춰주세요."],
+        )
+
+    user_pose = normalize_screen_points(user_points, calibration_profile)
+    guide_pose = normalize_screen_points(guide_points, calibration_profile)
+    if user_pose is None or guide_pose is None:
+        return make_result(stage_key, False, ["캘리브레이션 기준으로 자세를 비교할 수 없습니다. c 키로 다시 보정해주세요."])
+
+    all_distances = [distance(user_pose[index], guide_pose[index]) for index in REQUIRED_LANDMARKS]
+    group_distances = {
+        name: get_group_distance(user_pose, guide_pose, indexes)
+        for name, indexes in BODY_PART_GROUPS.items()
+    }
+    group_deltas = {
+        name: get_group_delta(user_pose, guide_pose, indexes)
+        for name, indexes in BODY_PART_GROUPS.items()
+    }
+
+    average_distance = float(np.mean(all_distances))
+    max_group_distance = max(group_distances.values())
+    score = max(0, min(100, int(100 - average_distance * 75 - max_group_distance * 20)))
+    passed = score >= 70 and max_group_distance <= 0.95
+
+    stage = get_stage_config(stage_key)
+    messages = []
+    if passed:
+        messages.append(f"{stage['korean']} 자세가 고정된 보조 스켈레톤과 잘 맞습니다.")
+    else:
+        if group_distances["head"] > 0.22:
+            messages.append(f"머리 위치를 고정된 가이드에 맞춰주세요. {direction_text(group_deltas['head'])}.")
+        if group_distances["arms"] > 0.32:
+            messages.append(f"팔과 손 위치를 고정된 가이드에 맞춰주세요. {direction_text(group_deltas['arms'])}.")
+        if group_distances["body"] > 0.24:
+            messages.append("어깨와 골반을 고정된 스켈레톤 중심에 맞춰주세요.")
+        if group_distances["lower"] > 0.32:
+            messages.append("무릎과 발목을 고정된 하체 라인에 맞춰주세요.")
+        if not messages:
+            messages.append("전체 자세를 고정된 보조 스켈레톤에 더 가깝게 맞춰주세요.")
+
+    metrics = {
+        "guide_score": score,
+        "average_distance": average_distance,
+        "max_group_distance": max_group_distance,
+        "head_distance": group_distances["head"],
+        "arms_distance": group_distances["arms"],
+        "body_distance": group_distances["body"],
+        "lower_distance": group_distances["lower"],
+    }
+    return make_result(stage_key, passed, messages, metrics)
+
+
+def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, image_width=None, image_height=None):
     """현재 단계의 보조 스켈레톤을 실제 판정 기준으로 사용합니다."""
     if not landmark_samples:
         return make_result(
             stage_key,
             False,
             ["자세를 인식하지 못했습니다. 카메라 앞에서 전신이 보이도록 서주세요."],
+        )
+
+    if calibration_profile is not None and image_width is not None and image_height is not None:
+        return build_calibrated_guide_feedback(
+            stage_key,
+            landmark_samples,
+            calibration_profile,
+            image_width,
+            image_height,
         )
 
     points = get_average_points(landmark_samples)

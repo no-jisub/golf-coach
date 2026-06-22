@@ -194,8 +194,86 @@ def get_user_anchor(user_landmarks, image_width, image_height):
     return shoulder_mid, shoulder_width
 
 
-def guide_point_to_user_pixel(point, guide_pose, user_anchor):
-    """Convert guide coordinates to the user's current shoulder position and scale."""
+def get_midpoint(point_a, point_b):
+    return ((point_a[0] + point_b[0]) / 2, (point_a[1] + point_b[1]) / 2)
+
+
+def get_user_body_ratio_from_points(points):
+    """Return vertical body size divided by shoulder width."""
+    left_shoulder = points[LEFT_SHOULDER]
+    right_shoulder = points[RIGHT_SHOULDER]
+    left_ankle = points[LEFT_ANKLE]
+    right_ankle = points[RIGHT_ANKLE]
+
+    shoulder_width = abs(right_shoulder[0] - left_shoulder[0])
+    if shoulder_width < 20:
+        return None
+
+    shoulder_mid = get_midpoint(left_shoulder, right_shoulder)
+    ankle_mid = get_midpoint(left_ankle, right_ankle)
+    body_height = abs(ankle_mid[1] - shoulder_mid[1])
+    if body_height < 40:
+        return None
+
+    return body_height / shoulder_width
+
+
+def get_user_body_ratio(user_landmarks, image_width, image_height):
+    """Estimate the user's body-height-to-shoulder-width ratio from current landmarks."""
+    if user_landmarks is None:
+        return None
+
+    required = [LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_ANKLE, RIGHT_ANKLE]
+    points = {}
+    for index in required:
+        landmark = user_landmarks[index]
+        if getattr(landmark, "visibility", 1.0) < 0.5:
+            return None
+        points[index] = landmark_to_pixel(landmark, image_width, image_height)
+
+    return get_user_body_ratio_from_points(points)
+
+
+def get_guide_body_ratio(guide_pose):
+    """Return guide vertical body size divided by guide shoulder width."""
+    shoulder_mid = get_midpoint(guide_pose[LEFT_SHOULDER], guide_pose[RIGHT_SHOULDER])
+    ankle_mid = get_midpoint(guide_pose[LEFT_ANKLE], guide_pose[RIGHT_ANKLE])
+    shoulder_width = abs(guide_pose[RIGHT_SHOULDER][0] - guide_pose[LEFT_SHOULDER][0])
+    body_height = abs(ankle_mid[1] - shoulder_mid[1])
+    if shoulder_width <= 0:
+        return 4.0
+    return body_height / shoulder_width
+
+
+def create_calibration_profile(landmark_samples, image_width, image_height):
+    """Create a body proportion profile from calibration frames."""
+    ratios = []
+    anchors = []
+    for landmarks in landmark_samples:
+        ratio = get_user_body_ratio(landmarks, image_width, image_height)
+        if ratio is not None:
+            ratios.append(ratio)
+        anchor = get_user_anchor(landmarks, image_width, image_height)
+        if anchor is not None:
+            anchors.append(anchor)
+
+    if not ratios or not anchors:
+        return None
+
+    shoulder_mid_x = sum(anchor[0][0] for anchor in anchors) / len(anchors)
+    shoulder_mid_y = sum(anchor[0][1] for anchor in anchors) / len(anchors)
+    shoulder_width = sum(anchor[1] for anchor in anchors) / len(anchors)
+
+    return {
+        "body_ratio": sum(ratios) / len(ratios),
+        "shoulder_mid": (int(shoulder_mid_x), int(shoulder_mid_y)),
+        "shoulder_width": shoulder_width,
+        "samples": len(ratios),
+    }
+
+
+def guide_point_to_user_pixel(point, guide_pose, user_anchor, body_ratio=None):
+    """Convert guide coordinates to the user's current position, width, and calibrated height."""
     shoulder_mid, user_shoulder_width = user_anchor
     guide_left = guide_pose[LEFT_SHOULDER]
     guide_right = guide_pose[RIGHT_SHOULDER]
@@ -204,14 +282,20 @@ def guide_point_to_user_pixel(point, guide_pose, user_anchor):
         (guide_left[1] + guide_right[1]) / 2,
     )
     guide_shoulder_width = abs(guide_right[0] - guide_left[0]) or 0.14
-    scale = user_shoulder_width / guide_shoulder_width
+    x_scale = user_shoulder_width / guide_shoulder_width
 
-    x = int(shoulder_mid[0] + (point[0] - guide_shoulder_mid[0]) * scale)
-    y = int(shoulder_mid[1] + (point[1] - guide_shoulder_mid[1]) * scale)
+    if body_ratio is None:
+        y_scale = x_scale
+    else:
+        guide_body_ratio = get_guide_body_ratio(guide_pose)
+        y_scale = x_scale * (body_ratio / guide_body_ratio)
+
+    x = int(shoulder_mid[0] + (point[0] - guide_shoulder_mid[0]) * x_scale)
+    y = int(shoulder_mid[1] + (point[1] - guide_shoulder_mid[1]) * y_scale)
     return x, y
 
 
-def draw_guide_skeleton(frame, stage_key, user_landmarks=None):
+def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profile=None):
     """Draw the current stage guide, adapting to the user's position and size when possible."""
     guide_pose = GUIDE_POSES.get(stage_key)
     if not guide_pose:
@@ -221,7 +305,19 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None):
     feedback_panel_height = 180
     guide_top = 20
     guide_height = max(image_height - feedback_panel_height - 40, 120)
-    user_anchor = get_user_anchor(user_landmarks, image_width, image_height)
+    if calibration_profile is not None:
+        user_anchor = (
+            calibration_profile["shoulder_mid"],
+            calibration_profile["shoulder_width"],
+        )
+    else:
+        user_anchor = get_user_anchor(user_landmarks, image_width, image_height)
+
+    body_ratio = None
+    if calibration_profile is not None:
+        body_ratio = calibration_profile.get("body_ratio")
+    if body_ratio is None:
+        body_ratio = get_user_body_ratio(user_landmarks, image_width, image_height)
 
     overlay = frame.copy()
     line_color = (255, 180, 40)
@@ -230,7 +326,7 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None):
 
     def to_pixel(point):
         if user_anchor is not None:
-            return guide_point_to_user_pixel(point, guide_pose, user_anchor)
+            return guide_point_to_user_pixel(point, guide_pose, user_anchor, body_ratio)
         return default_guide_point_to_pixel(point, image_width, guide_top, guide_height)
 
     for start_idx, end_idx in GUIDE_CONNECTIONS:
@@ -252,3 +348,20 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None):
             cv2.circle(overlay, pixel, 10, line_color, 2)
 
     cv2.addWeighted(overlay, 0.45, frame, 0.55, 0, frame)
+
+
+def get_calibrated_guide_pixels(stage_key, calibration_profile):
+    """Return fixed guide joint pixel positions from a locked calibration profile."""
+    guide_pose = GUIDE_POSES.get(stage_key)
+    if guide_pose is None or calibration_profile is None:
+        return None
+
+    user_anchor = (
+        calibration_profile["shoulder_mid"],
+        calibration_profile["shoulder_width"],
+    )
+    body_ratio = calibration_profile.get("body_ratio")
+    return {
+        index: guide_point_to_user_pixel(point, guide_pose, user_anchor, body_ratio)
+        for index, point in guide_pose.items()
+    }

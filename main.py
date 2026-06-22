@@ -11,7 +11,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
-from utils.guide_skeleton import draw_guide_skeleton
+from utils.guide_skeleton import create_calibration_profile, draw_guide_skeleton, get_user_anchor
 from utils.pose_drawer import draw_pose_landmarks
 
 
@@ -24,6 +24,8 @@ CAMERA_INDEX = 0
 # 자세를 멈춘 상태에서 최근 프레임을 모아 평균으로 판단합니다.
 ANALYSIS_WINDOW_SEC = 2.0
 MIN_SAMPLES_FOR_ANALYSIS = 20
+CALIBRATION_HOLD_SEC = 5.0
+CALIBRATION_MAX_ANCHOR_SHIFT_PX = 35
 
 # Windows 기본 한글 폰트입니다.
 KOREAN_FONT_PATH = Path("C:/Windows/Fonts/malgun.ttf")
@@ -120,7 +122,7 @@ def get_stage_status_text(current_stage, latest_feedback):
 
 def get_help_text():
     """하단 패널에 표시할 단계 조작 안내입니다."""
-    return "1 어드레스 | 2 테이크백 | 3 백스윙 | 4 탑 | 5 다운스윙 | 6 임팩트 | 7 팔로우스루 | 8 피니쉬 | n/p"
+    return "1-8 단계 선택 | n/p 이전/다음 | c 보정 다시 | q 종료"
 
 
 def draw_korean_feedback_panel(frame, current_stage, latest_feedback):
@@ -233,9 +235,70 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
             )
 
 
+def draw_calibration_status(frame, calibration_start_time, calibration_profile):
+    """초기 사용자 체형 보정 상태를 표시합니다."""
+    if calibration_profile is not None:
+        cv2.putText(
+            frame,
+            "Calibration: LOCKED",
+            (30, 290),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.8,
+            (0, 255, 0),
+            2,
+        )
+        cv2.putText(
+            frame,
+            "Press c to recalibrate guide position",
+            (30, 325),
+            cv2.FONT_HERSHEY_SIMPLEX,
+            0.7,
+            (255, 255, 255),
+            2,
+        )
+        return
+
+    elapsed = 0.0
+    if calibration_start_time is not None:
+        elapsed = time.monotonic() - calibration_start_time
+    progress = min(elapsed / CALIBRATION_HOLD_SEC, 1.0)
+    cv2.putText(
+        frame,
+        f"Calibration: {progress * 100:.0f}% ({elapsed:.1f}/{CALIBRATION_HOLD_SEC:.0f}s)",
+        (30, 290),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (0, 200, 255),
+        2,
+    )
+    cv2.putText(
+        frame,
+        "Match address guide and stand still",
+        (30, 325),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.7,
+        (255, 255, 255),
+        2,
+    )
+
+
 def reset_analysis_state():
     """단계가 바뀔 때 이전 프레임 평균과 피드백을 초기화합니다."""
     return deque(), None, None
+
+
+def anchor_shift_too_large(base_anchor, current_anchor):
+    """캘리브레이션 중 사용자가 많이 움직였는지 확인합니다."""
+    if base_anchor is None or current_anchor is None:
+        return False
+
+    base_mid, base_width = base_anchor
+    current_mid, current_width = current_anchor
+    dx = current_mid[0] - base_mid[0]
+    dy = current_mid[1] - base_mid[1]
+    center_shift = (dx * dx + dy * dy) ** 0.5
+    width_shift = abs(current_width - base_width)
+    return center_shift > CALIBRATION_MAX_ANCHOR_SHIFT_PX or width_shift > CALIBRATION_MAX_ANCHOR_SHIFT_PX
 
 
 def handle_key(key, current_stage_index):
@@ -276,6 +339,10 @@ def main():
     last_timestamp_ms = -1
     current_stage_index = 0
     pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
+    calibration_samples = deque()
+    calibration_start_time = None
+    calibration_base_anchor = None
+    calibration_profile = None
 
     with create_pose_landmarker() as landmarker:
         while True:
@@ -293,20 +360,46 @@ def main():
 
             last_timestamp_ms = get_video_timestamp_ms(start_time, last_timestamp_ms)
             result = landmarker.detect_for_video(mp_image, last_timestamp_ms)
-            current_stage = STAGE_CONFIGS[current_stage_index]
+            display_stage_index = 0 if calibration_profile is None else current_stage_index
+            current_stage = STAGE_CONFIGS[display_stage_index]
 
             if result.pose_landmarks:
                 landmarks = result.pose_landmarks[0]
-                draw_guide_skeleton(frame, current_stage["key"], landmarks)
+                if calibration_profile is None:
+                    current_anchor = get_user_anchor(landmarks, frame.shape[1], frame.shape[0])
+                    if calibration_start_time is None:
+                        calibration_start_time = time.monotonic()
+                        calibration_base_anchor = current_anchor
+                    elif anchor_shift_too_large(calibration_base_anchor, current_anchor):
+                        calibration_samples.clear()
+                        calibration_start_time = time.monotonic()
+                        calibration_base_anchor = current_anchor
+
+                    calibration_samples.append(landmarks)
+                    if time.monotonic() - calibration_start_time >= CALIBRATION_HOLD_SEC:
+                        calibration_profile = create_calibration_profile(
+                            list(calibration_samples),
+                            frame.shape[1],
+                            frame.shape[0],
+                        )
+                        current_stage_index = 0
+                        current_stage = STAGE_CONFIGS[current_stage_index]
+                        pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
+
+                draw_guide_skeleton(frame, current_stage["key"], landmarks, calibration_profile)
                 draw_pose_landmarks(frame, landmarks)
 
                 now = time.monotonic()
-                update_pose_samples(pose_samples, landmarks, now)
+                if calibration_profile is not None:
+                    update_pose_samples(pose_samples, landmarks, now)
 
-                if len(pose_samples) >= MIN_SAMPLES_FOR_ANALYSIS:
+                if calibration_profile is not None and len(pose_samples) >= MIN_SAMPLES_FOR_ANALYSIS:
                     latest_feedback = analyze_stage_pose(
                         current_stage["key"],
                         [sample[1] for sample in pose_samples],
+                        calibration_profile,
+                        frame.shape[1],
+                        frame.shape[0],
                     )
                     last_feedback_key = print_feedback_if_changed(
                         latest_feedback,
@@ -316,7 +409,10 @@ def main():
                 status_text = "Pose detected"
                 status_color = (0, 255, 0)
             else:
-                draw_guide_skeleton(frame, current_stage["key"])
+                draw_guide_skeleton(frame, current_stage["key"], calibration_profile=calibration_profile)
+                calibration_samples.clear()
+                calibration_start_time = None
+                calibration_base_anchor = None
                 pose_samples.clear()
                 latest_feedback = None
                 status_text = "No pose detected"
@@ -328,12 +424,22 @@ def main():
                 status_color,
                 pose_samples,
                 latest_feedback,
-                current_stage_index,
+                display_stage_index,
             )
+            draw_calibration_status(frame, calibration_start_time, calibration_profile)
             frame = draw_korean_feedback_panel(frame, current_stage, latest_feedback)
             cv2.imshow(window_name, frame)
 
             key = cv2.waitKey(1) & 0xFF
+            if key == ord("c"):
+                calibration_samples.clear()
+                calibration_start_time = None
+                calibration_base_anchor = None
+                calibration_profile = None
+                current_stage_index = 0
+                pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
+                continue
+
             current_stage_index, should_quit, stage_changed = handle_key(key, current_stage_index)
             if should_quit:
                 break
