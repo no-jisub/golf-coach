@@ -68,9 +68,100 @@ py -3.12 main.py
 
 현재 기준은 MVP용 1차 기준입니다. 실제 골프 레슨 수준의 정밀 판정이 아니라, 단계별 자세를 잡고 피드백을 확인하는 흐름을 먼저 만들기 위한 기준입니다.
 
+## 기준 자세 데이터 생성
+
+프로 골프 자세 캡처 이미지는 `reference_data/raw_images` 아래 단계별 폴더에 저장합니다. 원본 이미지는 `.gitignore`로 제외되어 GitHub에 올라가지 않습니다.
+
+이미지에서 관절 좌표를 추출하려면 다음을 실행합니다.
+
+```powershell
+py -3.12 tools\extract_reference_poses.py
+```
+
+추출된 좌표로 보조 스켈레톤 기준 데이터를 만들려면 다음을 실행합니다.
+
+```powershell
+py -3.12 tools\build_guide_poses.py
+```
+
+생성 결과는 다음 파일에 저장됩니다.
+
+```text
+reference_data\guide_poses\generated_guide_poses.json
+```
+
+앱은 이 파일이 있으면 자동으로 프로 사진 기반 보조 스켈레톤을 우선 사용하고, 파일이 없으면 코드에 들어있는 기본 스켈레톤을 사용합니다.
+
+추출된 좌표가 사진 위에 잘 찍혔는지 확인하려면 overlay 이미지를 생성합니다.
+
+```powershell
+py -3.12 tools\visualize_reference_poses.py
+```
+
+검수 이미지는 다음 위치에 저장됩니다.
+
+```text
+reference_data\debug_overlay
+```
+
+관절 좌표가 이상하게 찍힌 경우 JSON을 이미지 위에서 직접 보정할 수 있습니다.
+
+```powershell
+py -3.12 tools\edit_reference_landmarks.py --stage address
+```
+
+편집 도구 조작:
+
+- 마우스 드래그: 가까운 관절 이동
+- 방향키 또는 `w/a/s/d`: 선택 관절 미세 이동
+- `s`: JSON 저장
+- `q` 또는 `Esc`: 종료
+
+수동 보정 후에는 기준 스켈레톤을 다시 생성합니다.
+
+```powershell
+py -3.12 tools\build_guide_poses.py
+```
+
 ## 다음 개발 단계
 
 1. 실제 촬영 각도에 맞춰 각 단계 기준값을 조정합니다.
 2. 오른손잡이/왼손잡이 설정을 추가합니다.
 3. 단계별 점수를 저장하고 마지막에 요약 화면을 표시합니다.
 4. 단계별 통과 시 자동으로 다음 단계로 넘어가게 만듭니다.
+
+## 풀스윙 동영상에서 기준 프레임 뽑기
+
+프로 풀스윙 동영상은 `reference_data\raw_videos` 폴더에 저장합니다. 동영상 원본은 `.gitignore`로 제외되어 GitHub에 올라가지 않습니다.
+
+```powershell
+py -3.12 tools\extract_video_frames.py reference_data\raw_videos\pro01_full_swing.mp4
+```
+
+도구 창에서 단계별 구간을 지정한 뒤 단계 키를 누르면 해당 구간에서 여러 프레임이 자동으로 저장됩니다. 구간을 지정하지 않고 단계 키를 누르면 현재 프레임 1장만 저장됩니다.
+
+- `b`: 현재 프레임을 구간 시작으로 지정
+- `e`: 현재 프레임을 구간 끝으로 지정
+- `c`: 지정한 구간 초기화
+- `Space` 또는 `p`: 재생/일시정지
+- `a`/`d` 또는 방향키: 이전/다음 프레임 이동
+- `q`: 종료
+
+구간을 잡은 뒤 다음 키를 누르면 해당 단계 폴더에 프레임이 저장됩니다.
+
+- `1`: Address
+- `2`: Takeaway
+- `3`: Backswing
+- `4`: Top of Swing
+- `5`: Downswing
+- `6`: Impact
+- `7`: Follow-through
+- `8`: Finish
+
+프레임 저장 후 기존 흐름을 그대로 실행합니다.
+
+```powershell
+py -3.12 tools\extract_reference_poses.py
+py -3.12 tools\visualize_reference_poses.py
+py -3.12 tools\build_guide_poses.py
+```
