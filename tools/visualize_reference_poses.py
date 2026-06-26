@@ -50,14 +50,24 @@ def landmark_to_pixel(landmark, image_width, image_height):
 
 def draw_overlay(image, data):
     height, width, _ = image.shape
-    landmarks = data["landmarks"]
+    landmarks = data.get("landmarks", [])
+    landmark_by_index = {landmark.get("index"): landmark for landmark in landmarks}
 
     for start_idx, end_idx in CONNECTIONS:
-        start = landmarks[start_idx]
-        end = landmarks[end_idx]
+        if start_idx not in landmark_by_index or end_idx not in landmark_by_index:
+            continue
+        start = landmark_by_index[start_idx]
+        end = landmark_by_index[end_idx]
         start_point = landmark_to_pixel(start, width, height)
         end_point = landmark_to_pixel(end, width, height)
         cv2.line(image, start_point, end_point, (255, 255, 255), 3)
+
+    shaft = data.get("shaft")
+    if shaft and shaft.get("start") and shaft.get("end"):
+        shaft_start = (int(shaft["start"][0] * width), int(shaft["start"][1] * height))
+        shaft_end = (int(shaft["end"][0] * width), int(shaft["end"][1] * height))
+        cv2.line(image, shaft_start, shaft_end, (0, 255, 0), 5)
+        cv2.circle(image, shaft_start, 7, (0, 255, 0), -1)
 
     for landmark in landmarks:
         index = landmark["index"]
@@ -77,7 +87,8 @@ def draw_overlay(image, data):
                 2,
             )
 
-    label = f"{data['stage']} | {Path(data['image']).name}"
+    status = "detected" if data.get("detected") else "not detected"
+    label = f"{data['stage']} | {Path(data['image']).name} | {status}"
     cv2.rectangle(image, (10, 10), (520, 48), (0, 0, 0), -1)
     cv2.putText(image, label, (20, 38), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (255, 255, 255), 2)
     return image

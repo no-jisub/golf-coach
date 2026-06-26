@@ -93,6 +93,24 @@ reference_data\guide_poses\generated_guide_poses.json
 
 앱은 이 파일이 있으면 자동으로 프로 사진 기반 보조 스켈레톤을 우선 사용하고, 파일이 없으면 코드에 들어있는 기본 스켈레톤을 사용합니다.
 
+추출된 관절 JSON을 기준으로 OpenCV가 샤프트 후보를 자동 검출하게 하려면 다음을 실행합니다.
+
+```powershell
+py -3.12 tools\extract_reference_shafts.py
+```
+
+특정 선수나 단계만 처리할 수도 있습니다.
+
+```powershell
+py -3.12 tools\extract_reference_shafts.py --only pro02
+py -3.12 tools\extract_reference_shafts.py --stage address
+```
+
+샤프트 검수 이미지는 다음 위치에 저장됩니다.
+
+```text
+reference_data\debug_shaft_overlay
+```
 추출된 좌표가 사진 위에 잘 찍혔는지 확인하려면 overlay 이미지를 생성합니다.
 
 ```powershell
@@ -135,6 +153,20 @@ py -3.12 tools\build_guide_poses.py
 
 프로 풀스윙 동영상은 `reference_data\raw_videos` 폴더에 저장합니다. 동영상 원본은 `.gitignore`로 제외되어 GitHub에 올라가지 않습니다.
 
+로컬 영상에서 8단계 후보 프레임과 관절/샤프트 JSON을 한 번에 자동 추출하려면 다음을 실행합니다.
+
+```powershell
+py -3.12 tools\extract_swing_reference_from_video.py reference_data\raw_videos\pro03_full_swing.mp4 --prefix pro03
+```
+
+이 자동 추출은 아직 SwingNet 기반이 아니라 영상 진행률 기반 후보 프레임을 사용합니다. 따라서 생성된 결과는 반드시 overlay 이미지로 검수해야 합니다.
+
+검수 위치:
+
+```text
+reference_data\debug_overlay
+reference_data\debug_shaft_overlay
+```
 ```powershell
 py -3.12 tools\extract_video_frames.py reference_data\raw_videos\pro01_full_swing.mp4
 ```

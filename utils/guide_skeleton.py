@@ -37,7 +37,7 @@ GUIDE_CONNECTIONS = [
     (RIGHT_KNEE, RIGHT_ANKLE),
 ]
 
-DEFAULT_CLUB_GUIDES = {
+DEFAULT_SHAFT_GUIDES = {
     "address": ((0.50, 0.56), (0.44, 0.82)),
     "takeaway": ((0.38, 0.54), (0.18, 0.48)),
     "backswing": ((0.33, 0.30), (0.18, 0.17)),
@@ -175,23 +175,29 @@ DEFAULT_GUIDE_POSES = {
 }
 
 
-def load_generated_guide_poses():
-    """Load guide poses generated from reference photos when available."""
+def load_generated_guide_data():
+    """Load guide poses and shaft guides generated from reference photos when available."""
     guide_path = Path(__file__).resolve().parents[1] / "reference_data" / "guide_poses" / "generated_guide_poses.json"
     if not guide_path.exists():
         return None
 
     data = json.loads(guide_path.read_text(encoding="utf-8"))
     stages = data.get("stages", {})
-    loaded = {}
+    shafts = data.get("shafts", {})
+    loaded_poses = {}
+    loaded_shafts = {}
 
     for stage, pose in stages.items():
-        loaded[stage] = {
+        loaded_poses[stage] = {
             int(index): tuple(point)
             for index, point in pose.items()
         }
 
-    return loaded
+    for stage, shaft in shafts.items():
+        if "start" in shaft and "end" in shaft:
+            loaded_shafts[stage] = (tuple(shaft["start"]), tuple(shaft["end"]))
+
+    return loaded_poses, loaded_shafts
 
 
 MIRROR_LANDMARK_PAIRS = {
@@ -219,9 +225,9 @@ def mirror_guide_pose(guide_pose):
     return mirrored
 
 
-def mirror_club_guide(club_guide):
-    """클럽 막대기 기준 좌표를 화면 중앙 기준으로 좌우 반전합니다."""
-    return tuple((1.0 - point[0], point[1]) for point in club_guide)
+def mirror_shaft_guide(shaft_guide):
+    """샤프트 기준 좌표를 화면 중앙 기준으로 좌우 반전합니다."""
+    return tuple((1.0 - point[0], point[1]) for point in shaft_guide)
 
 
 def apply_swing_hand(guide_poses, swing_hand):
@@ -237,21 +243,22 @@ def apply_swing_hand(guide_poses, swing_hand):
     }
 
 
-def apply_club_swing_hand(club_guides, swing_hand):
-    """좌타로 만든 클럽 기준선을 필요하면 우타 기준으로 바꿉니다."""
+def apply_shaft_swing_hand(shaft_guides, swing_hand):
+    """좌타로 만든 샤프트 기준선을 필요하면 우타 기준으로 바꿉니다."""
     if swing_hand == "left":
-        return club_guides
+        return shaft_guides
     if swing_hand != "right":
         raise ValueError('SWING_HAND는 "right" 또는 "left"만 사용할 수 있습니다.')
 
     return {
-        stage: mirror_club_guide(club_guide)
-        for stage, club_guide in club_guides.items()
+        stage: mirror_shaft_guide(shaft_guide)
+        for stage, shaft_guide in shaft_guides.items()
     }
 
 
-GUIDE_POSES = apply_swing_hand(load_generated_guide_poses() or DEFAULT_GUIDE_POSES, SWING_HAND)
-CLUB_GUIDES = apply_club_swing_hand(DEFAULT_CLUB_GUIDES, SWING_HAND)
+GENERATED_GUIDE_POSES, GENERATED_SHAFT_GUIDES = load_generated_guide_data() or (None, None)
+GUIDE_POSES = apply_swing_hand(GENERATED_GUIDE_POSES or DEFAULT_GUIDE_POSES, SWING_HAND)
+SHAFT_GUIDES = apply_shaft_swing_hand(GENERATED_SHAFT_GUIDES or DEFAULT_SHAFT_GUIDES, SWING_HAND)
 
 
 
@@ -419,7 +426,7 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profi
     line_color = (255, 180, 40)
     point_color = (255, 240, 120)
     head_color = (80, 220, 255)
-    club_color = (80, 255, 255)
+    shaft_color = (80, 255, 255)
 
     def to_pixel(point):
         if user_anchor is not None:
@@ -435,17 +442,17 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profi
             5,
         )
 
-    club_guide = CLUB_GUIDES.get(stage_key)
-    if club_guide is not None:
-        club_start, club_end = club_guide
+    shaft_guide = SHAFT_GUIDES.get(stage_key)
+    if shaft_guide is not None:
+        shaft_start, shaft_end = shaft_guide
         cv2.line(
             overlay,
-            to_pixel(club_start),
-            to_pixel(club_end),
-            club_color,
+            to_pixel(shaft_start),
+            to_pixel(shaft_end),
+            shaft_color,
             7,
         )
-        cv2.circle(overlay, to_pixel(club_start), 7, club_color, -1)
+        cv2.circle(overlay, to_pixel(shaft_start), 7, shaft_color, -1)
 
     for index, point in guide_pose.items():
         pixel = to_pixel(point)

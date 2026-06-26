@@ -18,3 +18,8 @@ reference_data/raw_videos/**/*.avi
 reference_data/raw_videos/**/*.mkv
 reference_data/raw_videos/**/*.webm
 !reference_data/raw_videos/**/.gitkeep
+reference_data/debug_shaft_overlay/**/*.jpg
+reference_data/debug_shaft_overlay/**/*.jpeg
+reference_data/debug_shaft_overlay/**/*.png
+reference_data/debug_shaft_overlay/**/*.webp
+reference_data/extracted_landmarks/**/*_video_*_auto.json
