@@ -37,6 +37,17 @@ GUIDE_CONNECTIONS = [
     (RIGHT_KNEE, RIGHT_ANKLE),
 ]
 
+DEFAULT_CLUB_GUIDES = {
+    "address": ((0.50, 0.56), (0.44, 0.82)),
+    "takeaway": ((0.38, 0.54), (0.18, 0.48)),
+    "backswing": ((0.33, 0.30), (0.18, 0.17)),
+    "top": ((0.35, 0.10), (0.65, 0.07)),
+    "downswing": ((0.42, 0.48), (0.28, 0.30)),
+    "impact": ((0.50, 0.56), (0.43, 0.84)),
+    "follow_through": ((0.70, 0.38), (0.88, 0.30)),
+    "finish": ((0.72, 0.13), (0.90, 0.06)),
+}
+
 
 # 0~1 normalized guide pose coordinates.
 # These coordinates are both the visual guide and the current scoring reference.
@@ -208,6 +219,11 @@ def mirror_guide_pose(guide_pose):
     return mirrored
 
 
+def mirror_club_guide(club_guide):
+    """클럽 막대기 기준 좌표를 화면 중앙 기준으로 좌우 반전합니다."""
+    return tuple((1.0 - point[0], point[1]) for point in club_guide)
+
+
 def apply_swing_hand(guide_poses, swing_hand):
     """좌타로 만든 기준 좌표를 필요하면 우타 기준으로 바꿉니다."""
     if swing_hand == "left":
@@ -221,7 +237,22 @@ def apply_swing_hand(guide_poses, swing_hand):
     }
 
 
+def apply_club_swing_hand(club_guides, swing_hand):
+    """좌타로 만든 클럽 기준선을 필요하면 우타 기준으로 바꿉니다."""
+    if swing_hand == "left":
+        return club_guides
+    if swing_hand != "right":
+        raise ValueError('SWING_HAND는 "right" 또는 "left"만 사용할 수 있습니다.')
+
+    return {
+        stage: mirror_club_guide(club_guide)
+        for stage, club_guide in club_guides.items()
+    }
+
+
 GUIDE_POSES = apply_swing_hand(load_generated_guide_poses() or DEFAULT_GUIDE_POSES, SWING_HAND)
+CLUB_GUIDES = apply_club_swing_hand(DEFAULT_CLUB_GUIDES, SWING_HAND)
+
 
 
 def default_guide_point_to_pixel(point, image_width, guide_top, guide_height):
@@ -388,6 +419,7 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profi
     line_color = (255, 180, 40)
     point_color = (255, 240, 120)
     head_color = (80, 220, 255)
+    club_color = (80, 255, 255)
 
     def to_pixel(point):
         if user_anchor is not None:
@@ -402,6 +434,18 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profi
             line_color,
             5,
         )
+
+    club_guide = CLUB_GUIDES.get(stage_key)
+    if club_guide is not None:
+        club_start, club_end = club_guide
+        cv2.line(
+            overlay,
+            to_pixel(club_start),
+            to_pixel(club_end),
+            club_color,
+            7,
+        )
+        cv2.circle(overlay, to_pixel(club_start), 7, club_color, -1)
 
     for index, point in guide_pose.items():
         pixel = to_pixel(point)
