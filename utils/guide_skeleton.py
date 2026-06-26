@@ -4,6 +4,8 @@ from pathlib import Path
 import cv2
 
 
+SWING_HAND = "right"  # "right": 우타 기준, "left": 좌타 기준
+
 NOSE = 0
 LEFT_SHOULDER = 11
 RIGHT_SHOULDER = 12
@@ -181,7 +183,45 @@ def load_generated_guide_poses():
     return loaded
 
 
-GUIDE_POSES = load_generated_guide_poses() or DEFAULT_GUIDE_POSES
+MIRROR_LANDMARK_PAIRS = {
+    LEFT_SHOULDER: RIGHT_SHOULDER,
+    RIGHT_SHOULDER: LEFT_SHOULDER,
+    LEFT_ELBOW: RIGHT_ELBOW,
+    RIGHT_ELBOW: LEFT_ELBOW,
+    LEFT_WRIST: RIGHT_WRIST,
+    RIGHT_WRIST: LEFT_WRIST,
+    LEFT_HIP: RIGHT_HIP,
+    RIGHT_HIP: LEFT_HIP,
+    LEFT_KNEE: RIGHT_KNEE,
+    RIGHT_KNEE: LEFT_KNEE,
+    LEFT_ANKLE: RIGHT_ANKLE,
+    RIGHT_ANKLE: LEFT_ANKLE,
+}
+
+
+def mirror_guide_pose(guide_pose):
+    """보조 스켈레톤 좌표를 화면 중앙 기준으로 좌우 반전하고 좌우 관절 번호도 맞바꿉니다."""
+    mirrored = {}
+    for index, point in guide_pose.items():
+        target_index = MIRROR_LANDMARK_PAIRS.get(index, index)
+        mirrored[target_index] = (1.0 - point[0], point[1])
+    return mirrored
+
+
+def apply_swing_hand(guide_poses, swing_hand):
+    """좌타로 만든 기준 좌표를 필요하면 우타 기준으로 바꿉니다."""
+    if swing_hand == "left":
+        return guide_poses
+    if swing_hand != "right":
+        raise ValueError('SWING_HAND는 "right" 또는 "left"만 사용할 수 있습니다.')
+
+    return {
+        stage: mirror_guide_pose(pose)
+        for stage, pose in guide_poses.items()
+    }
+
+
+GUIDE_POSES = apply_swing_hand(load_generated_guide_poses() or DEFAULT_GUIDE_POSES, SWING_HAND)
 
 
 def default_guide_point_to_pixel(point, image_width, guide_top, guide_height):

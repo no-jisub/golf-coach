@@ -11,7 +11,7 @@ from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
-from utils.guide_skeleton import create_calibration_profile, draw_guide_skeleton, get_user_anchor
+from utils.guide_skeleton import SWING_HAND, create_calibration_profile, draw_guide_skeleton, get_user_anchor
 from utils.pose_drawer import draw_pose_landmarks
 
 
@@ -199,11 +199,22 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
         2,
     )
 
+    swing_hand_text = "Right-handed" if SWING_HAND == "right" else "Left-handed"
+    cv2.putText(
+        frame,
+        f"Guide: {swing_hand_text}",
+        (30, 170),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.8,
+        (255, 255, 255),
+        2,
+    )
+
     sample_progress = min(len(pose_samples) / MIN_SAMPLES_FOR_ANALYSIS, 1.0)
     cv2.putText(
         frame,
         f"Sample: {sample_progress * 100:.0f}%",
-        (30, 170),
+        (30, 210),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
         (255, 255, 255),
@@ -216,7 +227,7 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
         cv2.putText(
             frame,
             result_text,
-            (30, 210),
+            (30, 250),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.9,
             result_color,
@@ -227,7 +238,7 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
             cv2.putText(
                 frame,
                 f"Guide score: {score}",
-                (30, 250),
+                (30, 290),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.8,
                 (255, 255, 255),
@@ -241,7 +252,7 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
         cv2.putText(
             frame,
             "Calibration: LOCKED",
-            (30, 290),
+            (30, 330),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
             (0, 255, 0),
@@ -250,7 +261,7 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
         cv2.putText(
             frame,
             "Press c to recalibrate guide position",
-            (30, 325),
+            (30, 365),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.7,
             (255, 255, 255),
@@ -265,7 +276,7 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
     cv2.putText(
         frame,
         f"Calibration: {progress * 100:.0f}% ({elapsed:.1f}/{CALIBRATION_HOLD_SEC:.0f}s)",
-        (30, 290),
+        (30, 330),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
         (0, 200, 255),
@@ -274,7 +285,7 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
     cv2.putText(
         frame,
         "Match address guide and stand still",
-        (30, 325),
+        (30, 365),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.7,
         (255, 255, 255),
