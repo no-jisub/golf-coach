@@ -23,3 +23,5 @@ reference_data/debug_shaft_overlay/**/*.jpeg
 reference_data/debug_shaft_overlay/**/*.png
 reference_data/debug_shaft_overlay/**/*.webp
 reference_data/extracted_landmarks/**/*_video_*_auto.json
+reference_data/extracted_landmarks/**/*.json
+reference_data/guide_poses/generated_guide_poses.json
