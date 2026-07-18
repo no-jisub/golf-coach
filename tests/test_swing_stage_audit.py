@@ -24,6 +24,7 @@ from utils.swing_stage_contact_sheet import (
     build_stage_contact_sheet,
     candidate_frame_indexes,
 )
+from utils.swing_stage_accuracy import ACCURACY_SCHEMA, build_stage_accuracy_report
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -197,6 +198,61 @@ class SwingStageContactSheetTests(unittest.TestCase):
         )
         self.assertEqual(tuple(metadata["candidates"]), STAGE_KEYS)
         self.assertGreater(np.count_nonzero(sheet), 0)
+
+
+def make_audit(automatic_frames, *, fps=20.0, status="ok"):
+    video = {
+        "status": status,
+        "source": "sample.mp4",
+        "ground_truth_status": "reviewed",
+    }
+    if status == "ok":
+        video.update(
+            {
+                "video": {"fps": fps},
+                "stage_detection": {
+                    "events": {
+                        stage_key: {"frame_index": automatic_frames[index]}
+                        for index, stage_key in enumerate(STAGE_KEYS)
+                    }
+                },
+            }
+        )
+    return {"videos": {"sample": video}}
+
+
+class SwingStageAccuracyTests(unittest.TestCase):
+    def test_reviewed_events_produce_frame_and_time_error_metrics(self):
+        manifest = make_manifest("reviewed")
+        automatic_frames = [0, 11, 18, 30, 44, 50, 58, 70]
+
+        report = build_stage_accuracy_report(
+            make_audit(automatic_frames),
+            manifest,
+            tolerance_ms=100,
+        )
+
+        self.assertEqual(report["schema"], ACCURACY_SCHEMA)
+        self.assertEqual(report["summary"]["reviewed_count"], 1)
+        self.assertEqual(report["summary"]["evaluated_count"], 8)
+        self.assertEqual(report["summary"]["within_tolerance_count"], 7)
+        self.assertEqual(report["summary"]["within_tolerance_rate"], 0.875)
+        backswing = report["videos"]["sample"]["comparisons"]["backswing"]
+        self.assertEqual(backswing["signed_error_frames"], -2)
+        self.assertEqual(backswing["absolute_error_ms"], 100.0)
+
+    def test_pending_events_never_count_as_accuracy_ground_truth(self):
+        manifest = make_manifest("pending")
+        report = build_stage_accuracy_report(
+            make_audit([index * 10 for index in range(8)]),
+            manifest,
+        )
+
+        self.assertEqual(report["summary"]["reviewed_count"], 0)
+        self.assertEqual(report["summary"]["pending_review_count"], 1)
+        self.assertEqual(report["summary"]["evaluated_count"], 0)
+        self.assertIsNone(report["summary"]["within_tolerance_rate"])
+        self.assertEqual(report["videos"]["sample"]["status"], "pending_review")
 
 
 if __name__ == "__main__":
