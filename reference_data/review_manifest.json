@@ -1,0 +1,1944 @@
+{
+  "schema": "golf-coach-review-v1",
+  "policy": {
+    "required_landmarks": [
+      0,
+      11,
+      12,
+      13,
+      14,
+      15,
+      16,
+      23,
+      24,
+      25,
+      26,
+      27,
+      28
+    ],
+    "visibility_thresholds": {
+      "0": 0.6,
+      "11": 0.6,
+      "12": 0.6,
+      "13": 0.5,
+      "14": 0.5,
+      "15": 0.5,
+      "16": 0.5,
+      "23": 0.6,
+      "24": 0.6,
+      "25": 0.6,
+      "26": 0.6,
+      "27": 0.6,
+      "28": 0.6
+    },
+    "min_shoulder_to_body_ratio": 0.06,
+    "shaft_fail_score": 0.4,
+    "shaft_warning_score": 0.5,
+    "max_grip_endpoint_distance": 0.12,
+    "stage_outlier_method": "median_pose_distance_with_mad"
+  },
+  "summary": {
+    "total": 64,
+    "auto_check": {
+      "pass": 25,
+      "warning": 14,
+      "fail": 25
+    }
+  },
+  "samples": {
+    "reference_data/extracted_landmarks/address/pro01_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro01_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro01_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.11333,
+          "body_height": 0.43347,
+          "shoulder_to_body_ratio": 0.26146,
+          "min_visibility": 0.92085,
+          "shaft_grip_endpoint_distance": 0.00905,
+          "shaft_score": 0.7036,
+          "stage_pose_deviation": 0.03308,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro03_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro03_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro03_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.23641,
+          "body_height": 0.48616,
+          "shoulder_to_body_ratio": 0.48628,
+          "min_visibility": 0.9683,
+          "shaft_grip_endpoint_distance": 0.00705,
+          "shaft_score": 0.8651,
+          "stage_pose_deviation": 0.08044,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro04_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro04_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro04_video_address_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.437"
+          },
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.450"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.1672,
+          "body_height": 0.53233,
+          "shoulder_to_body_ratio": 0.31409,
+          "min_visibility": 0.82562,
+          "shaft_grip_endpoint_distance": 0.4369,
+          "shaft_score": 0.45,
+          "stage_pose_deviation": 0.07173,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro05_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro05_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro05_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.17118,
+          "body_height": 0.52189,
+          "shoulder_to_body_ratio": 0.328,
+          "min_visibility": 0.94736,
+          "shaft_grip_endpoint_distance": 0.03985,
+          "shaft_score": 0.5796,
+          "stage_pose_deviation": 0.06229,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro06_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro06_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro06_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.14707,
+          "body_height": 0.49492,
+          "shoulder_to_body_ratio": 0.29716,
+          "min_visibility": 0.92154,
+          "shaft_grip_endpoint_distance": 0.01587,
+          "shaft_score": 0.6735,
+          "stage_pose_deviation": 0.04277,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro07_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro07_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro07_video_address_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.155"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.16227,
+          "body_height": 0.51925,
+          "shoulder_to_body_ratio": 0.31251,
+          "min_visibility": 0.95425,
+          "shaft_grip_endpoint_distance": 0.15469,
+          "shaft_score": 0.775,
+          "stage_pose_deviation": 0.1138,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro08_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro08_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro08_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.17766,
+          "body_height": 0.46784,
+          "shoulder_to_body_ratio": 0.37975,
+          "min_visibility": 0.9718,
+          "shaft_grip_endpoint_distance": 0.03441,
+          "shaft_score": 0.6867,
+          "stage_pose_deviation": 0.07452,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/address/pro09_video_address_auto.json": {
+      "stage": "address",
+      "source": "reference_data/extracted_landmarks/address/pro09_video_address_auto.json",
+      "image": "reference_data\\raw_images\\address\\pro09_video_address_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.15989,
+          "body_height": 0.49776,
+          "shoulder_to_body_ratio": 0.32122,
+          "min_visibility": 0.91469,
+          "shaft_grip_endpoint_distance": 0.04122,
+          "shaft_score": 0.7502,
+          "stage_pose_deviation": 0.11578,
+          "stage_outlier_threshold": 0.32312
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro01_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro01_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro01_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.10468,
+          "body_height": 0.43793,
+          "shoulder_to_body_ratio": 0.23903,
+          "min_visibility": 0.93429,
+          "shaft_grip_endpoint_distance": 0.03192,
+          "shaft_score": 0.7048,
+          "stage_pose_deviation": 0.06576,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro03_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro03_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro03_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.754>0.379"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09716,
+          "body_height": 0.49263,
+          "shoulder_to_body_ratio": 0.19724,
+          "min_visibility": 0.55486,
+          "shaft_grip_endpoint_distance": 0.07683,
+          "shaft_score": 0.6451,
+          "stage_pose_deviation": 0.75363,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro04_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro04_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro04_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.401>0.379"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.10653,
+          "body_height": 0.52731,
+          "shoulder_to_body_ratio": 0.20202,
+          "min_visibility": 0.74623,
+          "shaft_grip_endpoint_distance": 0.03337,
+          "shaft_score": 0.6298,
+          "stage_pose_deviation": 0.40062,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro05_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro05_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro05_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.16079,
+          "body_height": 0.51261,
+          "shoulder_to_body_ratio": 0.31368,
+          "min_visibility": 0.96008,
+          "shaft_grip_endpoint_distance": 0.08035,
+          "shaft_score": 0.6825,
+          "stage_pose_deviation": 0.12724,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro06_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro06_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro06_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.14746,
+          "body_height": 0.48676,
+          "shoulder_to_body_ratio": 0.30295,
+          "min_visibility": 0.983,
+          "shaft_grip_endpoint_distance": 0.0446,
+          "shaft_score": 0.6168,
+          "stage_pose_deviation": 0.09251,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro07_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro07_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro07_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.493"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.13762,
+          "body_height": 0.50915,
+          "shoulder_to_body_ratio": 0.27029,
+          "min_visibility": 0.7651,
+          "shaft_grip_endpoint_distance": 0.05569,
+          "shaft_score": 0.4933,
+          "stage_pose_deviation": 0.06465,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro08_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro08_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro08_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.16692,
+          "body_height": 0.45314,
+          "shoulder_to_body_ratio": 0.36836,
+          "min_visibility": 0.97228,
+          "shaft_grip_endpoint_distance": 0.05532,
+          "shaft_score": 0.8583,
+          "stage_pose_deviation": 0.13144,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/takeaway/pro09_video_takeaway_auto.json": {
+      "stage": "takeaway",
+      "source": "reference_data/extracted_landmarks/takeaway/pro09_video_takeaway_auto.json",
+      "image": "reference_data\\raw_images\\takeaway\\pro09_video_takeaway_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.227"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.688>0.379"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.08537,
+          "body_height": 0.51116,
+          "shoulder_to_body_ratio": 0.16702,
+          "min_visibility": 0.57253,
+          "shaft_grip_endpoint_distance": 0.22681,
+          "shaft_score": 0.732,
+          "stage_pose_deviation": 0.68814,
+          "stage_outlier_threshold": 0.37934
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro01_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro01_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro01_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_score_missing",
+            "severity": "warning",
+            "message": "샤프트 점수가 없습니다."
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.06936,
+          "body_height": 0.42014,
+          "shoulder_to_body_ratio": 0.16508,
+          "min_visibility": 0.59237,
+          "stage_pose_deviation": 0.10933,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro03_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro03_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro03_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 16=0.42618149518966675<0.5"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.16458,
+          "body_height": 0.47308,
+          "shoulder_to_body_ratio": 0.34788,
+          "min_visibility": 0.42618,
+          "shaft_grip_endpoint_distance": 0.09143,
+          "shaft_score": 0.5351,
+          "stage_pose_deviation": 0.19673,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro04_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro04_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro04_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 14=0.4008648991584778<0.5"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.120"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09828,
+          "body_height": 0.52147,
+          "shoulder_to_body_ratio": 0.18847,
+          "min_visibility": 0.40086,
+          "shaft_grip_endpoint_distance": 0.12044,
+          "shaft_score": 0.641,
+          "stage_pose_deviation": 0.15496,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro05_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro05_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro05_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.11181,
+          "body_height": 0.51287,
+          "shoulder_to_body_ratio": 0.21801,
+          "min_visibility": 0.71686,
+          "shaft_grip_endpoint_distance": 0.04023,
+          "shaft_score": 0.6284,
+          "stage_pose_deviation": 0.12541,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro06_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro06_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro06_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.10247,
+          "body_height": 0.51132,
+          "shoulder_to_body_ratio": 0.2004,
+          "min_visibility": 0.92685,
+          "shaft_grip_endpoint_distance": 0.05536,
+          "shaft_score": 0.6562,
+          "stage_pose_deviation": 0.0983,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro07_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro07_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro07_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 14=0.3284089267253876<0.5, 16=0.48513028025627136<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.545>0.390"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09543,
+          "body_height": 0.56798,
+          "shoulder_to_body_ratio": 0.16801,
+          "min_visibility": 0.32841,
+          "shaft_grip_endpoint_distance": 0.10341,
+          "shaft_score": 0.6934,
+          "stage_pose_deviation": 0.54479,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro08_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro08_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro08_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.10916,
+          "body_height": 0.47693,
+          "shoulder_to_body_ratio": 0.22889,
+          "min_visibility": 0.8585,
+          "shaft_grip_endpoint_distance": 0.0571,
+          "shaft_score": 0.5855,
+          "stage_pose_deviation": 0.11275,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/backswing/pro09_video_backswing_auto.json": {
+      "stage": "backswing",
+      "source": "reference_data/extracted_landmarks/backswing/pro09_video_backswing_auto.json",
+      "image": "reference_data\\raw_images\\backswing\\pro09_video_backswing_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.305"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.11749,
+          "body_height": 0.53132,
+          "shoulder_to_body_ratio": 0.22113,
+          "min_visibility": 0.86448,
+          "shaft_grip_endpoint_distance": 0.30461,
+          "shaft_score": 0.8568,
+          "stage_pose_deviation": 0.23416,
+          "stage_outlier_threshold": 0.39019
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro01_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro01_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro01_video_top_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.17203858494758606<0.5, 15=0.4618499279022217<0.5, 25=0.5075311064720154<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.06237,
+          "body_height": 0.46356,
+          "shoulder_to_body_ratio": 0.13455,
+          "min_visibility": 0.17204,
+          "shaft_grip_endpoint_distance": 0.04387,
+          "shaft_score": 0.5927,
+          "stage_pose_deviation": 0.4573,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro03_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro03_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro03_video_top_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.3860378861427307<0.5, 15=0.4573933482170105<0.5"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.211"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.11949,
+          "body_height": 0.51165,
+          "shoulder_to_body_ratio": 0.23354,
+          "min_visibility": 0.38604,
+          "shaft_grip_endpoint_distance": 0.21114,
+          "shaft_score": 0.5345,
+          "stage_pose_deviation": 0.65416,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro04_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro04_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro04_video_top_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.1799546778202057<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.179>0.949"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.05936,
+          "body_height": 0.55702,
+          "shoulder_to_body_ratio": 0.10656,
+          "min_visibility": 0.17995,
+          "shaft_grip_endpoint_distance": 0.02895,
+          "shaft_score": 0.7038,
+          "stage_pose_deviation": 1.17916,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro05_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro05_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro05_video_top_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.10191,
+          "body_height": 0.53216,
+          "shoulder_to_body_ratio": 0.1915,
+          "min_visibility": 0.67411,
+          "shaft_grip_endpoint_distance": 0.03013,
+          "shaft_score": 0.7594,
+          "stage_pose_deviation": 0.30848,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro06_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro06_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro06_video_top_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.07785,
+          "body_height": 0.49205,
+          "shoulder_to_body_ratio": 0.15821,
+          "min_visibility": 0.58401,
+          "shaft_grip_endpoint_distance": 0.06486,
+          "shaft_score": 0.6287,
+          "stage_pose_deviation": 0.40278,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro07_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro07_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro07_video_top_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.243"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.0881,
+          "body_height": 0.53377,
+          "shoulder_to_body_ratio": 0.16505,
+          "min_visibility": 0.66969,
+          "shaft_grip_endpoint_distance": 0.24283,
+          "shaft_score": 0.6974,
+          "stage_pose_deviation": 0.47033,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro08_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro08_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro08_video_top_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.13249,
+          "body_height": 0.48195,
+          "shoulder_to_body_ratio": 0.27491,
+          "min_visibility": 0.88048,
+          "shaft_grip_endpoint_distance": 0.08571,
+          "shaft_score": 0.6439,
+          "stage_pose_deviation": 0.16342,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/top/pro09_video_top_auto.json": {
+      "stage": "top",
+      "source": "reference_data/extracted_landmarks/top/pro09_video_top_auto.json",
+      "image": "reference_data\\raw_images\\top\\pro09_video_top_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.146"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.12832,
+          "body_height": 0.52338,
+          "shoulder_to_body_ratio": 0.24518,
+          "min_visibility": 0.74934,
+          "shaft_grip_endpoint_distance": 0.14599,
+          "shaft_score": 0.8689,
+          "stage_pose_deviation": 0.15465,
+          "stage_outlier_threshold": 0.94856
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro01_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro01_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro01_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 15=0.3444642722606659<0.5"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.08072,
+          "body_height": 0.46845,
+          "shoulder_to_body_ratio": 0.1723,
+          "min_visibility": 0.34446,
+          "shaft_grip_endpoint_distance": 0.055,
+          "shaft_score": 0.6615,
+          "stage_pose_deviation": 0.51583,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro03_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro03_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro03_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.21983997523784637<0.5, 15=0.4123229384422302<0.5"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.226"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.327>0.737"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.05222,
+          "body_height": 0.52648,
+          "shoulder_to_body_ratio": 0.09919,
+          "min_visibility": 0.21984,
+          "shaft_grip_endpoint_distance": 0.22557,
+          "shaft_score": 0.6172,
+          "stage_pose_deviation": 1.32661,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro04_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro04_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro04_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.07722131907939911<0.5, 15=0.3626962900161743<0.5"
+          },
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.413"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.687>0.737"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.04061,
+          "body_height": 0.54542,
+          "shoulder_to_body_ratio": 0.07445,
+          "min_visibility": 0.07722,
+          "shaft_grip_endpoint_distance": 0.07602,
+          "shaft_score": 0.4131,
+          "stage_pose_deviation": 1.68729,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro05_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro05_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro05_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.11497,
+          "body_height": 0.52645,
+          "shoulder_to_body_ratio": 0.21839,
+          "min_visibility": 0.8216,
+          "shaft_grip_endpoint_distance": 0.03778,
+          "shaft_score": 0.7164,
+          "stage_pose_deviation": 0.21089,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro06_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro06_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro06_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.11872,
+          "body_height": 0.48477,
+          "shoulder_to_body_ratio": 0.2449,
+          "min_visibility": 0.90912,
+          "shaft_grip_endpoint_distance": 0.01039,
+          "shaft_score": 0.6964,
+          "stage_pose_deviation": 0.26976,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro07_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro07_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro07_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.09115,
+          "body_height": 0.52579,
+          "shoulder_to_body_ratio": 0.17335,
+          "min_visibility": 0.61124,
+          "shaft_grip_endpoint_distance": 0.05162,
+          "shaft_score": 0.7095,
+          "stage_pose_deviation": 0.35459,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro08_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro08_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro08_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.453"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09777,
+          "body_height": 0.445,
+          "shoulder_to_body_ratio": 0.21972,
+          "min_visibility": 0.71992,
+          "shaft_grip_endpoint_distance": 0.10324,
+          "shaft_score": 0.4534,
+          "stage_pose_deviation": 0.20801,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/downswing/pro09_video_downswing_auto.json": {
+      "stage": "downswing",
+      "source": "reference_data/extracted_landmarks/downswing/pro09_video_downswing_auto.json",
+      "image": "reference_data\\raw_images\\downswing\\pro09_video_downswing_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.10958,
+          "body_height": 0.50846,
+          "shoulder_to_body_ratio": 0.21551,
+          "min_visibility": 0.91072,
+          "shaft_grip_endpoint_distance": 0.05033,
+          "shaft_score": 0.8668,
+          "stage_pose_deviation": 0.13286,
+          "stage_outlier_threshold": 0.7374
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro01_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro01_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro01_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 15=0.31763017177581787<0.5, 16=0.43026453256607056<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.662>0.366"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.07699,
+          "body_height": 0.47286,
+          "shoulder_to_body_ratio": 0.16283,
+          "min_visibility": 0.31763,
+          "shaft_grip_endpoint_distance": 0.03718,
+          "shaft_score": 0.67,
+          "stage_pose_deviation": 0.66186,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro03_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro03_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro03_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.04559085890650749<0.5, 15=0.02008398063480854<0.5, 25=0.5439454317092896<0.6"
+          },
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.402"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.841>0.366"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.06387,
+          "body_height": 0.53129,
+          "shoulder_to_body_ratio": 0.12022,
+          "min_visibility": 0.02008,
+          "shaft_grip_endpoint_distance": 0.09937,
+          "shaft_score": 0.4023,
+          "stage_pose_deviation": 0.8412,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro04_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro04_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro04_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.03739186376333237<0.5, 15=0.09626688808202744<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.697>0.366"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.03911,
+          "body_height": 0.57399,
+          "shoulder_to_body_ratio": 0.06814,
+          "min_visibility": 0.03739,
+          "shaft_grip_endpoint_distance": 0.0444,
+          "shaft_score": 0.6843,
+          "stage_pose_deviation": 1.69724,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro05_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro05_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro05_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.17392,
+          "body_height": 0.50752,
+          "shoulder_to_body_ratio": 0.3427,
+          "min_visibility": 0.96173,
+          "shaft_grip_endpoint_distance": 0.05298,
+          "shaft_score": 0.6211,
+          "stage_pose_deviation": 0.05253,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro06_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro06_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro06_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.630"
+          },
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.450"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.14463,
+          "body_height": 0.45708,
+          "shoulder_to_body_ratio": 0.31643,
+          "min_visibility": 0.90648,
+          "shaft_grip_endpoint_distance": 0.62971,
+          "shaft_score": 0.45,
+          "stage_pose_deviation": 0.07874,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro07_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro07_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro07_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.1541,
+          "body_height": 0.48729,
+          "shoulder_to_body_ratio": 0.31625,
+          "min_visibility": 0.92108,
+          "shaft_grip_endpoint_distance": 0.05684,
+          "shaft_score": 0.6035,
+          "stage_pose_deviation": 0.09467,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro08_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro08_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro08_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.405"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.18091,
+          "body_height": 0.47169,
+          "shoulder_to_body_ratio": 0.38352,
+          "min_visibility": 0.9803,
+          "shaft_grip_endpoint_distance": 0.07745,
+          "shaft_score": 0.4052,
+          "stage_pose_deviation": 0.10898,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/impact/pro09_video_impact_auto.json": {
+      "stage": "impact",
+      "source": "reference_data/extracted_landmarks/impact/pro09_video_impact_auto.json",
+      "image": "reference_data\\raw_images\\impact\\pro09_video_impact_auto.jpg",
+      "auto_check": {
+        "status": "warning",
+        "reasons": [
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.135"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.14117,
+          "body_height": 0.50886,
+          "shoulder_to_body_ratio": 0.27743,
+          "min_visibility": 0.88503,
+          "shaft_grip_endpoint_distance": 0.13494,
+          "shaft_score": 0.8584,
+          "stage_pose_deviation": 0.12218,
+          "stage_outlier_threshold": 0.36558
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro01_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro01_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro01_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 15=0.3731263279914856<0.5, 16=0.3472771644592285<0.5, 25=0.512866735458374<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09567,
+          "body_height": 0.48125,
+          "shoulder_to_body_ratio": 0.1988,
+          "min_visibility": 0.34728,
+          "shaft_grip_endpoint_distance": 0.03334,
+          "shaft_score": 0.6526,
+          "stage_pose_deviation": 0.39453,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro03_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro03_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro03_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.19116446375846863<0.5, 15=0.4032737612724304<0.5"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.140"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.200>1.167"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.04716,
+          "body_height": 0.53947,
+          "shoulder_to_body_ratio": 0.08743,
+          "min_visibility": 0.19116,
+          "shaft_grip_endpoint_distance": 0.14044,
+          "shaft_score": 0.6199,
+          "stage_pose_deviation": 1.19961,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro04_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro04_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro04_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.15087956190109253<0.5, 15=0.23171710968017578<0.5"
+          },
+          {
+            "code": "shaft_score_low",
+            "severity": "warning",
+            "message": "샤프트 점수가 낮습니다: 0.470"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.268>1.167"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.03442,
+          "body_height": 0.56218,
+          "shoulder_to_body_ratio": 0.06123,
+          "min_visibility": 0.15088,
+          "shaft_grip_endpoint_distance": 0.07066,
+          "shaft_score": 0.4698,
+          "stage_pose_deviation": 1.26812,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro05_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro05_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro05_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.1703176349401474<0.5"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.242"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.05896,
+          "body_height": 0.54131,
+          "shoulder_to_body_ratio": 0.10892,
+          "min_visibility": 0.17032,
+          "shaft_grip_endpoint_distance": 0.24181,
+          "shaft_score": 0.7746,
+          "stage_pose_deviation": 0.71158,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro06_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro06_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro06_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 25=0.3747522830963135<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.1028,
+          "body_height": 0.53784,
+          "shoulder_to_body_ratio": 0.19114,
+          "min_visibility": 0.37475,
+          "shaft_grip_endpoint_distance": 0.0993,
+          "shaft_score": 0.5855,
+          "stage_pose_deviation": 0.42043,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro07_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro07_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro07_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.28066757321357727<0.5, 25=0.5716281533241272<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.08701,
+          "body_height": 0.55035,
+          "shoulder_to_body_ratio": 0.1581,
+          "min_visibility": 0.28067,
+          "shaft_grip_endpoint_distance": 0.11139,
+          "shaft_score": 0.723,
+          "stage_pose_deviation": 0.48319,
+          "stage_outlier_threshold": 1.1671
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro08_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro08_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro08_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.24219852685928345<0.5"
+          },
+          {
+            "code": "narrow_shoulder_ratio",
+            "severity": "fail",
+            "message": "어깨/신체 비율이 너무 작습니다: 0.059"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.139"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.02848,
+          "body_height": 0.48675,
+          "shoulder_to_body_ratio": 0.0585,
+          "min_visibility": 0.2422,
+          "shaft_grip_endpoint_distance": 0.13945,
+          "shaft_score": 0.6631
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/follow_through/pro09_video_follow_through_auto.json": {
+      "stage": "follow_through",
+      "source": "reference_data/extracted_landmarks/follow_through/pro09_video_follow_through_auto.json",
+      "image": "reference_data\\raw_images\\follow_through\\pro09_video_follow_through_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.4037327766418457<0.5, 25=0.5901992321014404<0.6"
+          },
+          {
+            "code": "narrow_shoulder_ratio",
+            "severity": "fail",
+            "message": "어깨/신체 비율이 너무 작습니다: 0.046"
+          },
+          {
+            "code": "shaft_far_from_grip",
+            "severity": "warning",
+            "message": "샤프트 양 끝점이 손에서 멉니다: 0.239"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.02342,
+          "body_height": 0.51412,
+          "shoulder_to_body_ratio": 0.04556,
+          "min_visibility": 0.40373,
+          "shaft_grip_endpoint_distance": 0.23931,
+          "shaft_score": 0.7566
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro01_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro01_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro01_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 15=0.4449709355831146<0.5, 16=0.34812992811203003<0.5, 25=0.565470814704895<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.07365,
+          "body_height": 0.47898,
+          "shoulder_to_body_ratio": 0.15377,
+          "min_visibility": 0.34813,
+          "shaft_grip_endpoint_distance": 0.04342,
+          "shaft_score": 0.6559,
+          "stage_pose_deviation": 0.60557,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro03_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro03_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro03_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.2861442267894745<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.746>0.744"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.067,
+          "body_height": 0.54252,
+          "shoulder_to_body_ratio": 0.1235,
+          "min_visibility": 0.28614,
+          "shaft_grip_endpoint_distance": 0.07803,
+          "shaft_score": 0.7077,
+          "stage_pose_deviation": 0.74577,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro04_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro04_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro04_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.15804,
+          "body_height": 0.5453,
+          "shoulder_to_body_ratio": 0.28982,
+          "min_visibility": 0.89718,
+          "shaft_grip_endpoint_distance": 0.07447,
+          "shaft_score": 0.6886,
+          "stage_pose_deviation": 0.31607,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro05_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro05_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro05_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.1546768695116043<0.5, 15=0.2155456244945526<0.5"
+          },
+          {
+            "code": "stage_pose_outlier",
+            "severity": "warning",
+            "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.793>0.744"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.04826,
+          "body_height": 0.58395,
+          "shoulder_to_body_ratio": 0.08265,
+          "min_visibility": 0.15468,
+          "shaft_grip_endpoint_distance": 0.07556,
+          "shaft_score": 0.7318,
+          "stage_pose_deviation": 0.79289,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro06_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro06_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro06_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.15438,
+          "body_height": 0.53351,
+          "shoulder_to_body_ratio": 0.28936,
+          "min_visibility": 0.9255,
+          "shaft_grip_endpoint_distance": 0.02256,
+          "shaft_score": 0.9123,
+          "stage_pose_deviation": 0.29748,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro07_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro07_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro07_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "pass",
+        "reasons": [],
+        "metrics": {
+          "shoulder_width": 0.16056,
+          "body_height": 0.53623,
+          "shoulder_to_body_ratio": 0.29942,
+          "min_visibility": 0.93473,
+          "shaft_grip_endpoint_distance": 0.11244,
+          "shaft_score": 0.7289,
+          "stage_pose_deviation": 0.32703,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro08_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro08_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro08_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 25=0.47287023067474365<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.11996,
+          "body_height": 0.52652,
+          "shoulder_to_body_ratio": 0.22783,
+          "min_visibility": 0.47287,
+          "shaft_grip_endpoint_distance": 0.01222,
+          "shaft_score": 0.7017,
+          "stage_pose_deviation": 0.49966,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    },
+    "reference_data/extracted_landmarks/finish/pro09_video_finish_auto.json": {
+      "stage": "finish",
+      "source": "reference_data/extracted_landmarks/finish/pro09_video_finish_auto.json",
+      "image": "reference_data\\raw_images\\finish\\pro09_video_finish_auto.jpg",
+      "auto_check": {
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "low_landmark_visibility",
+            "severity": "fail",
+            "message": "관절 가시성이 낮습니다: 13=0.37222471833229065<0.5, 15=0.3563135266304016<0.5, 25=0.5503569841384888<0.6"
+          }
+        ],
+        "metrics": {
+          "shoulder_width": 0.09948,
+          "body_height": 0.55252,
+          "shoulder_to_body_ratio": 0.18004,
+          "min_visibility": 0.35631,
+          "shaft_grip_endpoint_distance": 0.11936,
+          "shaft_score": 0.8643,
+          "stage_pose_deviation": 0.33259,
+          "stage_outlier_threshold": 0.74417
+        }
+      },
+      "human_review": {
+        "status": "pending",
+        "override_auto_fail": false,
+        "note": ""
+      }
+    }
+  }
+}
