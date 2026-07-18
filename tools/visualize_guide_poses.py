@@ -11,6 +11,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from utils.guide_skeleton import (
+    ALIGNED_GUIDE_POSES,
     GENERATED_GUIDE_POSES,
     GUIDE_CONNECTIONS,
     GUIDE_POSES,
@@ -51,8 +52,12 @@ def render_stage(stage_key, stage_label):
     canvas = np.full((PANEL_HEIGHT, PANEL_WIDTH, 3), 24, dtype=np.uint8)
     guide_pose = GUIDE_POSES[stage_key]
     is_generated = GENERATED_GUIDE_POSES is not None and stage_key in GENERATED_GUIDE_POSES
-    source_label = "REVIEWED DATA" if is_generated else "DEFAULT FALLBACK"
-    source_color = (80, 220, 80) if is_generated else (0, 180, 255)
+    if ALIGNED_GUIDE_POSES is not None and stage_key in ALIGNED_GUIDE_POSES:
+        source_label = "CADDIESET ALIGNED"
+        source_color = (80, 220, 80)
+    else:
+        source_label = "REVIEWED DATA" if is_generated else "DEFAULT FALLBACK"
+        source_color = (80, 220, 80) if is_generated else (0, 180, 255)
 
     cv2.putText(
         canvas,

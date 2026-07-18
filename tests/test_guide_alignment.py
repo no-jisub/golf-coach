@@ -10,7 +10,15 @@ from utils.guide_alignment import (
     audit_guide_stage_metrics,
     calculate_guide_stage_metrics,
 )
-from utils.guide_skeleton import GUIDE_POSES, SWING_HAND
+from utils.guide_skeleton import (
+    ALIGNED_GUIDE_POSES,
+    GUIDE_POSES,
+    LEFT_WRIST,
+    REFERENCE_GUIDE_POSES,
+    RIGHT_WRIST,
+    SHAFT_GUIDES,
+    SWING_HAND,
+)
 
 
 class GuideCaddieSetMetricTests(unittest.TestCase):
@@ -86,7 +94,7 @@ class GuideCaddieSetOptimizationTests(unittest.TestCase):
     def setUpClass(cls):
         cls.direction_multiplier = -1.0 if SWING_HAND == "right" else 1.0
         cls.aligned, cls.report = align_guide_poses_to_caddieset(
-            GUIDE_POSES,
+            REFERENCE_GUIDE_POSES,
             direction_multiplier=cls.direction_multiplier,
         )
 
@@ -109,7 +117,10 @@ class GuideCaddieSetOptimizationTests(unittest.TestCase):
 
     def test_aligned_output_has_all_runtime_landmarks(self):
         for stage_key in STAGE_KEYS:
-            self.assertEqual(set(self.aligned[stage_key]), set(GUIDE_POSES[stage_key]))
+            self.assertEqual(
+                set(self.aligned[stage_key]),
+                set(REFERENCE_GUIDE_POSES[stage_key]),
+            )
             for point in self.aligned[stage_key].values():
                 self.assertTrue(0.0 <= point[0] <= 1.0)
                 self.assertTrue(0.0 <= point[1] <= 1.0)
@@ -119,6 +130,38 @@ class GuideCaddieSetOptimizationTests(unittest.TestCase):
         self.assertEqual(output["stage_order"], list(STAGE_KEYS))
         self.assertIn("before", output["alignment"])
         self.assertIn("after", output["alignment"])
+
+
+class RuntimeAlignedGuideTests(unittest.TestCase):
+    def test_runtime_uses_serialized_aligned_stages(self):
+        self.assertIsNotNone(ALIGNED_GUIDE_POSES)
+        self.assertEqual(GUIDE_POSES, ALIGNED_GUIDE_POSES)
+        self.assertTrue(
+            any(
+                GUIDE_POSES[stage_key] != REFERENCE_GUIDE_POSES[stage_key]
+                for stage_key in STAGE_KEYS
+            )
+        )
+
+    def test_runtime_guide_passes_all_caddieset_items(self):
+        direction_multiplier = -1.0 if SWING_HAND == "right" else 1.0
+        metrics = calculate_guide_stage_metrics(
+            GUIDE_POSES,
+            direction_multiplier=direction_multiplier,
+        )
+        audit = audit_guide_stage_metrics(metrics)
+        self.assertEqual(audit["summary"]["pass_count"], 40)
+        self.assertEqual(audit["summary"]["warning_count"], 0)
+
+    def test_shaft_starts_at_adjusted_wrist_midpoint(self):
+        for stage_key in STAGE_KEYS:
+            pose = GUIDE_POSES[stage_key]
+            expected_start = (
+                (pose[LEFT_WRIST][0] + pose[RIGHT_WRIST][0]) / 2.0,
+                (pose[LEFT_WRIST][1] + pose[RIGHT_WRIST][1]) / 2.0,
+            )
+            self.assertAlmostEqual(SHAFT_GUIDES[stage_key][0][0], expected_start[0])
+            self.assertAlmostEqual(SHAFT_GUIDES[stage_key][0][1], expected_start[1])
 
 
 if __name__ == "__main__":

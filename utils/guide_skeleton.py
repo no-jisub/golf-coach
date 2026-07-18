@@ -200,6 +200,48 @@ def load_generated_guide_data():
     return loaded_poses, loaded_shafts
 
 
+def load_caddieset_aligned_guide_data(expected_swing_hand, expected_stages, path=None):
+    """Load the audited runtime guide poses produced by the CaddieSet aligner."""
+    guide_path = path or (
+        Path(__file__).resolve().parents[1]
+        / "reference_data"
+        / "guide_poses"
+        / "caddieset_aligned_guide_poses.json"
+    )
+    guide_path = Path(guide_path)
+    if not guide_path.exists():
+        return None
+
+    data = json.loads(guide_path.read_text(encoding="utf-8"))
+    if data.get("schema") != "golf-coach-caddieset-aligned-guide-v1":
+        raise ValueError(f"지원하지 않는 CaddieSet 가이드 형식입니다: {guide_path}")
+    if data.get("swing_hand") != expected_swing_hand:
+        raise ValueError(
+            "CaddieSet 가이드의 스윙 방향이 현재 SWING_HAND와 다릅니다: "
+            f"{data.get('swing_hand')} != {expected_swing_hand}"
+        )
+
+    stages = data.get("stages", {})
+    if set(stages) != set(expected_stages):
+        raise ValueError("CaddieSet 가이드에 필요한 8단계 좌표가 모두 들어 있지 않습니다.")
+
+    loaded = {}
+    for stage_key, expected_pose in expected_stages.items():
+        pose = {
+            int(index): tuple(float(value) for value in point)
+            for index, point in stages[stage_key].items()
+        }
+        if set(pose) != set(expected_pose):
+            raise ValueError(f"{stage_key} 단계의 관절 구성이 기준 스켈레톤과 다릅니다.")
+        if any(
+            len(point) != 2 or not all(0.0 <= value <= 1.0 for value in point)
+            for point in pose.values()
+        ):
+            raise ValueError(f"{stage_key} 단계에 유효하지 않은 정규화 좌표가 있습니다.")
+        loaded[stage_key] = pose
+    return loaded
+
+
 MIRROR_LANDMARK_PAIRS = {
     LEFT_SHOULDER: RIGHT_SHOULDER,
     RIGHT_SHOULDER: LEFT_SHOULDER,
@@ -264,15 +306,45 @@ def merge_generated_guides(default_guides, generated_guides):
     return merged
 
 
+def anchor_shaft_guides_to_poses(shaft_guides, guide_poses):
+    """Keep the club shaft attached to the midpoint of the adjusted wrists."""
+    anchored = {}
+    for stage_key, shaft in shaft_guides.items():
+        pose = guide_poses.get(stage_key)
+        if pose is None or LEFT_WRIST not in pose or RIGHT_WRIST not in pose:
+            anchored[stage_key] = shaft
+            continue
+
+        old_start, old_end = shaft
+        left_wrist = pose[LEFT_WRIST]
+        right_wrist = pose[RIGHT_WRIST]
+        new_start = (
+            (left_wrist[0] + right_wrist[0]) / 2.0,
+            (left_wrist[1] + right_wrist[1]) / 2.0,
+        )
+        delta = (new_start[0] - old_start[0], new_start[1] - old_start[1])
+        anchored[stage_key] = (
+            new_start,
+            (old_end[0] + delta[0], old_end[1] + delta[1]),
+        )
+    return anchored
+
+
 GENERATED_GUIDE_POSES, GENERATED_SHAFT_GUIDES = load_generated_guide_data() or (None, None)
-GUIDE_POSES = apply_swing_hand(
+REFERENCE_GUIDE_POSES = apply_swing_hand(
     merge_generated_guides(DEFAULT_GUIDE_POSES, GENERATED_GUIDE_POSES),
     SWING_HAND,
 )
-SHAFT_GUIDES = apply_shaft_swing_hand(
+REFERENCE_SHAFT_GUIDES = apply_shaft_swing_hand(
     merge_generated_guides(DEFAULT_SHAFT_GUIDES, GENERATED_SHAFT_GUIDES),
     SWING_HAND,
 )
+ALIGNED_GUIDE_POSES = load_caddieset_aligned_guide_data(
+    SWING_HAND,
+    REFERENCE_GUIDE_POSES,
+)
+GUIDE_POSES = merge_generated_guides(REFERENCE_GUIDE_POSES, ALIGNED_GUIDE_POSES)
+SHAFT_GUIDES = anchor_shaft_guides_to_poses(REFERENCE_SHAFT_GUIDES, GUIDE_POSES)
 
 
 

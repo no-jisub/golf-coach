@@ -5,22 +5,22 @@
   "profile_id": "faceon_all",
   "summary": {
     "total_count": 40,
-    "pass_count": 25,
-    "warning_count": 15,
+    "pass_count": 40,
+    "warning_count": 0,
     "unavailable_count": 0,
-    "outside_reference_count": 8,
-    "outside_observed_count": 7,
-    "aligned_stage_count": 0,
+    "outside_reference_count": 0,
+    "outside_observed_count": 0,
+    "aligned_stage_count": 8,
     "stage_count": 8
   },
   "stages": {
     "address": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 3,
         "measured_count": 3,
-        "pass_count": 2,
-        "warning_count": 1,
+        "pass_count": 3,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -40,10 +40,10 @@
             4.6015,
             16.81
           ],
-          "measured_value": 7.336471,
+          "measured_value": 5.848083,
           "relation": "within_reference",
-          "delta_to_target": -2.366029,
-          "normalized_delta": -0.4698697249528349,
+          "delta_to_target": -3.8544170000000006,
+          "normalized_delta": -0.7654487141296794,
           "status": "pass",
           "warning_level": null
         },
@@ -61,10 +61,10 @@
             0.96,
             1.81
           ],
-          "measured_value": 1.252165,
+          "measured_value": 1.217872,
           "relation": "within_reference",
-          "delta_to_target": -0.10533499999999996,
-          "normalized_delta": -0.3241076923076922,
+          "delta_to_target": -0.13962799999999986,
+          "normalized_delta": -0.42962461538461505,
           "status": "pass",
           "warning_level": null
         },
@@ -82,22 +82,22 @@
             0.51,
             0.79
           ],
-          "measured_value": 0.511991,
-          "relation": "below_reference",
-          "delta_to_target": -0.11050900000000008,
-          "normalized_delta": -1.0046272727272736,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 0.5428,
+          "relation": "within_reference",
+          "delta_to_target": -0.0797000000000001,
+          "normalized_delta": -0.7245454545454556,
+          "status": "pass",
+          "warning_level": null
         }
       }
     },
     "takeaway": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 6,
         "measured_count": 6,
-        "pass_count": 2,
-        "warning_count": 4,
+        "pass_count": 6,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -117,12 +117,12 @@
             -0.688,
             0.076
           ],
-          "measured_value": 0.024257,
-          "relation": "above_reference",
-          "delta_to_target": 0.16425700000000001,
-          "normalized_delta": 0.6570280000000001,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 0.011881,
+          "relation": "within_reference",
+          "delta_to_target": 0.15188100000000002,
+          "normalized_delta": 0.6075240000000001,
+          "status": "pass",
+          "warning_level": null
         },
         "hip_rotation": {
           "metric_key": "hip_rotation",
@@ -138,10 +138,10 @@
             0.0,
             17.6535
           ],
-          "measured_value": 1.099192,
+          "measured_value": 1.845074,
           "relation": "within_reference",
-          "delta_to_target": -7.033308,
-          "normalized_delta": -0.9370872027180068,
+          "delta_to_target": -6.287426,
+          "normalized_delta": -0.8377091466258078,
           "status": "pass",
           "warning_level": null
         },
@@ -159,12 +159,12 @@
             -0.7665,
             0.05
           ],
-          "measured_value": 0.049505,
-          "relation": "above_reference",
-          "delta_to_target": 0.22700499999999998,
-          "normalized_delta": 0.7093906249999999,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": -0.024752,
+          "relation": "within_reference",
+          "delta_to_target": 0.152748,
+          "normalized_delta": 0.47733749999999997,
+          "status": "pass",
+          "warning_level": null
         },
         "left_arm_angle": {
           "metric_key": "left_arm_angle",
@@ -180,10 +180,10 @@
             133.9155,
             180.0
           ],
-          "measured_value": 178.79248,
+          "measured_value": 175.08249,
           "relation": "within_reference",
-          "delta_to_target": 11.567480000000018,
-          "normalized_delta": 1.0028157780667553,
+          "delta_to_target": 7.857490000000013,
+          "normalized_delta": 0.681186822713482,
           "status": "pass",
           "warning_level": null
         },
@@ -201,12 +201,12 @@
             131.993,
             180.0
           ],
-          "measured_value": 172.767421,
-          "relation": "above_reference",
-          "delta_to_target": 15.442421000000024,
-          "normalized_delta": 1.0053332248299234,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 171.550095,
+          "relation": "within_reference",
+          "delta_to_target": 14.22509500000001,
+          "normalized_delta": 0.9260828098043697,
+          "status": "pass",
+          "warning_level": null
         },
         "shoulder_loc": {
           "metric_key": "shoulder_loc",
@@ -222,22 +222,22 @@
             5.6835,
             54.663
           ],
-          "measured_value": 5.769921,
-          "relation": "below_reference",
-          "delta_to_target": -28.615078999999998,
-          "normalized_delta": -1.7081589660936003,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 17.402827,
+          "relation": "within_reference",
+          "delta_to_target": -16.982173,
+          "normalized_delta": -1.0137400310410696,
+          "status": "pass",
+          "warning_level": null
         }
       }
     },
     "backswing": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 6,
         "measured_count": 6,
-        "pass_count": 3,
-        "warning_count": 3,
+        "pass_count": 6,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -257,10 +257,10 @@
             -0.86,
             0.08
           ],
-          "measured_value": -0.138614,
+          "measured_value": -0.101485,
           "relation": "within_reference",
-          "delta_to_target": 0.146386,
-          "normalized_delta": 0.4422537764350453,
+          "delta_to_target": 0.18351499999999998,
+          "normalized_delta": 0.5544259818731118,
           "status": "pass",
           "warning_level": null
         },
@@ -278,10 +278,10 @@
             0.0,
             27.097
           ],
-          "measured_value": 2.638467,
+          "measured_value": 16.383998,
           "relation": "within_reference",
-          "delta_to_target": -5.631532999999999,
-          "normalized_delta": -0.6147626221276131,
+          "delta_to_target": 8.113997999999999,
+          "normalized_delta": 0.8857592926150318,
           "status": "pass",
           "warning_level": null
         },
@@ -299,12 +299,12 @@
             -0.89,
             0.05
           ],
-          "measured_value": 0.091832,
-          "relation": "above_outer",
-          "delta_to_target": 0.404332,
-          "normalized_delta": 1.0236253164556963,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": -0.025743,
+          "relation": "within_reference",
+          "delta_to_target": 0.286757,
+          "normalized_delta": 0.7259670886075948,
+          "status": "pass",
+          "warning_level": null
         },
         "left_arm_angle": {
           "metric_key": "left_arm_angle",
@@ -320,10 +320,10 @@
             102.71,
             180.0
           ],
-          "measured_value": 146.853448,
+          "measured_value": 155.600211,
           "relation": "within_reference",
-          "delta_to_target": -17.01655200000002,
-          "normalized_delta": -0.9479973259052934,
+          "delta_to_target": -8.269789000000003,
+          "normalized_delta": -0.46071247910863516,
           "status": "pass",
           "warning_level": null
         },
@@ -341,12 +341,12 @@
             14.344,
             70.996
           ],
-          "measured_value": 19.337236,
-          "relation": "below_reference",
-          "delta_to_target": -31.917764000000002,
-          "normalized_delta": -1.565210082385249,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 25.826242,
+          "relation": "within_reference",
+          "delta_to_target": -25.428758000000002,
+          "normalized_delta": -1.2469967634366417,
+          "status": "pass",
+          "warning_level": null
         },
         "upper_tilt": {
           "metric_key": "upper_tilt",
@@ -362,22 +362,22 @@
             0.6745,
             0.8855
           ],
-          "measured_value": 0.630081,
-          "relation": "below_outer",
-          "delta_to_target": -0.15991900000000003,
-          "normalized_delta": -1.9989875000000001,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": 0.701014,
+          "relation": "within_reference",
+          "delta_to_target": -0.08898600000000001,
+          "normalized_delta": -1.112325,
+          "status": "pass",
+          "warning_level": null
         }
       }
     },
     "top": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 5,
         "measured_count": 5,
-        "pass_count": 3,
-        "warning_count": 2,
+        "pass_count": 5,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -397,10 +397,10 @@
             -0.92,
             0.262
           ],
-          "measured_value": -0.163366,
+          "measured_value": -0.15099,
           "relation": "within_reference",
-          "delta_to_target": 0.286634,
-          "normalized_delta": 0.595912681912682,
+          "delta_to_target": 0.29901,
+          "normalized_delta": 0.6216424116424116,
           "status": "pass",
           "warning_level": null
         },
@@ -418,10 +418,10 @@
             0.0,
             173.978
           ],
-          "measured_value": 2.571458,
+          "measured_value": 1.037457,
           "relation": "within_reference",
-          "delta_to_target": -5.463542,
-          "normalized_delta": -0.510682992942936,
+          "delta_to_target": -6.997543,
+          "normalized_delta": -0.6540676730382765,
           "status": "pass",
           "warning_level": null
         },
@@ -439,12 +439,12 @@
             -0.85,
             0.04
           ],
-          "measured_value": 0.071535,
-          "relation": "above_outer",
-          "delta_to_target": 0.524035,
-          "normalized_delta": 1.5101873198847264,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": -0.052228,
+          "relation": "within_reference",
+          "delta_to_target": 0.400272,
+          "normalized_delta": 1.1535216138328532,
+          "status": "pass",
+          "warning_level": null
         },
         "right_leg_angle": {
           "metric_key": "right_leg_angle",
@@ -460,10 +460,10 @@
             154.16,
             180.0
           ],
-          "measured_value": 167.398658,
+          "measured_value": 175.464417,
           "relation": "within_reference",
-          "delta_to_target": -8.546341999999981,
-          "normalized_delta": -0.7924285581826597,
+          "delta_to_target": -0.48058299999999576,
+          "normalized_delta": -0.044560315252665364,
           "status": "pass",
           "warning_level": null
         },
@@ -481,22 +481,22 @@
             10.6485,
             93.011
           ],
-          "measured_value": 15.79636,
-          "relation": "below_reference",
-          "delta_to_target": -41.59864,
-          "normalized_delta": -1.374298457167399,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 26.14332,
+          "relation": "within_reference",
+          "delta_to_target": -31.251680000000004,
+          "normalized_delta": -1.0324648980805446,
+          "status": "pass",
+          "warning_level": null
         }
       }
     },
     "downswing": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 6,
         "measured_count": 6,
-        "pass_count": 5,
-        "warning_count": 1,
+        "pass_count": 6,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -558,10 +558,10 @@
             0.0,
             157.278
           ],
-          "measured_value": 6.899032,
+          "measured_value": 6.180072,
           "relation": "within_reference",
-          "delta_to_target": 1.064032,
-          "normalized_delta": 0.1292398882545852,
+          "delta_to_target": 0.34507200000000005,
+          "normalized_delta": 0.041913275841127175,
           "status": "pass",
           "warning_level": null
         },
@@ -600,12 +600,12 @@
             16.26,
             86.389
           ],
-          "measured_value": 19.476575,
-          "relation": "below_reference",
-          "delta_to_target": -22.348425000000002,
-          "normalized_delta": -0.7958840811965814,
-          "status": "warning",
-          "warning_level": "outside_reference"
+          "measured_value": 20.47228,
+          "relation": "within_reference",
+          "delta_to_target": -21.35272,
+          "normalized_delta": -0.7604245014245016,
+          "status": "pass",
+          "warning_level": null
         },
         "shoulder_hanging_back": {
           "metric_key": "shoulder_hanging_back",
@@ -631,12 +631,12 @@
       }
     },
     "impact": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 7,
         "measured_count": 7,
-        "pass_count": 6,
-        "warning_count": 1,
+        "pass_count": 7,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -677,12 +677,12 @@
             0.0,
             0.31
           ],
-          "measured_value": 0.575678,
-          "relation": "above_outer",
-          "delta_to_target": 0.41317800000000005,
-          "normalized_delta": 3.5928521739130437,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": 0.253953,
+          "relation": "within_reference",
+          "delta_to_target": 0.09145299999999998,
+          "normalized_delta": 0.7952434782608694,
+          "status": "pass",
+          "warning_level": null
         },
         "hip_shifted": {
           "metric_key": "hip_shifted",
@@ -698,10 +698,10 @@
             0.0,
             0.779
           ],
-          "measured_value": 0.143317,
+          "measured_value": 0.093812,
           "relation": "within_reference",
-          "delta_to_target": -0.239183,
-          "normalized_delta": -0.8451696113074204,
+          "delta_to_target": -0.288688,
+          "normalized_delta": -1.0200989399293285,
           "status": "pass",
           "warning_level": null
         },
@@ -782,22 +782,22 @@
             0.0,
             0.44
           ],
-          "measured_value": 0.238708,
+          "measured_value": 0.050171,
           "relation": "within_reference",
-          "delta_to_target": -0.0012919999999999876,
-          "normalized_delta": -0.007599999999999926,
+          "delta_to_target": -0.189829,
+          "normalized_delta": -1.1166411764705881,
           "status": "pass",
           "warning_level": null
         }
       }
     },
     "follow_through": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 5,
         "measured_count": 5,
-        "pass_count": 3,
-        "warning_count": 2,
+        "pass_count": 5,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -838,12 +838,12 @@
             0.07,
             0.95
           ],
-          "measured_value": -0.032921,
-          "relation": "below_outer",
-          "delta_to_target": -0.572921,
-          "normalized_delta": -1.7601259600614438,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": 0.189851,
+          "relation": "within_reference",
+          "delta_to_target": -0.35014900000000004,
+          "normalized_delta": -1.0757265745007683,
+          "status": "pass",
+          "warning_level": null
         },
         "left_arm_angle": {
           "metric_key": "left_arm_angle",
@@ -880,10 +880,10 @@
             144.1,
             180.0
           ],
-          "measured_value": 170.455474,
+          "measured_value": 171.869898,
           "relation": "within_reference",
-          "delta_to_target": 4.325474000000014,
-          "normalized_delta": 0.3653271959459475,
+          "delta_to_target": 5.739898000000011,
+          "normalized_delta": 0.4847886824324338,
           "status": "pass",
           "warning_level": null
         },
@@ -901,22 +901,22 @@
             0.0,
             98.6
           ],
-          "measured_value": 102.380757,
-          "relation": "above_outer",
-          "delta_to_target": 8.133257,
-          "normalized_delta": 0.16509199228661323,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": 90.69446,
+          "relation": "within_reference",
+          "delta_to_target": -3.5530399999999958,
+          "normalized_delta": -0.07212097838221852,
+          "status": "pass",
+          "warning_level": null
         }
       }
     },
     "finish": {
-      "overall_status": "warning",
+      "overall_status": "pass",
       "summary": {
         "total_count": 2,
         "measured_count": 2,
-        "pass_count": 1,
-        "warning_count": 1,
+        "pass_count": 2,
+        "warning_count": 0,
         "unavailable_count": 0,
         "measurement_ratio": 1.0,
         "minimum_measurement_ratio": 0.6
@@ -936,12 +936,12 @@
             68.17,
             90.0
           ],
-          "measured_value": 49.522551,
-          "relation": "below_outer",
-          "delta_to_target": -36.842448999999995,
-          "normalized_delta": -4.0954256336149415,
-          "status": "warning",
-          "warning_level": "outside_observed"
+          "measured_value": 70.756281,
+          "relation": "within_reference",
+          "delta_to_target": -15.608718999999994,
+          "normalized_delta": -1.7350732547799024,
+          "status": "pass",
+          "warning_level": null
         },
         "hip_shifted": {
           "metric_key": "hip_shifted",
@@ -957,10 +957,10 @@
             -0.0835,
             1.1435
           ],
-          "measured_value": 0.444059,
+          "measured_value": 0.233663,
           "relation": "within_reference",
-          "delta_to_target": -0.21594100000000005,
-          "normalized_delta": -0.5398525000000001,
+          "delta_to_target": -0.426337,
+          "normalized_delta": -1.0658425,
           "status": "pass",
           "warning_level": null
         }
