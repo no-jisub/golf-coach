@@ -1,0 +1,158 @@
+{
+  "schema": "golf-coach-swing-stage-ground-truth-v1",
+  "view": "FACEON",
+  "stage_order": [
+    "address",
+    "takeaway",
+    "backswing",
+    "top",
+    "downswing",
+    "impact",
+    "follow_through",
+    "finish"
+  ],
+  "videos": {
+    "pro01": {
+      "source": "reference_data/raw_videos/pro01_fullswing_video.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro03": {
+      "source": "reference_data/raw_videos/pro03_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro04": {
+      "source": "reference_data/raw_videos/pro04_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro05": {
+      "source": "reference_data/raw_videos/pro05_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro06": {
+      "source": "reference_data/raw_videos/pro06_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro07": {
+      "source": "reference_data/raw_videos/pro07_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro08": {
+      "source": "reference_data/raw_videos/pro08_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    },
+    "pro09": {
+      "source": "reference_data/raw_videos/pro09_fullswing.mp4",
+      "review_status": "pending",
+      "events": {
+        "address": null,
+        "takeaway": null,
+        "backswing": null,
+        "top": null,
+        "downswing": null,
+        "impact": null,
+        "follow_through": null,
+        "finish": null
+      },
+      "reviewed_by": null,
+      "reviewed_at": null,
+      "note": ""
+    }
+  },
+  "summary": {
+    "video_count": 8,
+    "excluded_count": 0,
+    "pending_count": 8,
+    "reviewed_count": 0
+  }
+}
