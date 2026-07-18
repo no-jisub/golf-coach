@@ -1,4 +1,5 @@
 import json
+import math
 from pathlib import Path
 
 
@@ -113,3 +114,89 @@ def select_stage_evaluation_items(
         "evaluation_items": items,
     }
 
+
+def _valid_number(value):
+    return isinstance(value, (int, float)) and not isinstance(value, bool) and math.isfinite(value)
+
+
+def _validated_range(item, range_key):
+    values = item.get(range_key)
+    if (
+        not isinstance(values, list)
+        or len(values) != 2
+        or not all(_valid_number(value) for value in values)
+    ):
+        raise CaddieSetProfileError(
+            f"평가 항목의 {range_key}가 올바르지 않습니다: {item.get('source_column')}"
+        )
+    return min(values), max(values)
+
+
+def compare_metric_value(metric_key, measured_value, item):
+    """한 측정값과 CaddieSet 관찰 범위의 수치 관계를 계산합니다."""
+    reference_low, reference_high = _validated_range(item, "observed_reference_range")
+    outer_low, outer_high = _validated_range(item, "observed_outer_range")
+    target = item.get("target")
+    if not _valid_number(target):
+        raise CaddieSetProfileError(
+            f"평가 항목의 target이 올바르지 않습니다: {item.get('source_column')}"
+        )
+
+    base = {
+        "metric_key": metric_key,
+        "source_column": item.get("source_column"),
+        "description": item.get("description", metric_key),
+        "unit": item.get("unit", "unknown"),
+        "target": target,
+        "reference_range": [reference_low, reference_high],
+        "outer_range": [outer_low, outer_high],
+    }
+    if not _valid_number(measured_value):
+        return {
+            **base,
+            "measured_value": None,
+            "relation": "unavailable",
+            "delta_to_target": None,
+            "normalized_delta": None,
+        }
+
+    if measured_value < outer_low:
+        relation = "below_outer"
+    elif measured_value < reference_low:
+        relation = "below_reference"
+    elif measured_value <= reference_high:
+        relation = "within_reference"
+    elif measured_value <= outer_high:
+        relation = "above_reference"
+    else:
+        relation = "above_outer"
+
+    delta_to_target = measured_value - target
+    half_span = max((reference_high - reference_low) / 2.0, 1e-9)
+    return {
+        **base,
+        "measured_value": measured_value,
+        "relation": relation,
+        "delta_to_target": delta_to_target,
+        "normalized_delta": delta_to_target / half_span,
+    }
+
+
+def compare_stage_metrics(measured_metrics, stage_selection):
+    """현재 단계에 선택된 항목만 사용자 지표와 비교합니다."""
+    comparisons = {}
+    for metric_key, item in stage_selection["evaluation_items"].items():
+        comparisons[metric_key] = compare_metric_value(
+            metric_key,
+            measured_metrics.get(metric_key),
+            item,
+        )
+
+    return {
+        "stage_key": stage_selection["stage_key"],
+        "profile_id": stage_selection["profile_id"],
+        "view": stage_selection["view"],
+        "club_type": stage_selection["club_type"],
+        "used_profile_fallback": stage_selection["used_fallback"],
+        "comparisons": comparisons,
+    }
