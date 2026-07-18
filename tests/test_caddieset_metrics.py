@@ -73,6 +73,14 @@ class CaddieSetMetricTests(unittest.TestCase):
         self.assertAlmostEqual(metrics["hip_shifted"], 0.1)
         self.assertAlmostEqual(mirrored["head_loc"], -0.1)
         self.assertAlmostEqual(mirrored["hip_shifted"], -0.1)
+        self.assertAlmostEqual(
+            mirrored["shoulder_loc"],
+            metrics["shoulder_loc"],
+        )
+        self.assertAlmostEqual(
+            mirrored["finish_angle"],
+            180.0 - metrics["finish_angle"],
+        )
 
     def test_relative_metrics_are_unavailable_without_address(self):
         metrics = calculate_pose_metrics(make_points())

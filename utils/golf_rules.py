@@ -2,8 +2,16 @@ import math
 
 import numpy as np
 
+from utils.caddieset_evaluator import (
+    CaddieSetProfileError,
+    classify_stage_comparisons,
+    compare_stage_metrics,
+    select_stage_evaluation_items,
+)
+from utils.caddieset_metrics import average_landmark_points, calculate_pose_metrics
 from utils.guide_skeleton import (
     GUIDE_POSES,
+    SWING_HAND,
     get_calibrated_guide_pixels,
     NOSE,
     LEFT_SHOULDER,
@@ -93,6 +101,34 @@ BODY_PART_GROUPS = {
     "arms": [LEFT_ELBOW, RIGHT_ELBOW, LEFT_WRIST, RIGHT_WRIST],
     "body": [LEFT_SHOULDER, RIGHT_SHOULDER, LEFT_HIP, RIGHT_HIP],
     "lower": [LEFT_KNEE, RIGHT_KNEE, LEFT_ANKLE, RIGHT_ANKLE],
+}
+
+CADDIESET_VIEW = "FACEON"
+CADDIESET_CLUB_TYPE = None
+CADDIESET_DIRECTION_MULTIPLIER = -1.0 if SWING_HAND == "right" else 1.0
+
+METRIC_CORRECTION_TEMPLATES = {
+    "shoulder_angle": ("어깨선 기울기를 조금 더 만들어주세요.", "어깨선 기울기를 조금 줄여주세요."),
+    "spine_angle": ("상체 기울기를 조금 더 만들어주세요.", "상체 기울기를 조금 줄여주세요."),
+    "stance_ratio": ("양발 간격을 조금 넓혀주세요.", "양발 간격을 조금 좁혀주세요."),
+    "upper_tilt": ("상·하체 비율이 기준보다 작습니다. 상체 높이와 무릎 굽힘을 확인하세요.", "상·하체 비율이 기준보다 큽니다. 상체 높이와 무릎 굽힘을 확인하세요."),
+    "hip_rotation": ("골반 회전을 조금 더 만들어주세요.", "골반 회전을 조금 줄여주세요."),
+    "left_arm_angle": ("왼팔 팔꿈치를 조금 더 펴주세요.", "왼팔 팔꿈치를 조금 더 굽혀주세요."),
+    "right_arm_angle": ("오른팔 팔꿈치를 조금 더 펴주세요.", "오른팔 팔꿈치를 조금 더 굽혀주세요."),
+    "left_leg_angle": ("왼쪽 무릎을 조금 더 펴주세요.", "왼쪽 무릎을 조금 더 굽혀주세요."),
+    "right_leg_angle": ("오른쪽 무릎을 조금 더 펴주세요.", "오른쪽 무릎을 조금 더 굽혀주세요."),
+    "right_armpit_angle": ("오른팔과 몸통 사이 공간을 조금 넓혀주세요.", "오른팔을 몸통에 조금 더 붙여주세요."),
+    "shoulder_loc": ("왼쪽 어깨와 왼발의 좌우 간격을 조금 늘려주세요.", "왼쪽 어깨와 왼발의 좌우 간격을 조금 줄여주세요."),
+    "hip_hanging_back": ("왼쪽 골반을 왼발에서 조금 더 멀리 두세요.", "왼쪽 골반을 왼발 위에 조금 더 가깝게 두세요."),
+    "shoulder_hanging_back": ("왼쪽 어깨를 왼발에서 조금 더 멀리 두세요.", "왼쪽 어깨를 왼발 위에 조금 더 가깝게 두세요."),
+    "weight_shift": ("왼발 쪽 체중 이동선을 조금 더 세워주세요.", "왼발 쪽 체중 이동선 기울기를 조금 줄여주세요."),
+    "finish_angle": ("피니시 때 왼발과 골반 정렬을 조금 더 세워주세요.", "피니시 때 왼발과 골반 기울기를 조금 줄여주세요."),
+}
+
+POSITION_METRIC_LABELS = {
+    "head_loc": "머리",
+    "hip_line": "골반",
+    "hip_shifted": "골반",
 }
 
 
@@ -216,6 +252,115 @@ def direction_text(delta):
         return "가이드 위치에 더 가깝게 맞춰주세요"
 
     return ", ".join(directions)
+
+
+def format_caddieset_value(value, unit):
+    if value is None:
+        return "측정 불가"
+    if unit == "degree":
+        return f"{value:.1f}°"
+    return f"{value:.2f}"
+
+
+def build_metric_feedback_message(comparison, direction_multiplier=CADDIESET_DIRECTION_MULTIPLIER):
+    """범위를 벗어난 한 항목을 화면용 교정 문구로 바꿉니다."""
+    if comparison.get("status") == "unavailable":
+        return f"{comparison['description']}을 측정할 관절이 충분히 보이지 않습니다."
+
+    relation = comparison["relation"]
+    is_low = relation.startswith("below")
+    metric_key = comparison["metric_key"]
+    if metric_key in POSITION_METRIC_LABELS:
+        desired_delta = comparison["target"] - comparison["measured_value"]
+        screen_delta = desired_delta / direction_multiplier
+        screen_direction = "화면 오른쪽" if screen_delta > 0 else "화면 왼쪽"
+        instruction = f"{POSITION_METRIC_LABELS[metric_key]} 위치를 {screen_direction}으로 조금 옮겨주세요."
+    else:
+        low_message, high_message = METRIC_CORRECTION_TEMPLATES.get(
+            metric_key,
+            (
+                f"{comparison['description']} 값을 조금 높여주세요.",
+                f"{comparison['description']} 값을 조금 낮춰주세요.",
+            ),
+        )
+        instruction = low_message if is_low else high_message
+
+    measured = format_caddieset_value(comparison["measured_value"], comparison["unit"])
+    reference_low, reference_high = comparison["reference_range"]
+    reference = (
+        f"{format_caddieset_value(reference_low, comparison['unit'])}~"
+        f"{format_caddieset_value(reference_high, comparison['unit'])}"
+    )
+    return f"{instruction} 현재 {measured}, 참조 {reference}"
+
+
+def build_caddieset_messages(stage_key, classified_result, max_messages=3):
+    stage = get_stage_config(stage_key)
+    status = classified_result["overall_status"]
+    comparisons = list(classified_result["comparisons"].values())
+
+    if status == "pass":
+        count = classified_result["summary"]["pass_count"]
+        return [f"{stage['korean']}의 CaddieSet 평가 항목 {count}개가 참조 범위 안입니다."]
+
+    if status == "unavailable":
+        messages = ["평가에 필요한 관절이 충분히 보이지 않습니다. 전신과 양팔이 보이게 서주세요."]
+        unavailable = [item for item in comparisons if item["status"] == "unavailable"]
+        messages.extend(
+            build_metric_feedback_message(item)
+            for item in unavailable[: max(0, max_messages - 1)]
+        )
+        return messages[:max_messages]
+
+    warnings = [item for item in comparisons if item["status"] == "warning"]
+    warnings.sort(
+        key=lambda item: (
+            item.get("warning_level") == "outside_observed",
+            abs(item.get("normalized_delta") or 0.0),
+        ),
+        reverse=True,
+    )
+    messages = [build_metric_feedback_message(item) for item in warnings[:max_messages]]
+    if not messages:
+        messages.append("일부 관절을 측정하지 못했습니다. 전신과 양팔이 보이게 서주세요.")
+    return messages
+
+
+def build_caddieset_feedback(stage_key, landmark_samples, calibration_profile):
+    """현재 자세를 CaddieSet 단계별 관찰 범위로 판정합니다."""
+    points = average_landmark_points(landmark_samples)
+    address_points = (calibration_profile or {}).get("caddieset_address_points")
+    measured_metrics = calculate_pose_metrics(
+        points,
+        address_points=address_points,
+        direction_multiplier=CADDIESET_DIRECTION_MULTIPLIER,
+    )
+    selection = select_stage_evaluation_items(
+        stage_key,
+        view=CADDIESET_VIEW,
+        club_type=CADDIESET_CLUB_TYPE,
+    )
+    compared = compare_stage_metrics(measured_metrics, selection)
+    classified = classify_stage_comparisons(compared)
+    messages = build_caddieset_messages(stage_key, classified)
+
+    result = make_result(
+        stage_key,
+        classified["passed"],
+        messages,
+        {
+            "profile_id": classified["profile_id"],
+            **classified["summary"],
+        },
+    )
+    result.update(
+        {
+            "status": classified["overall_status"],
+            "source": "caddieset",
+            "item_results": classified["comparisons"],
+        }
+    )
+    return result
 
 
 def build_guide_feedback(stage_key, points):
@@ -364,7 +509,7 @@ def build_calibrated_guide_feedback(stage_key, landmark_samples, calibration_pro
 
 
 def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, image_width=None, image_height=None):
-    """현재 단계의 보조 스켈레톤을 실제 판정 기준으로 사용합니다."""
+    """보정 후에는 CaddieSet 단계 지표를, 보정 전에는 기존 가이드를 사용합니다."""
     if not landmark_samples:
         return make_result(
             stage_key,
@@ -373,13 +518,17 @@ def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, im
         )
 
     if calibration_profile is not None and image_width is not None and image_height is not None:
-        return build_calibrated_guide_feedback(
-            stage_key,
-            landmark_samples,
-            calibration_profile,
-            image_width,
-            image_height,
-        )
+        try:
+            return build_caddieset_feedback(stage_key, landmark_samples, calibration_profile)
+        except CaddieSetProfileError as error:
+            result = make_result(
+                stage_key,
+                False,
+                [f"CaddieSet 평가 기준을 불러오지 못했습니다: {error}"],
+            )
+            result["status"] = "unavailable"
+            result["source"] = "caddieset"
+            return result
 
     points = get_average_points(landmark_samples)
     if points is None:

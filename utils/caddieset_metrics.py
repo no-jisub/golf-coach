@@ -213,13 +213,18 @@ def calculate_pose_metrics(points, address_points=None, direction_multiplier=1.0
 
     shoulder_location = None
     if left_shoulder is not None and left_ankle is not None and right_ankle is not None:
-        left_edge = min(left_ankle[0], right_ankle[0])
-        shoulder_location = _safe_ratio(left_shoulder[0] - left_edge, stance_width)
+        shoulder_location = _safe_ratio(abs(left_shoulder[0] - left_ankle[0]), stance_width)
         if shoulder_location is not None:
             shoulder_location *= 100.0
 
     right_distance = point_to_line_distance(right_elbow, right_shoulder, right_hip)
     right_distance = _safe_ratio(right_distance, shoulder_width)
+
+    weight_shift = line_angle_to_horizontal(left_ankle, left_hip, acute=False)
+    finish_angle = line_angle_to_horizontal(left_ankle, right_hip, acute=False)
+    if direction_multiplier < 0:
+        weight_shift = 180.0 - weight_shift if weight_shift is not None else None
+        finish_angle = 180.0 - finish_angle if finish_angle is not None else None
 
     return {
         "shoulder_angle": line_angle_to_horizontal(left_shoulder, right_shoulder),
@@ -263,7 +268,6 @@ def calculate_pose_metrics(points, address_points=None, direction_multiplier=1.0
             else None,
             stance_width,
         ),
-        "weight_shift": line_angle_to_horizontal(left_ankle, left_hip, acute=False),
-        "finish_angle": line_angle_to_horizontal(left_ankle, right_hip, acute=False),
+        "weight_shift": weight_shift,
+        "finish_angle": finish_angle,
     }
-

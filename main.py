@@ -10,6 +10,7 @@ from PIL import Image, ImageDraw, ImageFont
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+from utils.caddieset_metrics import average_landmark_points
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
 from utils.guide_skeleton import SWING_HAND, create_calibration_profile, draw_guide_skeleton, get_user_anchor
 from utils.pose_drawer import draw_pose_landmarks
@@ -74,7 +75,13 @@ def print_feedback_if_changed(feedback, last_feedback_key):
     print(f"[{feedback['stage_korean']} 자세 피드백]")
     for message in feedback["messages"]:
         print(f"- {message}")
-    print(f"- 판정: {'통과' if feedback['passed'] else '수정 필요'}")
+    status_labels = {
+        "pass": "통과",
+        "warning": "주의",
+        "unavailable": "측정 불가",
+    }
+    status = feedback.get("status", "pass" if feedback["passed"] else "warning")
+    print(f"- 판정: {status_labels.get(status, status)}")
     return feedback_key
 
 
@@ -114,10 +121,16 @@ def get_stage_status_text(current_stage, latest_feedback):
     if latest_feedback is None:
         return f"{stage_name} 분석 대기", (255, 255, 255)
 
-    if latest_feedback["passed"]:
+    feedback_status = latest_feedback.get(
+        "status",
+        "pass" if latest_feedback["passed"] else "warning",
+    )
+    if feedback_status == "pass":
         return f"{stage_name} 통과", (80, 255, 120)
+    if feedback_status == "unavailable":
+        return f"{stage_name} 측정 불가", (255, 150, 100)
 
-    return f"{stage_name} 수정 필요", (255, 220, 80)
+    return f"{stage_name} 주의", (255, 220, 80)
 
 
 def get_help_text():
@@ -222,8 +235,22 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
     )
 
     if latest_feedback:
-        result_text = "PASS" if latest_feedback["passed"] else "CHECK"
-        result_color = (0, 255, 0) if latest_feedback["passed"] else (0, 200, 255)
+        feedback_status = latest_feedback.get(
+            "status",
+            "pass" if latest_feedback["passed"] else "warning",
+        )
+        result_texts = {
+            "pass": "PASS",
+            "warning": "WARNING",
+            "unavailable": "NO DATA",
+        }
+        result_colors = {
+            "pass": (0, 255, 0),
+            "warning": (0, 200, 255),
+            "unavailable": (80, 150, 255),
+        }
+        result_text = result_texts.get(feedback_status, "CHECK")
+        result_color = result_colors.get(feedback_status, (0, 200, 255))
         cv2.putText(
             frame,
             result_text,
@@ -233,17 +260,31 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
             result_color,
             2,
         )
-        score = latest_feedback.get("metrics", {}).get("guide_score")
-        if score is not None:
+        feedback_metrics = latest_feedback.get("metrics", {})
+        if latest_feedback.get("source") == "caddieset":
+            pass_count = feedback_metrics.get("pass_count", 0)
+            measured_count = feedback_metrics.get("measured_count", 0)
             cv2.putText(
                 frame,
-                f"Guide score: {score}",
+                f"Items in range: {pass_count}/{measured_count}",
                 (30, 290),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.8,
                 (255, 255, 255),
                 2,
             )
+        else:
+            score = feedback_metrics.get("guide_score")
+            if score is not None:
+                cv2.putText(
+                    frame,
+                    f"Guide score: {score}",
+                    (30, 290),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.8,
+                    (255, 255, 255),
+                    2,
+                )
 
 
 def draw_calibration_status(frame, calibration_start_time, calibration_profile):
@@ -393,6 +434,10 @@ def main():
                             frame.shape[1],
                             frame.shape[0],
                         )
+                        if calibration_profile is not None:
+                            calibration_profile["caddieset_address_points"] = average_landmark_points(
+                                list(calibration_samples)
+                            )
                         current_stage_index = 0
                         current_stage = STAGE_CONFIGS[current_stage_index]
                         pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
