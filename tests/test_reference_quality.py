@@ -7,6 +7,7 @@ from unittest import mock
 
 from tools import audit_reference_samples as audit
 from tools import build_guide_poses as builder
+from tools import review_reference_samples as reviewer
 
 
 def make_landmarks(low_visibility_index=None):
@@ -190,6 +191,58 @@ class GuidePoseInclusionTests(unittest.TestCase):
         self.assertEqual([accepted_key], used_files)
         self.assertEqual(1, stats["included"])
         self.assertEqual(1, stats["pending"])
+
+
+class ReviewReferenceSamplesTests(unittest.TestCase):
+    def make_manifest(self):
+        return {
+            "schema": reviewer.REVIEW_SCHEMA,
+            "summary": {},
+            "samples": {
+                "address-pass.json": {
+                    "stage": "address",
+                    "auto_check": {"status": "pass", "reasons": [], "metrics": {}},
+                    "human_review": {"status": "pending", "override_auto_fail": False, "note": ""},
+                },
+                "impact-fail.json": {
+                    "stage": "impact",
+                    "auto_check": {"status": "fail", "reasons": [], "metrics": {}},
+                    "human_review": {"status": "pending", "override_auto_fail": False, "note": ""},
+                },
+            },
+        }
+
+    def test_filter_samples_combines_filters(self):
+        manifest = self.make_manifest()
+
+        rows = reviewer.filter_samples(manifest, stage="impact", auto_status="fail", review_status="pending")
+
+        self.assertEqual(["impact-fail.json"], [key for key, _ in rows])
+
+    def test_auto_fail_requires_explicit_override(self):
+        sample = self.make_manifest()["samples"]["impact-fail.json"]
+
+        with self.assertRaises(ValueError):
+            reviewer.apply_decision(sample, "accepted")
+
+        review = reviewer.apply_decision(sample, "accepted", override_auto_fail=True)
+        self.assertEqual("accepted", review["status"])
+        self.assertTrue(review["override_auto_fail"])
+
+    def test_summary_counts_reviews_and_overrides(self):
+        manifest = self.make_manifest()
+        reviewer.apply_decision(manifest["samples"]["address-pass.json"], "accepted")
+        reviewer.apply_decision(
+            manifest["samples"]["impact-fail.json"],
+            "accepted",
+            override_auto_fail=True,
+        )
+
+        summary = reviewer.update_review_summary(manifest)
+
+        self.assertEqual(2, summary["accepted"])
+        self.assertEqual(0, summary["pending"])
+        self.assertEqual(1, summary["auto_fail_overrides"])
 
 
 if __name__ == "__main__":
