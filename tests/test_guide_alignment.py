@@ -1,7 +1,12 @@
 import unittest
 
 from tools.analyze_guide_caddieset_alignment import build_metric_snapshot
-from utils.guide_alignment import STAGE_KEYS, calculate_guide_stage_metrics
+from tools.audit_guide_caddieset_alignment import build_alignment_report
+from utils.guide_alignment import (
+    STAGE_KEYS,
+    audit_guide_stage_metrics,
+    calculate_guide_stage_metrics,
+)
 from utils.guide_skeleton import GUIDE_POSES, SWING_HAND
 
 
@@ -32,6 +37,45 @@ class GuideCaddieSetMetricTests(unittest.TestCase):
             snapshot["direction_multiplier"],
             -1.0 if SWING_HAND == "right" else 1.0,
         )
+
+
+class GuideCaddieSetAuditTests(unittest.TestCase):
+    def test_audit_checks_all_40_faceon_stage_items(self):
+        direction_multiplier = -1.0 if SWING_HAND == "right" else 1.0
+        metrics = calculate_guide_stage_metrics(
+            GUIDE_POSES,
+            direction_multiplier=direction_multiplier,
+        )
+        audit = audit_guide_stage_metrics(metrics)
+        self.assertEqual(audit["summary"]["total_count"], 40)
+        self.assertEqual(
+            audit["summary"]["pass_count"] + audit["summary"]["warning_count"],
+            40,
+        )
+        self.assertEqual(tuple(audit["stages"]), STAGE_KEYS)
+
+    def test_report_keeps_item_level_ranges_and_relations(self):
+        report = build_alignment_report()
+        shoulder = report["stages"]["address"]["items"]["shoulder_angle"]
+        self.assertIsNotNone(shoulder["measured_value"])
+        self.assertEqual(len(shoulder["reference_range"]), 2)
+        self.assertIn(
+            shoulder["relation"],
+            {
+                "within_reference",
+                "below_reference",
+                "above_reference",
+                "below_outer",
+                "above_outer",
+            },
+        )
+
+    def test_report_summary_matches_stage_summaries(self):
+        report = build_alignment_report()
+        stage_passes = sum(
+            stage["summary"]["pass_count"] for stage in report["stages"].values()
+        )
+        self.assertEqual(report["summary"]["pass_count"], stage_passes)
 
 
 if __name__ == "__main__":

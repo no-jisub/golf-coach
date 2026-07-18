@@ -1,5 +1,11 @@
 import math
 
+from utils.caddieset_evaluator import (
+    classify_stage_comparisons,
+    compare_stage_metrics,
+    load_evaluation_profiles,
+    select_stage_evaluation_items,
+)
 from utils.caddieset_metrics import calculate_pose_metrics
 
 
@@ -42,3 +48,57 @@ def calculate_guide_stage_metrics(guide_poses, direction_multiplier=1.0):
         }
     return stage_metrics
 
+
+def audit_guide_stage_metrics(
+    stage_metrics,
+    *,
+    profile_data=None,
+    view="FACEON",
+    club_type=None,
+):
+    """가이드 지표가 CaddieSet 단계별 관찰 범위에 들어오는지 검사합니다."""
+    if profile_data is None:
+        profile_data = load_evaluation_profiles()
+
+    stage_results = {}
+    total_summary = {
+        "total_count": 0,
+        "pass_count": 0,
+        "warning_count": 0,
+        "unavailable_count": 0,
+        "outside_reference_count": 0,
+        "outside_observed_count": 0,
+    }
+    for stage_key in STAGE_KEYS:
+        selection = select_stage_evaluation_items(
+            stage_key,
+            data=profile_data,
+            view=view,
+            club_type=club_type,
+        )
+        comparison = compare_stage_metrics(stage_metrics[stage_key], selection)
+        classified = classify_stage_comparisons(comparison)
+        stage_results[stage_key] = classified
+
+        summary = classified["summary"]
+        for key in ("total_count", "pass_count", "warning_count", "unavailable_count"):
+            total_summary[key] += summary[key]
+        total_summary["outside_reference_count"] += sum(
+            item["warning_level"] == "outside_reference"
+            for item in classified["comparisons"].values()
+        )
+        total_summary["outside_observed_count"] += sum(
+            item["warning_level"] == "outside_observed"
+            for item in classified["comparisons"].values()
+        )
+
+    total_summary["aligned_stage_count"] = sum(
+        result["overall_status"] == "pass" for result in stage_results.values()
+    )
+    total_summary["stage_count"] = len(stage_results)
+    return {
+        "view": view,
+        "club_type": club_type or "ALL",
+        "summary": total_summary,
+        "stages": stage_results,
+    }

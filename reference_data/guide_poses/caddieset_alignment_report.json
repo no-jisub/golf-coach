@@ -1,0 +1,970 @@
+{
+  "schema": "golf-coach-guide-caddieset-alignment-v1",
+  "swing_hand": "right",
+  "coordinate_space": "runtime_guide_after_swing_hand",
+  "profile_id": "faceon_all",
+  "summary": {
+    "total_count": 40,
+    "pass_count": 25,
+    "warning_count": 15,
+    "unavailable_count": 0,
+    "outside_reference_count": 8,
+    "outside_observed_count": 7,
+    "aligned_stage_count": 0,
+    "stage_count": 8
+  },
+  "stages": {
+    "address": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 3,
+        "measured_count": 3,
+        "pass_count": 2,
+        "warning_count": 1,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "shoulder_angle": {
+          "metric_key": "shoulder_angle",
+          "source_column": "0-SHOULDER-ANGLE",
+          "description": "수평선에 대한 어깨선 각도",
+          "unit": "degree",
+          "target": 9.7025,
+          "reference_range": [
+            5.355,
+            15.426
+          ],
+          "outer_range": [
+            4.6015,
+            16.81
+          ],
+          "measured_value": 7.336471,
+          "relation": "within_reference",
+          "delta_to_target": -2.366029,
+          "normalized_delta": -0.4698697249528349,
+          "status": "pass",
+          "warning_level": null
+        },
+        "stance_ratio": {
+          "metric_key": "stance_ratio",
+          "source_column": "0-STANCE-RATIO",
+          "description": "어깨 너비 대비 스탠스 너비 비율",
+          "unit": "ratio",
+          "target": 1.3575,
+          "reference_range": [
+            1.07,
+            1.72
+          ],
+          "outer_range": [
+            0.96,
+            1.81
+          ],
+          "measured_value": 1.252165,
+          "relation": "within_reference",
+          "delta_to_target": -0.10533499999999996,
+          "normalized_delta": -0.3241076923076922,
+          "status": "pass",
+          "warning_level": null
+        },
+        "upper_tilt": {
+          "metric_key": "upper_tilt",
+          "source_column": "0-UPPER-TILT",
+          "description": "하체 대비 상체 기울기 비율",
+          "unit": "ratio",
+          "target": 0.6225,
+          "reference_range": [
+            0.53,
+            0.75
+          ],
+          "outer_range": [
+            0.51,
+            0.79
+          ],
+          "measured_value": 0.511991,
+          "relation": "below_reference",
+          "delta_to_target": -0.11050900000000008,
+          "normalized_delta": -1.0046272727272736,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        }
+      }
+    },
+    "takeaway": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 6,
+        "measured_count": 6,
+        "pass_count": 2,
+        "warning_count": 4,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "1-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.14,
+          "reference_range": [
+            -0.48,
+            0.02
+          ],
+          "outer_range": [
+            -0.688,
+            0.076
+          ],
+          "measured_value": 0.024257,
+          "relation": "above_reference",
+          "delta_to_target": 0.16425700000000001,
+          "normalized_delta": 0.6570280000000001,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        },
+        "hip_rotation": {
+          "metric_key": "hip_rotation",
+          "source_column": "1-HIP-ROTATION",
+          "description": "어드레스 대비 골반 회전 각도",
+          "unit": "degree",
+          "target": 8.1325,
+          "reference_range": [
+            0.048,
+            15.059
+          ],
+          "outer_range": [
+            0.0,
+            17.6535
+          ],
+          "measured_value": 1.099192,
+          "relation": "within_reference",
+          "delta_to_target": -7.033308,
+          "normalized_delta": -0.9370872027180068,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "1-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": -0.1775,
+          "reference_range": [
+            -0.66,
+            -0.02
+          ],
+          "outer_range": [
+            -0.7665,
+            0.05
+          ],
+          "measured_value": 0.049505,
+          "relation": "above_reference",
+          "delta_to_target": 0.22700499999999998,
+          "normalized_delta": 0.7093906249999999,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        },
+        "left_arm_angle": {
+          "metric_key": "left_arm_angle",
+          "source_column": "1-LEFT-ARM-ANGLE",
+          "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 167.225,
+          "reference_range": [
+            156.93,
+            180.0
+          ],
+          "outer_range": [
+            133.9155,
+            180.0
+          ],
+          "measured_value": 178.79248,
+          "relation": "within_reference",
+          "delta_to_target": 11.567480000000018,
+          "normalized_delta": 1.0028157780667553,
+          "status": "pass",
+          "warning_level": null
+        },
+        "right_arm_angle": {
+          "metric_key": "right_arm_angle",
+          "source_column": "1-RIGHT-ARM-ANGLE",
+          "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 157.325,
+          "reference_range": [
+            141.169,
+            171.89
+          ],
+          "outer_range": [
+            131.993,
+            180.0
+          ],
+          "measured_value": 172.767421,
+          "relation": "above_reference",
+          "delta_to_target": 15.442421000000024,
+          "normalized_delta": 1.0053332248299234,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        },
+        "shoulder_loc": {
+          "metric_key": "shoulder_loc",
+          "source_column": "1-SHOULDER-LOC",
+          "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+          "unit": "ratio",
+          "target": 34.385,
+          "reference_range": [
+            16.496,
+            50.0
+          ],
+          "outer_range": [
+            5.6835,
+            54.663
+          ],
+          "measured_value": 5.769921,
+          "relation": "below_reference",
+          "delta_to_target": -28.615078999999998,
+          "normalized_delta": -1.7081589660936003,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        }
+      }
+    },
+    "backswing": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 6,
+        "measured_count": 6,
+        "pass_count": 3,
+        "warning_count": 3,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "2-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.285,
+          "reference_range": [
+            -0.7,
+            -0.038
+          ],
+          "outer_range": [
+            -0.86,
+            0.08
+          ],
+          "measured_value": -0.138614,
+          "relation": "within_reference",
+          "delta_to_target": 0.146386,
+          "normalized_delta": 0.4422537764350453,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_rotation": {
+          "metric_key": "hip_rotation",
+          "source_column": "2-HIP-ROTATION",
+          "description": "어드레스 대비 골반 회전 각도",
+          "unit": "degree",
+          "target": 8.27,
+          "reference_range": [
+            0.149,
+            18.47
+          ],
+          "outer_range": [
+            0.0,
+            27.097
+          ],
+          "measured_value": 2.638467,
+          "relation": "within_reference",
+          "delta_to_target": -5.631532999999999,
+          "normalized_delta": -0.6147626221276131,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "2-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": -0.3125,
+          "reference_range": [
+            -0.81,
+            -0.02
+          ],
+          "outer_range": [
+            -0.89,
+            0.05
+          ],
+          "measured_value": 0.091832,
+          "relation": "above_outer",
+          "delta_to_target": 0.404332,
+          "normalized_delta": 1.0236253164556963,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        },
+        "left_arm_angle": {
+          "metric_key": "left_arm_angle",
+          "source_column": "2-LEFT-ARM-ANGLE",
+          "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 163.87,
+          "reference_range": [
+            144.1,
+            180.0
+          ],
+          "outer_range": [
+            102.71,
+            180.0
+          ],
+          "measured_value": 146.853448,
+          "relation": "within_reference",
+          "delta_to_target": -17.01655200000002,
+          "normalized_delta": -0.9479973259052934,
+          "status": "pass",
+          "warning_level": null
+        },
+        "shoulder_loc": {
+          "metric_key": "shoulder_loc",
+          "source_column": "2-SHOULDER-LOC",
+          "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+          "unit": "ratio",
+          "target": 51.255,
+          "reference_range": [
+            25.776,
+            66.56
+          ],
+          "outer_range": [
+            14.344,
+            70.996
+          ],
+          "measured_value": 19.337236,
+          "relation": "below_reference",
+          "delta_to_target": -31.917764000000002,
+          "normalized_delta": -1.565210082385249,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        },
+        "upper_tilt": {
+          "metric_key": "upper_tilt",
+          "source_column": "2-UPPER-TILT",
+          "description": "하체 대비 상체 기울기 비율",
+          "unit": "ratio",
+          "target": 0.79,
+          "reference_range": [
+            0.7,
+            0.86
+          ],
+          "outer_range": [
+            0.6745,
+            0.8855
+          ],
+          "measured_value": 0.630081,
+          "relation": "below_outer",
+          "delta_to_target": -0.15991900000000003,
+          "normalized_delta": -1.9989875000000001,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        }
+      }
+    },
+    "top": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 5,
+        "measured_count": 5,
+        "pass_count": 3,
+        "warning_count": 2,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "3-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.45,
+          "reference_range": [
+            -0.83,
+            0.132
+          ],
+          "outer_range": [
+            -0.92,
+            0.262
+          ],
+          "measured_value": -0.163366,
+          "relation": "within_reference",
+          "delta_to_target": 0.286634,
+          "normalized_delta": 0.595912681912682,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_rotation": {
+          "metric_key": "hip_rotation",
+          "source_column": "3-HIP-ROTATION",
+          "description": "어드레스 대비 골반 회전 각도",
+          "unit": "degree",
+          "target": 8.035,
+          "reference_range": [
+            0.0,
+            21.397
+          ],
+          "outer_range": [
+            0.0,
+            173.978
+          ],
+          "measured_value": 2.571458,
+          "relation": "within_reference",
+          "delta_to_target": -5.463542,
+          "normalized_delta": -0.510682992942936,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "3-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": -0.4525,
+          "reference_range": [
+            -0.742,
+            -0.048
+          ],
+          "outer_range": [
+            -0.85,
+            0.04
+          ],
+          "measured_value": 0.071535,
+          "relation": "above_outer",
+          "delta_to_target": 0.524035,
+          "normalized_delta": 1.5101873198847264,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        },
+        "right_leg_angle": {
+          "metric_key": "right_leg_angle",
+          "source_column": "3-RIGHT-LEG-ANGLE",
+          "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+          "unit": "degree",
+          "target": 175.945,
+          "reference_range": [
+            158.43,
+            180.0
+          ],
+          "outer_range": [
+            154.16,
+            180.0
+          ],
+          "measured_value": 167.398658,
+          "relation": "within_reference",
+          "delta_to_target": -8.546341999999981,
+          "normalized_delta": -0.7924285581826597,
+          "status": "pass",
+          "warning_level": null
+        },
+        "shoulder_loc": {
+          "metric_key": "shoulder_loc",
+          "source_column": "3-SHOULDER-LOC",
+          "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+          "unit": "ratio",
+          "target": 57.395,
+          "reference_range": [
+            25.574,
+            86.112
+          ],
+          "outer_range": [
+            10.6485,
+            93.011
+          ],
+          "measured_value": 15.79636,
+          "relation": "below_reference",
+          "delta_to_target": -41.59864,
+          "normalized_delta": -1.374298457167399,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        }
+      }
+    },
+    "downswing": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 6,
+        "measured_count": 6,
+        "pass_count": 5,
+        "warning_count": 1,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "4-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.265,
+          "reference_range": [
+            -0.604,
+            0.28
+          ],
+          "outer_range": [
+            -0.74,
+            0.417
+          ],
+          "measured_value": 0.065842,
+          "relation": "within_reference",
+          "delta_to_target": 0.330842,
+          "normalized_delta": 0.7485113122171946,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_hanging_back": {
+          "metric_key": "hip_hanging_back",
+          "source_column": "4-HIP-HANGING-BACK",
+          "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+          "unit": "ratio",
+          "target": 0.295,
+          "reference_range": [
+            0.11,
+            0.39
+          ],
+          "outer_range": [
+            0.0,
+            0.438
+          ],
+          "measured_value": 0.28125,
+          "relation": "within_reference",
+          "delta_to_target": -0.013749999999999984,
+          "normalized_delta": -0.09821428571428559,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_rotation": {
+          "metric_key": "hip_rotation",
+          "source_column": "4-HIP-ROTATION",
+          "description": "어드레스 대비 골반 회전 각도",
+          "unit": "degree",
+          "target": 5.835,
+          "reference_range": [
+            0.0,
+            16.466
+          ],
+          "outer_range": [
+            0.0,
+            157.278
+          ],
+          "measured_value": 6.899032,
+          "relation": "within_reference",
+          "delta_to_target": 1.064032,
+          "normalized_delta": 0.1292398882545852,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "4-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": 0.005,
+          "reference_range": [
+            -0.26,
+            0.25
+          ],
+          "outer_range": [
+            -0.3575,
+            0.31
+          ],
+          "measured_value": -0.032921,
+          "relation": "within_reference",
+          "delta_to_target": -0.037920999999999996,
+          "normalized_delta": -0.1487098039215686,
+          "status": "pass",
+          "warning_level": null
+        },
+        "right_armpit_angle": {
+          "metric_key": "right_armpit_angle",
+          "source_column": "4-RIGHT-ARMPIT-ANGLE",
+          "description": "오른쪽 팔꿈치·어깨·골반이 이루는 각도",
+          "unit": "degree",
+          "target": 41.825,
+          "reference_range": [
+            19.95,
+            76.11
+          ],
+          "outer_range": [
+            16.26,
+            86.389
+          ],
+          "measured_value": 19.476575,
+          "relation": "below_reference",
+          "delta_to_target": -22.348425000000002,
+          "normalized_delta": -0.7958840811965814,
+          "status": "warning",
+          "warning_level": "outside_reference"
+        },
+        "shoulder_hanging_back": {
+          "metric_key": "shoulder_hanging_back",
+          "source_column": "4-SHOULDER-HANGING-BACK",
+          "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+          "unit": "ratio",
+          "target": 0.3875,
+          "reference_range": [
+            0.084,
+            0.53
+          ],
+          "outer_range": [
+            0.0,
+            0.57
+          ],
+          "measured_value": 0.21875,
+          "relation": "within_reference",
+          "delta_to_target": -0.16875,
+          "normalized_delta": -0.7567264573991032,
+          "status": "pass",
+          "warning_level": null
+        }
+      }
+    },
+    "impact": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 7,
+        "measured_count": 7,
+        "pass_count": 6,
+        "warning_count": 1,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "5-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.3025,
+          "reference_range": [
+            -0.719,
+            0.3
+          ],
+          "outer_range": [
+            -0.88,
+            0.47
+          ],
+          "measured_value": -0.164356,
+          "relation": "within_reference",
+          "delta_to_target": 0.138144,
+          "normalized_delta": 0.27113640824337587,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_hanging_back": {
+          "metric_key": "hip_hanging_back",
+          "source_column": "5-HIP-HANGING-BACK",
+          "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+          "unit": "ratio",
+          "target": 0.1625,
+          "reference_range": [
+            0.03,
+            0.26
+          ],
+          "outer_range": [
+            0.0,
+            0.31
+          ],
+          "measured_value": 0.575678,
+          "relation": "above_outer",
+          "delta_to_target": 0.41317800000000005,
+          "normalized_delta": 3.5928521739130437,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "5-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": 0.3825,
+          "reference_range": [
+            0.092,
+            0.658
+          ],
+          "outer_range": [
+            0.0,
+            0.779
+          ],
+          "measured_value": 0.143317,
+          "relation": "within_reference",
+          "delta_to_target": -0.239183,
+          "normalized_delta": -0.8451696113074204,
+          "status": "pass",
+          "warning_level": null
+        },
+        "left_arm_angle": {
+          "metric_key": "left_arm_angle",
+          "source_column": "5-LEFT-ARM-ANGLE",
+          "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 161.4125,
+          "reference_range": [
+            138.59,
+            180.0
+          ],
+          "outer_range": [
+            129.9025,
+            180.0
+          ],
+          "measured_value": 174.89711,
+          "relation": "within_reference",
+          "delta_to_target": 13.484610000000004,
+          "normalized_delta": 0.6512731224341949,
+          "status": "pass",
+          "warning_level": null
+        },
+        "right_arm_angle": {
+          "metric_key": "right_arm_angle",
+          "source_column": "5-RIGHT-ARM-ANGLE",
+          "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 150.8175,
+          "reference_range": [
+            129.79,
+            168.52
+          ],
+          "outer_range": [
+            120.402,
+            180.0
+          ],
+          "measured_value": 164.744664,
+          "relation": "within_reference",
+          "delta_to_target": 13.927164000000005,
+          "normalized_delta": 0.7191925639039504,
+          "status": "pass",
+          "warning_level": null
+        },
+        "shoulder_angle": {
+          "metric_key": "shoulder_angle",
+          "source_column": "5-SHOULDER-ANGLE",
+          "description": "수평선에 대한 어깨선 각도",
+          "unit": "degree",
+          "target": 18.0875,
+          "reference_range": [
+            10.916,
+            27.774
+          ],
+          "outer_range": [
+            9.464,
+            30.025
+          ],
+          "measured_value": 13.833845,
+          "relation": "within_reference",
+          "delta_to_target": -4.253654999999998,
+          "normalized_delta": -0.5046452722742909,
+          "status": "pass",
+          "warning_level": null
+        },
+        "shoulder_hanging_back": {
+          "metric_key": "shoulder_hanging_back",
+          "source_column": "5-SHOULDER-HANGING-BACK",
+          "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+          "unit": "ratio",
+          "target": 0.24,
+          "reference_range": [
+            0.04,
+            0.38
+          ],
+          "outer_range": [
+            0.0,
+            0.44
+          ],
+          "measured_value": 0.238708,
+          "relation": "within_reference",
+          "delta_to_target": -0.0012919999999999876,
+          "normalized_delta": -0.007599999999999926,
+          "status": "pass",
+          "warning_level": null
+        }
+      }
+    },
+    "follow_through": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 5,
+        "measured_count": 5,
+        "pass_count": 3,
+        "warning_count": 2,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "head_loc": {
+          "metric_key": "head_loc",
+          "source_column": "6-HEAD-LOC",
+          "description": "어드레스 대비 머리 위치 변화",
+          "unit": "ratio",
+          "target": -0.2025,
+          "reference_range": [
+            -0.802,
+            0.31
+          ],
+          "outer_range": [
+            -0.9505,
+            0.4105
+          ],
+          "measured_value": 0.065842,
+          "relation": "within_reference",
+          "delta_to_target": 0.268342,
+          "normalized_delta": 0.4826294964028777,
+          "status": "pass",
+          "warning_level": null
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "6-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": 0.54,
+          "reference_range": [
+            0.189,
+            0.84
+          ],
+          "outer_range": [
+            0.07,
+            0.95
+          ],
+          "measured_value": -0.032921,
+          "relation": "below_outer",
+          "delta_to_target": -0.572921,
+          "normalized_delta": -1.7601259600614438,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        },
+        "left_arm_angle": {
+          "metric_key": "left_arm_angle",
+          "source_column": "6-LEFT-ARM-ANGLE",
+          "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+          "unit": "degree",
+          "target": 164.725,
+          "reference_range": [
+            131.3,
+            180.0
+          ],
+          "outer_range": [
+            70.73,
+            180.0
+          ],
+          "measured_value": 163.249735,
+          "relation": "within_reference",
+          "delta_to_target": -1.4752650000000074,
+          "normalized_delta": -0.06058583162217691,
+          "status": "pass",
+          "warning_level": null
+        },
+        "right_leg_angle": {
+          "metric_key": "right_leg_angle",
+          "source_column": "6-RIGHT-LEG-ANGLE",
+          "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+          "unit": "degree",
+          "target": 166.13,
+          "reference_range": [
+            148.21,
+            171.89
+          ],
+          "outer_range": [
+            144.1,
+            180.0
+          ],
+          "measured_value": 170.455474,
+          "relation": "within_reference",
+          "delta_to_target": 4.325474000000014,
+          "normalized_delta": 0.3653271959459475,
+          "status": "pass",
+          "warning_level": null
+        },
+        "weight_shift": {
+          "metric_key": "weight_shift",
+          "source_column": "6-WEIGHT-SHIFT",
+          "description": "왼쪽 발목과 왼쪽 골반을 잇는 선의 각도",
+          "unit": "degree",
+          "target": 94.2475,
+          "reference_range": [
+            0.0,
+            98.53
+          ],
+          "outer_range": [
+            0.0,
+            98.6
+          ],
+          "measured_value": 102.380757,
+          "relation": "above_outer",
+          "delta_to_target": 8.133257,
+          "normalized_delta": 0.16509199228661323,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        }
+      }
+    },
+    "finish": {
+      "overall_status": "warning",
+      "summary": {
+        "total_count": 2,
+        "measured_count": 2,
+        "pass_count": 1,
+        "warning_count": 1,
+        "unavailable_count": 0,
+        "measurement_ratio": 1.0,
+        "minimum_measurement_ratio": 0.6
+      },
+      "items": {
+        "finish_angle": {
+          "metric_key": "finish_angle",
+          "source_column": "7-FINISH-ANGLE",
+          "description": "왼쪽 발목과 오른쪽 골반을 잇는 선의 각도",
+          "unit": "degree",
+          "target": 86.365,
+          "reference_range": [
+            70.754,
+            88.746
+          ],
+          "outer_range": [
+            68.17,
+            90.0
+          ],
+          "measured_value": 49.522551,
+          "relation": "below_outer",
+          "delta_to_target": -36.842448999999995,
+          "normalized_delta": -4.0954256336149415,
+          "status": "warning",
+          "warning_level": "outside_observed"
+        },
+        "hip_shifted": {
+          "metric_key": "hip_shifted",
+          "source_column": "7-HIP-SHIFTED",
+          "description": "어드레스 대비 골반 위치 이동",
+          "unit": "ratio",
+          "target": 0.66,
+          "reference_range": [
+            0.23,
+            1.03
+          ],
+          "outer_range": [
+            -0.0835,
+            1.1435
+          ],
+          "measured_value": 0.444059,
+          "relation": "within_reference",
+          "delta_to_target": -0.21594100000000005,
+          "normalized_delta": -0.5398525000000001,
+          "status": "pass",
+          "warning_level": null
+        }
+      }
+    }
+  }
+}
