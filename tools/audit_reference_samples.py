@@ -9,6 +9,7 @@ from statistics import median
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EXTRACTED_DIR = PROJECT_ROOT / "reference_data" / "extracted_landmarks"
 DEFAULT_OUTPUT_PATH = PROJECT_ROOT / "reference_data" / "review_manifest.json"
+REVIEW_SCHEMA = "golf-coach-review-v1"
 
 STAGES = [
     "address",
@@ -389,14 +390,19 @@ def load_existing_reviews(manifest_path):
     }
 
 
-def build_manifest(extracted_dir=EXTRACTED_DIR, existing_manifest_path=None, preserve_reviews=True):
+def build_manifest(
+    extracted_dir=EXTRACTED_DIR,
+    existing_manifest_path=None,
+    preserve_reviews=True,
+    project_root=PROJECT_ROOT,
+):
     samples = {}
     for stage in STAGES:
         stage_dir = extracted_dir / stage
         if not stage_dir.exists():
             continue
         for json_path in sorted(stage_dir.glob("*.json")):
-            sample = audit_sample(json_path)
+            sample = audit_sample(json_path, project_root=project_root)
             samples[sample["source"]] = sample
 
     add_stage_outlier_checks(samples)
@@ -415,7 +421,7 @@ def build_manifest(extracted_dir=EXTRACTED_DIR, existing_manifest_path=None, pre
         summary[sample["auto_check"]["status"]] += 1
 
     return {
-        "schema": "golf-coach-review-v1",
+        "schema": REVIEW_SCHEMA,
         "policy": {
             "required_landmarks": REQUIRED_LANDMARKS,
             "visibility_thresholds": {str(index): value for index, value in VISIBILITY_THRESHOLDS.items()},
