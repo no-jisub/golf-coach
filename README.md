@@ -273,6 +273,54 @@ reference_data\guide_poses\generated_guide_poses.json
 
 이 파일이 있으면 `main.py` 실행 시 기본 좌표보다 이 생성 좌표를 우선 사용합니다.
 
+## 참조 샘플 품질 검사와 검수
+
+참조 JSON을 가이드에 반영하기 전에 자동 품질 검사와 사람 검수를 모두 통과해야 합니다.
+
+자동 검사 및 manifest 갱신:
+
+```powershell
+py -3.12 tools\audit_reference_samples.py
+```
+
+검수 화면 실행:
+
+```powershell
+py -3.12 tools\review_reference_samples.py --review-status pending
+```
+
+주요 키:
+
+- `a`: 승인
+- `o`: 자동 실패 샘플 강제 승인
+- `r`: 제외
+- `p`: 보류
+- `s`: 자세는 유지하고 샤프트 포함 여부 전환
+- `j`/`k` 또는 좌우 방향키: 이전/다음
+- `q`: 종료
+
+검수 상태는 `reference_data/review_manifest.json`에 저장합니다. 가이드 생성기는 사람 검수가
+`accepted`인 샘플만 사용하며, 자동 검사 `fail`은 `override_auto_fail: true`가 있어야 반영합니다.
+
+최종 런타임 가이드 접촉 시트 생성:
+
+```powershell
+py -3.12 tools\visualize_guide_poses.py
+```
+
+결과 위치:
+
+```text
+reference_data\debug_guide_overlay\generated_guide_contact_sheet.jpg
+```
+
+현재 검수 결과는 64개 중 승인 34개, 제외 30개입니다. 승인 데이터가 있는 6단계는 생성 좌표를
+사용하고, 올바른 샘플이 없는 `downswing`, `follow_through`는 기본 가이드로 폴백합니다. 샤프트는
+최종 시각 검수에서 방향이 맞지 않았던 `backswing`, `impact`도 기본 샤프트로 폴백합니다.
+
+좌표가 들어 있는 `generated_guide_poses.json`과 접촉 시트 이미지는 Git에서 제외합니다. 좌표를
+제외한 단계별 반영 수량은 `reference_data/guide_poses/guide_build_report.json`에 기록합니다.
+
 ## 데이터와 GitHub 정책
 
 원본 영상, 원본 이미지, 추출 JSON, debug overlay, 생성된 guide pose JSON은 GitHub에 올리지 않는 방향입니다.

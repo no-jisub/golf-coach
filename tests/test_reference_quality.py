@@ -8,6 +8,7 @@ from unittest import mock
 from tools import audit_reference_samples as audit
 from tools import build_guide_poses as builder
 from tools import review_reference_samples as reviewer
+from tools import visualize_guide_poses
 from utils import guide_skeleton
 
 
@@ -262,6 +263,24 @@ class GuidePoseInclusionTests(unittest.TestCase):
         self.assertEqual(1, stats["pending"])
         self.assertEqual(1, stats["shaft_excluded_by_review"])
 
+    def test_normalize_shaft_orients_nearest_endpoint_as_grip(self):
+        landmarks = {
+            item["index"]: {
+                "x": item["x"],
+                "y": item["y"],
+                "visibility": item["visibility"],
+            }
+            for item in make_landmarks()
+        }
+        shaft = {
+            "start": (0.10, 0.80),
+            "end": (0.50, 0.55),
+        }
+
+        normalized = builder.normalize_shaft(shaft, landmarks)
+
+        self.assertGreater(normalized["club"]["y"], normalized["grip"]["y"])
+
 
 class ReviewReferenceSamplesTests(unittest.TestCase):
     def make_manifest(self):
@@ -336,6 +355,14 @@ class GeneratedGuideFallbackTests(unittest.TestCase):
 
         self.assertEqual({0: (0.6, 0.15)}, merged["address"])
         self.assertEqual({0: (0.4, 0.2)}, merged["downswing"])
+
+    def test_final_guide_contact_sheet_contains_all_eight_stages(self):
+        sheet = visualize_guide_poses.build_contact_sheet()
+
+        self.assertEqual(
+            (visualize_guide_poses.PANEL_HEIGHT * 2, visualize_guide_poses.PANEL_WIDTH * 4, 3),
+            sheet.shape,
+        )
 
 
 if __name__ == "__main__":

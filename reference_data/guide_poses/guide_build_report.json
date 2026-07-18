@@ -13,6 +13,18 @@
     "downswing",
     "follow_through"
   ],
+  "generated_shaft_stages": [
+    "address",
+    "takeaway",
+    "top",
+    "finish"
+  ],
+  "fallback_shaft_stages": [
+    "backswing",
+    "downswing",
+    "impact",
+    "follow_through"
+  ],
   "stage_stats": {
     "address": {
       "total": 8,
@@ -50,8 +62,8 @@
       "invalid_human_status": 0,
       "invalid_auto_status": 0,
       "unusable_landmarks": 0,
-      "shaft_included": 5,
-      "shaft_excluded_by_review": 0
+      "shaft_included": 0,
+      "shaft_excluded_by_review": 5
     },
     "top": {
       "total": 8,
@@ -89,8 +101,8 @@
       "invalid_human_status": 0,
       "invalid_auto_status": 0,
       "unusable_landmarks": 0,
-      "shaft_included": 3,
-      "shaft_excluded_by_review": 2
+      "shaft_included": 0,
+      "shaft_excluded_by_review": 5
     },
     "follow_through": {
       "total": 8,

@@ -194,13 +194,33 @@ def normalize_shaft(shaft, landmarks):
     if shoulder_width / body_height < MIN_SHOULDER_TO_BODY_RATIO:
         return None
 
-    return {
+    normalized_endpoints = {
         key: {
             "x": (point[0] - shoulder_mid[0]) / shoulder_width,
             "y": (point[1] - shoulder_mid[1]) / body_height,
         }
         for key, point in (("start", shaft["start"]), ("end", shaft["end"]))
     }
+    grip = midpoint(
+        (landmarks[15]["x"], landmarks[15]["y"]),
+        (landmarks[16]["x"], landmarks[16]["y"]),
+    )
+    normalized_grip = {
+        "x": (grip[0] - shoulder_mid[0]) / shoulder_width,
+        "y": (grip[1] - shoulder_mid[1]) / body_height,
+    }
+
+    def endpoint_distance(endpoint):
+        return (
+            (endpoint["x"] - normalized_grip["x"]) ** 2
+            + (endpoint["y"] - normalized_grip["y"]) ** 2
+        ) ** 0.5
+
+    start = normalized_endpoints["start"]
+    end = normalized_endpoints["end"]
+    if endpoint_distance(start) <= endpoint_distance(end):
+        return {"grip": start, "club": end}
+    return {"grip": end, "club": start}
 
 
 def denormalize_shaft_to_guide_space(normalized):
@@ -284,11 +304,17 @@ def build_stage_pose(stage, review_manifest):
 
     merged_shaft = None
     if shaft_guides:
-        merged_shaft = {}
-        for key in ("start", "end"):
-            xs = [shaft[key][0] for shaft in shaft_guides]
-            ys = [shaft[key][1] for shaft in shaft_guides]
-            merged_shaft[key] = [round(median(xs), 4), round(median(ys), 4)]
+        club_xs = [shaft["club"][0] for shaft in shaft_guides]
+        club_ys = [shaft["club"][1] for shaft in shaft_guides]
+        wrist_left = merged[str(15)]
+        wrist_right = merged[str(16)]
+        merged_shaft = {
+            "start": [
+                round((wrist_left[0] + wrist_right[0]) / 2, 4),
+                round((wrist_left[1] + wrist_right[1]) / 2, 4),
+            ],
+            "end": [round(median(club_xs), 4), round(median(club_ys), 4)],
+        }
 
     return merged, merged_shaft, used_files, review_stats
 
@@ -363,11 +389,15 @@ def main():
     OUTPUT_PATH.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     generated_stages = list(output["stages"])
     fallback_stages = [stage for stage in STAGES if stage not in output["stages"]]
+    generated_shaft_stages = list(output["shafts"])
+    fallback_shaft_stages = [stage for stage in STAGES if stage not in output["shafts"]]
     report = {
         "schema": "golf-coach-guide-build-report-v1",
         "review_manifest": output["review"]["manifest"],
         "generated_stages": generated_stages,
         "fallback_stages": fallback_stages,
+        "generated_shaft_stages": generated_shaft_stages,
+        "fallback_shaft_stages": fallback_shaft_stages,
         "stage_stats": output["review"]["stages"],
     }
     report_path.parent.mkdir(parents=True, exist_ok=True)

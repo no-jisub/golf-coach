@@ -611,8 +611,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro03_video_backswing_auto.json": {
@@ -647,8 +647,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": true,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro04_video_backswing_auto.json": {
@@ -688,8 +688,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": true,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro05_video_backswing_auto.json": {
@@ -718,8 +718,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro06_video_backswing_auto.json": {
@@ -748,8 +748,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro07_video_backswing_auto.json": {
@@ -819,8 +819,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro09_video_backswing_auto.json": {
@@ -1636,8 +1636,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/impact/pro06_video_impact_auto.json": {
@@ -1678,7 +1678,7 @@
         "status": "accepted",
         "override_auto_fail": false,
         "include_shaft": false,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/impact/pro07_video_impact_auto.json": {
@@ -1708,7 +1708,7 @@
         "status": "accepted",
         "override_auto_fail": false,
         "include_shaft": false,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/impact/pro08_video_impact_auto.json": {
@@ -1743,8 +1743,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/impact/pro09_video_impact_auto.json": {
@@ -1779,8 +1779,8 @@
       "human_review": {
         "status": "accepted",
         "override_auto_fail": false,
-        "include_shaft": true,
-        "note": "시각 검수: 단계와 관절 좌표 확인"
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인; 최종 가이드 검수: 기본 샤프트 사용"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro01_video_follow_through_auto.json": {
