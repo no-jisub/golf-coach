@@ -3,6 +3,7 @@ __pycache__/
 .venv/
 venv/
 .env
+analysis_sessions/
 reference_data/raw_images/**/*.jpg
 reference_data/raw_images/**/*.jpeg
 reference_data/raw_images/**/*.png
