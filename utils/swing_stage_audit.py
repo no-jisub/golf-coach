@@ -8,6 +8,7 @@ from utils.swing_video import LANDMARK_SCHEMA, extract_video_landmarks, write_js
 
 GROUND_TRUTH_SCHEMA = "golf-coach-swing-stage-ground-truth-v1"
 REVIEW_STATUSES = {"pending", "reviewed", "excluded"}
+SEQUENCE_MODES = {"linear", "cyclic"}
 AUDIT_SCHEMA = "golf-coach-swing-stage-audit-v1"
 
 
@@ -56,6 +57,9 @@ def validate_ground_truth_manifest(manifest, *, project_root=None, require_files
         status = video.get("review_status")
         if status not in REVIEW_STATUSES:
             raise ValueError(f"{video_id}: 지원하지 않는 검수 상태입니다: {status}")
+        sequence_mode = video.get("sequence_mode", "linear")
+        if sequence_mode not in SEQUENCE_MODES:
+            raise ValueError(f"{video_id}: 지원하지 않는 영상 순서 방식입니다: {sequence_mode}")
         events = video.get("events")
         if not isinstance(events, dict) or set(events) != set(STAGE_KEYS):
             raise ValueError(f"{video_id}: 정확한 8단계 events 객체가 필요합니다.")
@@ -70,8 +74,13 @@ def validate_ground_truth_manifest(manifest, *, project_root=None, require_files
         if status == "reviewed":
             if any(value is None for value in values):
                 raise ValueError(f"{video_id}: reviewed 영상은 8단계 프레임이 모두 필요합니다.")
-            if values != sorted(set(values)):
-                raise ValueError(f"{video_id}: 8단계 프레임은 중복 없이 시간순이어야 합니다.")
+            if len(values) != len(set(values)):
+                raise ValueError(f"{video_id}: 8단계 프레임은 중복될 수 없습니다.")
+            wrap_count = sum(current < previous for previous, current in zip(values, values[1:]))
+            if sequence_mode == "linear" and wrap_count:
+                raise ValueError(f"{video_id}: linear 영상의 8단계 프레임은 시간순이어야 합니다.")
+            if sequence_mode == "cyclic" and wrap_count > 1:
+                raise ValueError(f"{video_id}: cyclic 영상은 프레임 경계를 한 번만 순환할 수 있습니다.")
         if status == "excluded" and not str(video.get("note", "")).strip():
             raise ValueError(f"{video_id}: 제외 사유 note가 필요합니다.")
 

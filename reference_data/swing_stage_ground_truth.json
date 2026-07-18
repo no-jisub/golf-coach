@@ -31,20 +31,21 @@
     },
     "pro03": {
       "source": "reference_data/raw_videos/pro03_fullswing.mp4",
-      "review_status": "pending",
+      "review_status": "reviewed",
+      "sequence_mode": "cyclic",
       "events": {
-        "address": null,
-        "takeaway": null,
-        "backswing": null,
-        "top": null,
-        "downswing": null,
-        "impact": null,
-        "follow_through": null,
-        "finish": null
+        "address": 243,
+        "takeaway": 27,
+        "backswing": 48,
+        "top": 86,
+        "downswing": 114,
+        "impact": 123,
+        "follow_through": 137,
+        "finish": 241
       },
-      "reviewed_by": null,
-      "reviewed_at": null,
-      "note": ""
+      "reviewed_by": "user",
+      "reviewed_at": "2026-07-19",
+      "note": "반복 영상: 8.11초의 address 이후 프레임 경계에서 0.90초의 takeaway로 순환"
     },
     "pro04": {
       "source": "reference_data/raw_videos/pro04_fullswing.mp4",
@@ -152,7 +153,7 @@
   "summary": {
     "video_count": 8,
     "excluded_count": 0,
-    "pending_count": 8,
-    "reviewed_count": 0
+    "pending_count": 7,
+    "reviewed_count": 1
   }
 }

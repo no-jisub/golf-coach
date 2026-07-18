@@ -62,8 +62,9 @@ class SwingStageGroundTruthTests(unittest.TestCase):
         )
 
         self.assertEqual(manifest["summary"]["video_count"], 8)
-        self.assertEqual(manifest["summary"]["pending_count"], 8)
-        self.assertEqual(manifest["summary"]["reviewed_count"], 0)
+        self.assertEqual(manifest["summary"]["pending_count"], 7)
+        self.assertEqual(manifest["summary"]["reviewed_count"], 1)
+        self.assertEqual(manifest["videos"]["pro03"]["sequence_mode"], "cyclic")
 
     def test_reviewed_events_must_be_complete_and_strictly_ordered(self):
         manifest = make_manifest("reviewed")
@@ -78,6 +79,20 @@ class SwingStageGroundTruthTests(unittest.TestCase):
         unordered["videos"]["sample"]["events"]["impact"] = 20
         with self.assertRaises(ValueError):
             validate_ground_truth_manifest(unordered)
+
+    def test_cyclic_video_allows_one_frame_boundary_wrap(self):
+        manifest = make_manifest("reviewed")
+        video = manifest["videos"]["sample"]
+        video["sequence_mode"] = "cyclic"
+        video["events"] = {
+            stage_key: frame
+            for stage_key, frame in zip(STAGE_KEYS, [70, 0, 10, 20, 30, 40, 50, 60])
+        }
+        validate_ground_truth_manifest(manifest)
+
+        video["sequence_mode"] = "linear"
+        with self.assertRaises(ValueError):
+            validate_ground_truth_manifest(manifest)
 
     def test_excluded_video_requires_note(self):
         manifest = make_manifest("excluded")
@@ -200,7 +215,7 @@ class SwingStageContactSheetTests(unittest.TestCase):
         self.assertGreater(np.count_nonzero(sheet), 0)
 
 
-def make_audit(automatic_frames, *, fps=20.0, status="ok"):
+def make_audit(automatic_frames, *, fps=20.0, total_frames=100, status="ok"):
     video = {
         "status": status,
         "source": "sample.mp4",
@@ -209,7 +224,7 @@ def make_audit(automatic_frames, *, fps=20.0, status="ok"):
     if status == "ok":
         video.update(
             {
-                "video": {"fps": fps},
+                "video": {"fps": fps, "total_frames": total_frames},
                 "stage_detection": {
                     "events": {
                         stage_key: {"frame_index": automatic_frames[index]}
@@ -253,6 +268,23 @@ class SwingStageAccuracyTests(unittest.TestCase):
         self.assertEqual(report["summary"]["evaluated_count"], 0)
         self.assertIsNone(report["summary"]["within_tolerance_rate"])
         self.assertEqual(report["videos"]["sample"]["status"], "pending_review")
+
+    def test_cyclic_video_uses_shortest_distance_across_frame_boundary(self):
+        manifest = make_manifest("reviewed")
+        manifest["videos"]["sample"]["sequence_mode"] = "cyclic"
+        manifest["videos"]["sample"]["events"]["address"] = 90
+        automatic_frames = [0, 10, 20, 30, 40, 50, 60, 70]
+
+        report = build_stage_accuracy_report(
+            make_audit(automatic_frames, fps=20.0, total_frames=100),
+            manifest,
+        )
+
+        address = report["videos"]["sample"]["comparisons"]["address"]
+        self.assertEqual(address["raw_signed_error_frames"], -90)
+        self.assertEqual(address["signed_error_frames"], 10)
+        self.assertEqual(address["absolute_error_ms"], 500.0)
+        self.assertTrue(address["crosses_frame_boundary"])
 
 
 if __name__ == "__main__":

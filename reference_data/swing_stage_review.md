@@ -21,6 +21,7 @@ py -3.12 tools\audit_swing_stage_detection.py
 - 확인이 끝나면 `review_status`를 `reviewed`로 바꿉니다.
 - 검수자와 검수 시각은 `reviewed_by`, `reviewed_at`에 기록합니다.
 - 영상이 불완전하거나 정면 영상이 아니면 `excluded`로 바꾸고 `note`에 사유를 적습니다.
+- 반복 영상에서 address가 finish 뒤에 있으면 `sequence_mode`를 `cyclic`으로 기록합니다. 이 경우 단계 순서는 프레임 경계를 한 번 넘어갈 수 있습니다.
 
 검수 시트의 세 후보 사이에 정확한 순간이 없다면 원본 영상을 프레임 단위로 확인해 번호를 기록합니다.
 

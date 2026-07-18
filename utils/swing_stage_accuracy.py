@@ -37,6 +37,16 @@ def _aggregate_measurements(measurements):
     }
 
 
+def _signed_frame_error(automatic_frame, ground_truth_frame, total_frames=None):
+    raw_error = automatic_frame - ground_truth_frame
+    if not total_frames:
+        return raw_error
+    return min(
+        (raw_error, raw_error + total_frames, raw_error - total_frames),
+        key=abs,
+    )
+
+
 def build_stage_accuracy_report(audit, manifest, *, tolerance_ms=DEFAULT_TOLERANCE_MS):
     """Compare automatic events only with human-reviewed ground-truth events."""
     tolerance_ms = float(tolerance_ms)
@@ -54,6 +64,7 @@ def build_stage_accuracy_report(audit, manifest, *, tolerance_ms=DEFAULT_TOLERAN
         video_report = {
             "source": ground_truth["source"],
             "ground_truth_status": ground_truth_status,
+            "sequence_mode": ground_truth.get("sequence_mode", "linear"),
         }
 
         if ground_truth_status == "excluded" or audit_status == "excluded":
@@ -70,6 +81,13 @@ def build_stage_accuracy_report(audit, manifest, *, tolerance_ms=DEFAULT_TOLERAN
                 video_report["error"] = "video fps is missing or invalid"
                 video_reports[video_id] = video_report
                 continue
+            total_frames = int(audit_video.get("video", {}).get("total_frames") or 0)
+            is_cyclic = video_report["sequence_mode"] == "cyclic"
+            if is_cyclic and total_frames <= 0:
+                video_report["status"] = "analysis_failed"
+                video_report["error"] = "cyclic video total_frames is missing or invalid"
+                video_reports[video_id] = video_report
+                continue
 
             comparisons = {}
             for stage_key in STAGE_KEYS:
@@ -77,16 +95,23 @@ def build_stage_accuracy_report(audit, manifest, *, tolerance_ms=DEFAULT_TOLERAN
                     audit_video["stage_detection"]["events"][stage_key]["frame_index"]
                 )
                 ground_truth_frame = int(ground_truth["events"][stage_key])
-                signed_error_frames = automatic_frame - ground_truth_frame
+                raw_signed_error_frames = automatic_frame - ground_truth_frame
+                signed_error_frames = _signed_frame_error(
+                    automatic_frame,
+                    ground_truth_frame,
+                    total_frames if is_cyclic else None,
+                )
                 signed_error_ms = signed_error_frames / fps * 1000.0
                 measurement = {
                     "ground_truth_frame": ground_truth_frame,
                     "automatic_frame": automatic_frame,
+                    "raw_signed_error_frames": raw_signed_error_frames,
                     "signed_error_frames": signed_error_frames,
                     "absolute_error_frames": abs(signed_error_frames),
                     "signed_error_ms": _rounded(signed_error_ms),
                     "absolute_error_ms": _rounded(abs(signed_error_ms)),
                     "within_tolerance": abs(signed_error_ms) <= tolerance_ms,
+                    "crosses_frame_boundary": signed_error_frames != raw_signed_error_frames,
                 }
                 comparisons[stage_key] = measurement
                 all_measurements.append(measurement)
