@@ -10,6 +10,7 @@ if str(PROJECT_ROOT) not in sys.path:
 from utils.swing_video import extract_video_landmarks, write_json
 from utils.swing_stage_detector import detect_stage_events, save_representative_frames
 from utils.swing_video_evaluator import evaluate_detected_stages
+from utils.swing_video_renderer import render_annotated_video
 
 
 MODEL_PATH = PROJECT_ROOT / "pose_landmarker_full.task"
@@ -69,6 +70,19 @@ def main():
         stage_detection["stages"][stage_key]["image"] = path
     stage_path = write_json(output_dir / "stage_events.json", stage_detection)
     analysis = evaluate_detected_stages(payload, stage_detection)
+    render_result = render_annotated_video(
+        video_path,
+        payload,
+        stage_detection,
+        analysis,
+        output_dir / "annotated_swing.mp4",
+    )
+    analysis["outputs"] = {
+        "frame_landmarks": str(output_path),
+        "stage_events": str(stage_path),
+        "stage_frames": representative_paths,
+        "annotated_video": render_result,
+    }
     analysis_path = write_json(output_dir / "stage_analysis.json", analysis)
     print(f"영상: {video_path}")
     print(
@@ -84,6 +98,7 @@ def main():
         f"unavailable={analysis['summary']['unavailable_count']}"
     )
     print(f"분석: {analysis_path}")
+    print(f"결과 영상: {render_result['path']}")
     return 0
 
 

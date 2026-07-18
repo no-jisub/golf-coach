@@ -140,7 +140,17 @@ def detect_stage_events(landmark_payload):
     wrist_x = _smooth([feature["wrist_x"] for feature in features])
     wrist_y = _smooth([feature["wrist_y"] for feature in features])
     body_height = _smooth([feature["body_height"] for feature in features])
-    shoulder_angle = _smooth([feature["shoulder_angle"] for feature in features])
+    raw_shoulder_angle = np.asarray(
+        [feature["shoulder_angle"] for feature in features],
+        dtype=float,
+    )
+    shoulder_radians = np.radians(raw_shoulder_angle)
+    shoulder_angle = np.degrees(
+        np.arctan2(
+            _smooth(np.sin(shoulder_radians)),
+            _smooth(np.cos(shoulder_radians)),
+        )
+    )
     shoulder_width = _smooth([feature["shoulder_width_ratio"] for feature in features])
     timestamps = np.asarray([feature["timestamp_ms"] for feature in features], dtype=float)
 
@@ -160,10 +170,22 @@ def detect_stage_events(landmark_payload):
 
     address_angle = float(shoulder_angle[address_index])
     address_width = max(float(shoulder_width[address_index]), 1e-6)
-    shoulder_turn = np.abs(shoulder_angle - address_angle)
-    shoulder_turn += np.maximum(0.0, (address_width - shoulder_width) / address_width) * 25.0
+    shoulder_turn = np.abs((shoulder_angle - address_angle + 180.0) % 360.0 - 180.0)
+    shoulder_turn += np.clip(
+        (address_width - shoulder_width) / address_width,
+        0.0,
+        1.0,
+    ) * 25.0
+    speed_peak_start = max(address_index + 2, round((len(features) - 1) * 0.2))
+    speed_peak_end = max(
+        speed_peak_start,
+        round((len(features) - 1) * 0.78),
+    )
+    impact_speed_peak = speed_peak_start + int(
+        np.argmax(speed[speed_peak_start : speed_peak_end + 1])
+    )
     top_start = min(len(features) - 2, address_index + 1)
-    top_end = max(top_start, round((len(features) - 1) * 0.68))
+    top_end = max(top_start, impact_speed_peak - 1)
     top_wrist = wrist_y[top_start : top_end + 1] / np.maximum(
         body_height[top_start : top_end + 1], 1e-6
     )
@@ -172,8 +194,13 @@ def detect_stage_events(landmark_payload):
     top_score = top_wrist - top_turn / turn_scale * 0.12
     top_index = top_start + int(np.argmin(top_score))
 
-    impact_start = min(len(features) - 1, top_index + 1)
-    impact_end = max(impact_start, round((len(features) - 1) * 0.88))
+    impact_radius = max(3, round(len(features) * 0.1))
+    impact_start = max(top_index + 1, impact_speed_peak - impact_radius)
+    impact_start = min(len(features) - 1, impact_start)
+    impact_end = min(
+        len(features) - 1,
+        max(impact_start, impact_speed_peak + impact_radius),
+    )
     address_wrist = (wrist_x[address_index], wrist_y[address_index])
     impact_scores = []
     for index in range(impact_start, impact_end + 1):
@@ -184,12 +211,24 @@ def detect_stage_events(landmark_payload):
         impact_scores.append(position_distance - speed[index] / max_speed * 0.3)
     impact_index = impact_start + int(np.argmin(impact_scores))
 
-    finish_start = min(len(features) - 1, impact_index + 1)
+    finish_start = min(len(features) - 1, impact_index + 2)
+    finish_end = min(
+        len(features) - 1,
+        impact_index + max(8, round(len(features) * 0.35)),
+    )
+    finish_y = wrist_y[finish_start : finish_end + 1]
+    finish_y_min = float(np.min(finish_y))
+    finish_y_span = max(float(np.ptp(finish_y)), 1e-6)
     finish_scores = []
-    finish_span = max(len(features) - 1 - finish_start, 1)
-    for index in range(finish_start, len(features)):
+    finish_span = max(finish_end - finish_start, 1)
+    for index in range(finish_start, finish_end + 1):
         progress = (index - finish_start) / finish_span
-        finish_scores.append(speed[index] / max_speed - progress * 0.3)
+        hand_height_score = (wrist_y[index] - finish_y_min) / finish_y_span
+        finish_scores.append(
+            speed[index] / max_speed * 0.65
+            + hand_height_score * 0.35
+            + progress * 0.05
+        )
     finish_index = finish_start + int(np.argmin(finish_scores))
 
     takeaway_index = _choose_path_fraction(
@@ -250,6 +289,7 @@ def detect_stage_events(landmark_payload):
         "diagnostics": {
             "usable_pose_frames": len(features),
             "max_normalized_wrist_speed": round(max_speed, 6),
+            "impact_speed_peak_frame": features[impact_speed_peak]["frame_index"],
             "backswing_upward_ratio": round(upward_ratio, 4),
             "downswing_downward_ratio": round(downward_ratio, 4),
             "follow_through_upward_ratio": round(follow_up_ratio, 4),

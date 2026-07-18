@@ -15,6 +15,7 @@ from utils.swing_stage_detector import (
     save_representative_frames,
 )
 from utils.swing_video_evaluator import ANALYSIS_SCHEMA, evaluate_detected_stages
+from utils.swing_video_renderer import render_annotated_video, stage_for_frame
 
 
 def make_landmark(index):
@@ -173,7 +174,9 @@ class SwingStageDetectorTests(unittest.TestCase):
         self.assertTrue(25 <= result["stages"]["top"]["frame_index"] <= 45)
         self.assertTrue(45 <= result["stages"]["impact"]["frame_index"] <= 68)
         self.assertGreaterEqual(result["stages"]["finish"]["frame_index"], 70)
+        self.assertLess(result["stages"]["finish"]["frame_index"], 81)
         self.assertGreater(result["stages"]["top"]["motion"]["shoulder_turn"], 5.0)
+        self.assertLess(result["stages"]["top"]["motion"]["shoulder_turn"], 90.0)
 
     def test_saves_one_representative_image_per_stage(self):
         result = detect_stage_events(make_synthetic_swing_payload())
@@ -235,6 +238,41 @@ class SwingVideoEvaluationTests(unittest.TestCase):
         ]
         with self.assertRaises(ValueError):
             evaluate_detected_stages(payload, detection)
+
+
+class SwingVideoRenderTests(unittest.TestCase):
+    def test_stage_assignment_switches_in_order(self):
+        detection = detect_stage_events(make_synthetic_swing_payload())
+        assigned = [stage_for_frame(frame, detection) for frame in range(81)]
+        stage_positions = [assigned.index(stage_key) for stage_key in STAGE_KEYS]
+
+        self.assertEqual(stage_positions, sorted(stage_positions))
+
+    def test_renders_guide_tolerance_and_user_pose_video(self):
+        payload = make_synthetic_swing_payload()
+        detection = detect_stage_events(payload)
+        analysis = evaluate_detected_stages(payload, detection)
+        with tempfile.TemporaryDirectory() as temp_dir:
+            input_path = Path(temp_dir) / "input.avi"
+            output_path = Path(temp_dir) / "annotated.avi"
+            write_test_video(input_path, frame_count=81, fps=50.0)
+            result = render_annotated_video(
+                input_path,
+                payload,
+                detection,
+                analysis,
+                output_path,
+            )
+            capture = cv2.VideoCapture(str(output_path))
+            success, rendered_frame = capture.read()
+            rendered_count = int(capture.get(cv2.CAP_PROP_FRAME_COUNT))
+            capture.release()
+
+        self.assertTrue(success)
+        self.assertEqual(result["frame_count"], 81)
+        self.assertEqual(rendered_count, 81)
+        self.assertGreater(np.count_nonzero(rendered_frame), 0)
+        self.assertFalse(result["audio_preserved"])
 
 
 if __name__ == "__main__":

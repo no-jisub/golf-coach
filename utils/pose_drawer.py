@@ -31,7 +31,13 @@ def landmark_to_point(landmark, image_width, image_height):
     return x, y
 
 
-def draw_pose_landmarks(frame, landmarks):
+def draw_pose_landmarks(
+    frame,
+    landmarks,
+    line_color=(255, 255, 255),
+    point_color=(0, 255, 0),
+    point_indexes=None,
+):
     """Pose Landmarker 결과를 OpenCV 화면에 점과 선으로 표시합니다."""
     image_height, image_width, _ = frame.shape
 
@@ -44,11 +50,20 @@ def draw_pose_landmarks(frame, landmarks):
 
         start_point = landmark_to_point(start, image_width, image_height)
         end_point = landmark_to_point(end, image_width, image_height)
-        cv2.line(frame, start_point, end_point, (255, 255, 255), 2)
+        cv2.line(frame, start_point, end_point, line_color, 2)
 
-    for landmark in landmarks:
+    if point_indexes is None:
+        displayed_landmarks = landmarks
+    else:
+        displayed_landmarks = (
+            landmarks[index]
+            for index in sorted(point_indexes)
+            if index < len(landmarks)
+        )
+
+    for landmark in displayed_landmarks:
         if not is_visible(landmark):
             continue
 
         point = landmark_to_point(landmark, image_width, image_height)
-        cv2.circle(frame, point, 4, (0, 255, 0), -1)
+        cv2.circle(frame, point, 4, point_color, -1)
