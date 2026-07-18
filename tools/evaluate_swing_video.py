@@ -9,6 +9,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from utils.swing_video import extract_video_landmarks, write_json
 from utils.swing_stage_detector import detect_stage_events, save_representative_frames
+from utils.swing_video_evaluator import evaluate_detected_stages
 
 
 MODEL_PATH = PROJECT_ROOT / "pose_landmarker_full.task"
@@ -67,6 +68,8 @@ def main():
     for stage_key, path in representative_paths.items():
         stage_detection["stages"][stage_key]["image"] = path
     stage_path = write_json(output_dir / "stage_events.json", stage_detection)
+    analysis = evaluate_detected_stages(payload, stage_detection)
+    analysis_path = write_json(output_dir / "stage_analysis.json", analysis)
     print(f"영상: {video_path}")
     print(
         f"프레임: {payload['video']['decoded_frames']}, "
@@ -75,6 +78,12 @@ def main():
     )
     print(f"저장: {output_path}")
     print(f"8단계: {stage_path}")
+    print(
+        f"판정: pass={analysis['summary']['pass_count']} "
+        f"warning={analysis['summary']['warning_count']} "
+        f"unavailable={analysis['summary']['unavailable_count']}"
+    )
+    print(f"분석: {analysis_path}")
     return 0
 
 

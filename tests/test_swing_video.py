@@ -14,6 +14,7 @@ from utils.swing_stage_detector import (
     detect_stage_events,
     save_representative_frames,
 )
+from utils.swing_video_evaluator import ANALYSIS_SCHEMA, evaluate_detected_stages
 
 
 def make_landmark(index):
@@ -190,6 +191,50 @@ class SwingStageDetectorTests(unittest.TestCase):
         payload = make_synthetic_swing_payload(frame_count=7)
         with self.assertRaises(ValueError):
             detect_stage_events(payload)
+
+
+class SwingVideoEvaluationTests(unittest.TestCase):
+    def test_serializes_stage_coordinates_metrics_and_classification(self):
+        payload = make_synthetic_swing_payload()
+        detection = detect_stage_events(payload)
+        analysis = evaluate_detected_stages(payload, detection)
+
+        self.assertEqual(analysis["schema"], ANALYSIS_SCHEMA)
+        self.assertEqual(analysis["stage_order"], list(STAGE_KEYS))
+        self.assertEqual(analysis["summary"]["total_count"], 40)
+        self.assertEqual(
+            analysis["summary"]["pass_count"]
+            + analysis["summary"]["warning_count"]
+            + analysis["summary"]["unavailable_count"],
+            40,
+        )
+        for stage_key in STAGE_KEYS:
+            stage = analysis["stages"][stage_key]
+            self.assertEqual(len(stage["landmarks"]), 33)
+            self.assertEqual(len(stage["metrics"]), 20)
+            self.assertIn(stage["evaluation"]["status"], {"pass", "warning", "unavailable"})
+            self.assertTrue(stage["evaluation"]["items"])
+            self.assertTrue(stage["evaluation"]["messages"])
+
+    def test_address_is_relative_movement_origin(self):
+        payload = make_synthetic_swing_payload()
+        detection = detect_stage_events(payload)
+        analysis = evaluate_detected_stages(payload, detection)
+        address_metrics = analysis["stages"]["address"]["metrics"]
+
+        self.assertAlmostEqual(address_metrics["head_loc"], 0.0)
+        self.assertAlmostEqual(address_metrics["hip_shifted"], 0.0)
+        self.assertAlmostEqual(address_metrics["hip_rotation"], 0.0)
+
+    def test_missing_selected_frame_is_rejected(self):
+        payload = make_synthetic_swing_payload()
+        detection = detect_stage_events(payload)
+        missing_frame = detection["stages"]["impact"]["frame_index"]
+        payload["frames"] = [
+            frame for frame in payload["frames"] if frame["frame_index"] != missing_frame
+        ]
+        with self.assertRaises(ValueError):
+            evaluate_detected_stages(payload, detection)
 
 
 if __name__ == "__main__":
