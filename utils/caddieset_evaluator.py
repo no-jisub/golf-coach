@@ -200,3 +200,68 @@ def compare_stage_metrics(measured_metrics, stage_selection):
         "used_profile_fallback": stage_selection["used_fallback"],
         "comparisons": comparisons,
     }
+
+
+def classify_metric_comparison(comparison):
+    """수치 관계를 항목별 통과·주의·측정 불가 상태로 변환합니다."""
+    relation = comparison.get("relation")
+    if relation == "within_reference":
+        status = "pass"
+        warning_level = None
+    elif relation in {"below_reference", "above_reference"}:
+        status = "warning"
+        warning_level = "outside_reference"
+    elif relation in {"below_outer", "above_outer"}:
+        status = "warning"
+        warning_level = "outside_observed"
+    elif relation == "unavailable":
+        status = "unavailable"
+        warning_level = None
+    else:
+        raise CaddieSetProfileError(f"알 수 없는 지표 비교 관계입니다: {relation}")
+
+    return {
+        **comparison,
+        "status": status,
+        "warning_level": warning_level,
+    }
+
+
+def classify_stage_comparisons(stage_comparison, minimum_measurement_ratio=0.6):
+    """항목별 상태와 단계 전체 상태를 계산합니다."""
+    if not 0.0 <= minimum_measurement_ratio <= 1.0:
+        raise ValueError("minimum_measurement_ratio는 0~1 사이여야 합니다.")
+
+    classified = {
+        metric_key: classify_metric_comparison(comparison)
+        for metric_key, comparison in stage_comparison.get("comparisons", {}).items()
+    }
+    total_count = len(classified)
+    pass_count = sum(item["status"] == "pass" for item in classified.values())
+    warning_count = sum(item["status"] == "warning" for item in classified.values())
+    unavailable_count = sum(item["status"] == "unavailable" for item in classified.values())
+    measured_count = pass_count + warning_count
+    measurement_ratio = measured_count / total_count if total_count else 0.0
+
+    if total_count == 0 or measurement_ratio < minimum_measurement_ratio:
+        overall_status = "unavailable"
+    elif warning_count > 0 or unavailable_count > 0:
+        overall_status = "warning"
+    else:
+        overall_status = "pass"
+
+    return {
+        **stage_comparison,
+        "overall_status": overall_status,
+        "passed": overall_status == "pass",
+        "summary": {
+            "total_count": total_count,
+            "measured_count": measured_count,
+            "pass_count": pass_count,
+            "warning_count": warning_count,
+            "unavailable_count": unavailable_count,
+            "measurement_ratio": measurement_ratio,
+            "minimum_measurement_ratio": minimum_measurement_ratio,
+        },
+        "comparisons": classified,
+    }

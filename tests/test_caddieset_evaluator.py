@@ -3,6 +3,8 @@ import unittest
 from utils.caddieset_evaluator import (
     CaddieSetProfileError,
     STAGE_KEYS,
+    classify_metric_comparison,
+    classify_stage_comparisons,
     compare_metric_value,
     compare_stage_metrics,
     load_evaluation_profiles,
@@ -130,6 +132,78 @@ class CaddieSetMetricComparisonTests(unittest.TestCase):
         )
         self.assertEqual(set(result["comparisons"]), {"shoulder_angle", "stance_ratio"})
         self.assertEqual(result["stage_key"], "address")
+
+
+class CaddieSetClassificationTests(unittest.TestCase):
+    def make_comparison(self, relation):
+        return {
+            "metric_key": "shoulder_angle",
+            "relation": relation,
+            "measured_value": None if relation == "unavailable" else 10.0,
+        }
+
+    def test_classifies_each_relation(self):
+        expected = {
+            "within_reference": ("pass", None),
+            "below_reference": ("warning", "outside_reference"),
+            "above_reference": ("warning", "outside_reference"),
+            "below_outer": ("warning", "outside_observed"),
+            "above_outer": ("warning", "outside_observed"),
+            "unavailable": ("unavailable", None),
+        }
+        for relation, (status, warning_level) in expected.items():
+            with self.subTest(relation=relation):
+                result = classify_metric_comparison(self.make_comparison(relation))
+                self.assertEqual(result["status"], status)
+                self.assertEqual(result["warning_level"], warning_level)
+
+    def test_stage_passes_only_when_every_item_passes(self):
+        result = classify_stage_comparisons(
+            {
+                "stage_key": "address",
+                "comparisons": {
+                    "a": self.make_comparison("within_reference"),
+                    "b": self.make_comparison("within_reference"),
+                },
+            }
+        )
+        self.assertEqual(result["overall_status"], "pass")
+        self.assertTrue(result["passed"])
+
+    def test_stage_warns_for_outlier_or_partial_measurement(self):
+        warning_result = classify_stage_comparisons(
+            {
+                "comparisons": {
+                    "a": self.make_comparison("within_reference"),
+                    "b": self.make_comparison("above_outer"),
+                }
+            }
+        )
+        partial_result = classify_stage_comparisons(
+            {
+                "comparisons": {
+                    "a": self.make_comparison("within_reference"),
+                    "b": self.make_comparison("unavailable"),
+                }
+            },
+            minimum_measurement_ratio=0.5,
+        )
+        self.assertEqual(warning_result["overall_status"], "warning")
+        self.assertEqual(partial_result["overall_status"], "warning")
+
+    def test_stage_is_unavailable_when_too_few_items_are_measured(self):
+        result = classify_stage_comparisons(
+            {
+                "comparisons": {
+                    "a": self.make_comparison("within_reference"),
+                    "b": self.make_comparison("unavailable"),
+                    "c": self.make_comparison("unavailable"),
+                }
+            }
+        )
+        self.assertEqual(result["overall_status"], "unavailable")
+        self.assertEqual(result["summary"]["measured_count"], 1)
+        self.assertFalse(result["passed"])
 
 
 if __name__ == "__main__":
