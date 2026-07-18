@@ -7,6 +7,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EXTRACTED_DIR = PROJECT_ROOT / "reference_data" / "extracted_landmarks"
 OUTPUT_PATH = PROJECT_ROOT / "reference_data" / "guide_poses" / "generated_guide_poses.json"
+REPORT_PATH = PROJECT_ROOT / "reference_data" / "guide_poses" / "guide_build_report.json"
 REVIEW_MANIFEST_PATH = PROJECT_ROOT / "reference_data" / "review_manifest.json"
 
 STAGES = [
@@ -302,12 +303,19 @@ def parse_args():
         default=REVIEW_MANIFEST_PATH,
         help="검수 manifest 경로입니다.",
     )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=REPORT_PATH,
+        help="좌표를 제외한 단계별 빌드 결과 리포트 경로입니다.",
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     manifest_path = args.manifest.resolve()
+    report_path = args.report.resolve()
     review_manifest = load_review_manifest(manifest_path)
     output = {
         "schema": "golf-coach-guide-poses-v1",
@@ -353,8 +361,22 @@ def main():
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    generated_stages = list(output["stages"])
+    fallback_stages = [stage for stage in STAGES if stage not in output["stages"]]
+    report = {
+        "schema": "golf-coach-guide-build-report-v1",
+        "review_manifest": output["review"]["manifest"],
+        "generated_stages": generated_stages,
+        "fallback_stages": fallback_stages,
+        "stage_stats": output["review"]["stages"],
+    }
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print()
     print(f"저장 완료: {OUTPUT_PATH.relative_to(PROJECT_ROOT)}")
+    print(f"빌드 리포트: {report_path.relative_to(PROJECT_ROOT) if report_path.is_relative_to(PROJECT_ROOT) else report_path}")
+    if fallback_stages:
+        print(f"기본 가이드 폴백 단계: {', '.join(fallback_stages)}")
     return 0
 
 

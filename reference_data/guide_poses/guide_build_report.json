@@ -1,0 +1,122 @@
+{
+  "schema": "golf-coach-guide-build-report-v1",
+  "review_manifest": "reference_data/review_manifest.json",
+  "generated_stages": [
+    "address",
+    "takeaway",
+    "backswing",
+    "top",
+    "impact",
+    "finish"
+  ],
+  "fallback_stages": [
+    "downswing",
+    "follow_through"
+  ],
+  "stage_stats": {
+    "address": {
+      "total": 8,
+      "included": 8,
+      "pending": 0,
+      "rejected": 0,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 3,
+      "shaft_excluded_by_review": 5
+    },
+    "takeaway": {
+      "total": 8,
+      "included": 5,
+      "pending": 0,
+      "rejected": 3,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 3,
+      "shaft_excluded_by_review": 2
+    },
+    "backswing": {
+      "total": 8,
+      "included": 6,
+      "pending": 0,
+      "rejected": 2,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 5,
+      "shaft_excluded_by_review": 0
+    },
+    "top": {
+      "total": 8,
+      "included": 5,
+      "pending": 0,
+      "rejected": 3,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 3,
+      "shaft_excluded_by_review": 2
+    },
+    "downswing": {
+      "total": 8,
+      "included": 0,
+      "pending": 0,
+      "rejected": 8,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 0,
+      "shaft_excluded_by_review": 0
+    },
+    "impact": {
+      "total": 8,
+      "included": 5,
+      "pending": 0,
+      "rejected": 3,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 3,
+      "shaft_excluded_by_review": 2
+    },
+    "follow_through": {
+      "total": 8,
+      "included": 0,
+      "pending": 0,
+      "rejected": 8,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 0,
+      "shaft_excluded_by_review": 0
+    },
+    "finish": {
+      "total": 8,
+      "included": 5,
+      "pending": 0,
+      "rejected": 3,
+      "missing_review": 0,
+      "auto_fail_without_override": 0,
+      "invalid_human_status": 0,
+      "invalid_auto_status": 0,
+      "unusable_landmarks": 0,
+      "shaft_included": 5,
+      "shaft_excluded_by_review": 0
+    }
+  }
+}

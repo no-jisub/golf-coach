@@ -8,6 +8,7 @@ from unittest import mock
 from tools import audit_reference_samples as audit
 from tools import build_guide_poses as builder
 from tools import review_reference_samples as reviewer
+from utils import guide_skeleton
 
 
 def make_landmarks(low_visibility_index=None):
@@ -319,6 +320,22 @@ class ReviewReferenceSamplesTests(unittest.TestCase):
         reviewer.set_shaft_inclusion(sample, False)
 
         self.assertFalse(sample["human_review"]["include_shaft"])
+
+
+class GeneratedGuideFallbackTests(unittest.TestCase):
+    def test_generated_stages_override_defaults_and_missing_stages_fall_back(self):
+        defaults = {
+            "address": {0: (0.5, 0.1)},
+            "downswing": {0: (0.4, 0.2)},
+        }
+        generated = {
+            "address": {0: (0.6, 0.15)},
+        }
+
+        merged = guide_skeleton.merge_generated_guides(defaults, generated)
+
+        self.assertEqual({0: (0.6, 0.15)}, merged["address"])
+        self.assertEqual({0: (0.4, 0.2)}, merged["downswing"])
 
 
 if __name__ == "__main__":

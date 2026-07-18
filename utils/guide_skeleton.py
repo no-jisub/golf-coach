@@ -256,9 +256,23 @@ def apply_shaft_swing_hand(shaft_guides, swing_hand):
     }
 
 
+def merge_generated_guides(default_guides, generated_guides):
+    """검수 데이터가 없는 단계는 기본 가이드를 유지하고 생성된 단계만 덮어씁니다."""
+    merged = dict(default_guides)
+    if generated_guides:
+        merged.update(generated_guides)
+    return merged
+
+
 GENERATED_GUIDE_POSES, GENERATED_SHAFT_GUIDES = load_generated_guide_data() or (None, None)
-GUIDE_POSES = apply_swing_hand(GENERATED_GUIDE_POSES or DEFAULT_GUIDE_POSES, SWING_HAND)
-SHAFT_GUIDES = apply_shaft_swing_hand(GENERATED_SHAFT_GUIDES or DEFAULT_SHAFT_GUIDES, SWING_HAND)
+GUIDE_POSES = apply_swing_hand(
+    merge_generated_guides(DEFAULT_GUIDE_POSES, GENERATED_GUIDE_POSES),
+    SWING_HAND,
+)
+SHAFT_GUIDES = apply_shaft_swing_hand(
+    merge_generated_guides(DEFAULT_SHAFT_GUIDES, GENERATED_SHAFT_GUIDES),
+    SWING_HAND,
+)
 
 
 
