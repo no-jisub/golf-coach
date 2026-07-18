@@ -1,3 +1,4 @@
+import argparse
 import json
 from statistics import median
 from pathlib import Path
@@ -6,6 +7,7 @@ from pathlib import Path
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
 EXTRACTED_DIR = PROJECT_ROOT / "reference_data" / "extracted_landmarks"
 OUTPUT_PATH = PROJECT_ROOT / "reference_data" / "guide_poses" / "generated_guide_poses.json"
+REVIEW_MANIFEST_PATH = PROJECT_ROOT / "reference_data" / "review_manifest.json"
 
 STAGES = [
     "address",
@@ -20,6 +22,7 @@ STAGES = [
 
 GUIDE_LANDMARKS = [0, 11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28]
 MIN_SHOULDER_TO_BODY_RATIO = 0.04
+REVIEW_SCHEMA = "golf-coach-review-v1"
 
 
 def midpoint(point_a, point_b):
@@ -56,6 +59,51 @@ def load_reference_data(json_path):
         shaft = None
 
     return landmarks, shaft
+
+
+def load_review_manifest(manifest_path=REVIEW_MANIFEST_PATH):
+    if not manifest_path.exists():
+        raise FileNotFoundError(
+            f"검수 manifest가 없습니다: {manifest_path}\n"
+            "먼저 tools\\audit_reference_samples.py를 실행해주세요."
+        )
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    if manifest.get("schema") != REVIEW_SCHEMA:
+        raise ValueError(
+            f"지원하지 않는 검수 manifest 스키마입니다: {manifest.get('schema')}"
+        )
+    if not isinstance(manifest.get("samples"), dict):
+        raise ValueError("검수 manifest에 samples 객체가 없습니다.")
+    return manifest
+
+
+def get_sample_review_key(json_path):
+    return json_path.relative_to(PROJECT_ROOT).as_posix()
+
+
+def get_sample_inclusion(json_path, review_manifest):
+    """사람이 승인한 샘플만 포함하고 자동 실패는 명시적 override를 요구합니다."""
+    review_key = get_sample_review_key(json_path)
+    sample_review = review_manifest.get("samples", {}).get(review_key)
+    if sample_review is None:
+        return False, "missing_review"
+
+    human_review = sample_review.get("human_review", {})
+    human_status = human_review.get("status")
+    if human_status == "pending":
+        return False, "pending"
+    if human_status == "rejected":
+        return False, "rejected"
+    if human_status != "accepted":
+        return False, "invalid_human_status"
+
+    auto_status = sample_review.get("auto_check", {}).get("status")
+    if auto_status not in {"pass", "warning", "fail"}:
+        return False, "invalid_auto_status"
+    if auto_status == "fail" and not human_review.get("override_auto_fail", False):
+        return False, "auto_fail_without_override"
+    return True, "included"
 
 
 def normalize_landmarks(landmarks):
@@ -167,33 +215,52 @@ def denormalize_shaft_to_guide_space(normalized):
     }
 
 
-def build_stage_pose(stage):
+def build_stage_pose(stage, review_manifest):
     stage_dir = EXTRACTED_DIR / stage
     if not stage_dir.exists():
-        return None, None, []
+        return None, None, [], {"total": 0, "included": 0, "missing_stage_dir": 1}
 
     json_paths = sorted(stage_dir.glob("*.json"))
     guide_poses = []
     shaft_guides = []
     used_files = []
+    review_stats = {
+        "total": len(json_paths),
+        "included": 0,
+        "pending": 0,
+        "rejected": 0,
+        "missing_review": 0,
+        "auto_fail_without_override": 0,
+        "invalid_human_status": 0,
+        "invalid_auto_status": 0,
+        "unusable_landmarks": 0,
+    }
 
     for json_path in json_paths:
+        included, reason = get_sample_inclusion(json_path, review_manifest)
+        if not included:
+            review_stats[reason] = review_stats.get(reason, 0) + 1
+            continue
+
         landmarks, shaft = load_reference_data(json_path)
         if landmarks is None:
+            review_stats["unusable_landmarks"] += 1
             continue
 
         normalized = normalize_landmarks(landmarks)
         if normalized is None:
+            review_stats["unusable_landmarks"] += 1
             continue
 
         guide_poses.append(denormalize_to_guide_space(normalized))
         normalized_shaft = normalize_shaft(shaft, landmarks)
         if normalized_shaft is not None:
             shaft_guides.append(denormalize_shaft_to_guide_space(normalized_shaft))
-        used_files.append(str(json_path.relative_to(PROJECT_ROOT)))
+        used_files.append(get_sample_review_key(json_path))
+        review_stats["included"] += 1
 
     if not guide_poses:
-        return None, None, used_files
+        return None, None, used_files, review_stats
 
     merged = {}
     for index in map(str, GUIDE_LANDMARKS):
@@ -210,10 +277,26 @@ def build_stage_pose(stage):
             ys = [shaft[key][1] for shaft in shaft_guides]
             merged_shaft[key] = [round(median(xs), 4), round(median(ys), 4)]
 
-    return merged, merged_shaft, used_files
+    return merged, merged_shaft, used_files, review_stats
+
+
+def parse_args():
+    parser = argparse.ArgumentParser(
+        description="사람이 승인한 참조 샘플만 사용해 단계별 보조 스켈레톤을 생성합니다."
+    )
+    parser.add_argument(
+        "--manifest",
+        type=Path,
+        default=REVIEW_MANIFEST_PATH,
+        help="검수 manifest 경로입니다.",
+    )
+    return parser.parse_args()
 
 
 def main():
+    args = parse_args()
+    manifest_path = args.manifest.resolve()
+    review_manifest = load_review_manifest(manifest_path)
     output = {
         "schema": "golf-coach-guide-poses-v1",
         "coordinate_system": "0_to_1_screen_like_guide_space",
@@ -222,12 +305,25 @@ def main():
         "stages": {},
         "shafts": {},
         "sources": {},
+        "review": {
+            "schema": review_manifest["schema"],
+            "manifest": str(manifest_path.relative_to(PROJECT_ROOT)).replace("\\", "/")
+            if manifest_path.is_relative_to(PROJECT_ROOT)
+            else str(manifest_path),
+            "stages": {},
+        },
     }
 
     for stage in STAGES:
-        guide_pose, shaft_guide, used_files = build_stage_pose(stage)
+        guide_pose, shaft_guide, used_files, review_stats = build_stage_pose(stage, review_manifest)
+        output["review"]["stages"][stage] = review_stats
         if guide_pose is None:
-            print(f"[SKIP] {stage}: usable landmark JSON 없음")
+            print(
+                f"[SKIP] {stage}: 승인된 사용 가능 샘플 없음 "
+                f"(pending={review_stats.get('pending', 0)}, "
+                f"rejected={review_stats.get('rejected', 0)}, "
+                f"auto_fail={review_stats.get('auto_fail_without_override', 0)})"
+            )
             continue
 
         output["stages"][stage] = guide_pose
@@ -235,13 +331,20 @@ def main():
             output["shafts"][stage] = shaft_guide
         output["sources"][stage] = used_files
         shaft_text = "샤프트 있음" if shaft_guide is not None else "샤프트 없음"
-        print(f"[OK] {stage}: {len(used_files)}개 JSON 반영, {shaft_text}")
+        print(f"[OK] {stage}: 승인 샘플 {len(used_files)}개 반영, {shaft_text}")
+
+    if not output["stages"]:
+        print()
+        print("승인된 사용 가능 샘플이 없어 기존 guide pose 파일을 변경하지 않았습니다.")
+        print("reference_data\\review_manifest.json에서 샘플을 검수한 뒤 human_review.status를 accepted로 변경해주세요.")
+        return 1
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
     OUTPUT_PATH.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print()
     print(f"저장 완료: {OUTPUT_PATH.relative_to(PROJECT_ROOT)}")
+    return 0
 
 
 if __name__ == "__main__":
-    main()
+    raise SystemExit(main())
