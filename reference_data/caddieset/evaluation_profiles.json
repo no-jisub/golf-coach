@@ -1,0 +1,5164 @@
+{
+  "schema": "golf-coach-caddieset-evaluation-v1",
+  "source": {
+    "name": "CaddieSet",
+    "repository": "https://github.com/damilab/CaddieSet",
+    "commit": "3c73d9d40580bb8a5a10711ad1fa10735a205ffe",
+    "license": "MIT",
+    "csv_sha256": "646459b081863e244d75efe6f09fad4d34750d2fed7fde44db654e7720a9a306",
+    "total_rows": 1757,
+    "views": {
+      "DTL": 833,
+      "FACEON": 924
+    },
+    "club_types": {
+      "I4": 40,
+      "I5": 41,
+      "I6": 28,
+      "I7": 319,
+      "I8": 45,
+      "I9": 101,
+      "W1": 1137,
+      "W3": 46
+    },
+    "golfers": 8
+  },
+  "conversion": {
+    "current_app_profile": "faceon_all",
+    "stage_mapping": {
+      "0": "address",
+      "1": "takeaway",
+      "2": "backswing",
+      "3": "top",
+      "4": "downswing",
+      "5": "impact",
+      "6": "follow_through",
+      "7": "finish"
+    },
+    "reference_outcome_filter": {
+      "absolute_direction_angle_max_degrees": 6.0,
+      "absolute_spin_axis_max_degrees": 10.0,
+      "basis": "CaddieSet paper straight-shot classification thresholds"
+    },
+    "aggregation": {
+      "target": "median of each golfer's median (equal golfer weighting)",
+      "observed_reference_range": "10th to 90th percentile of selected shots",
+      "observed_outer_range": "5th to 95th percentile of selected shots",
+      "warning": "Observed ranges are evidence references, not validated pass/fail limits."
+    }
+  },
+  "profiles": {
+    "faceon_all": {
+      "view": "FACEON",
+      "club_type": "ALL",
+      "candidate_shots": 924,
+      "selected_reference_shots": 530,
+      "selected_golfers": 8,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "shoulder_angle": {
+              "source_column": "0-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 9.7025,
+              "shot_median": 9.585,
+              "observed_reference_range": [
+                5.355,
+                15.426
+              ],
+              "observed_outer_range": [
+                4.6015,
+                16.81
+              ],
+              "golfer_median_range": [
+                7.245,
+                13.9165
+              ]
+            },
+            "stance_ratio": {
+              "source_column": "0-STANCE-RATIO",
+              "unit": "ratio",
+              "description": "어깨 너비 대비 스탠스 너비 비율",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 1.3575,
+              "shot_median": 1.325,
+              "observed_reference_range": [
+                1.07,
+                1.72
+              ],
+              "observed_outer_range": [
+                0.96,
+                1.81
+              ],
+              "golfer_median_range": [
+                1.209,
+                1.727
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "0-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.6225,
+              "shot_median": 0.63,
+              "observed_reference_range": [
+                0.53,
+                0.75
+              ],
+              "observed_outer_range": [
+                0.51,
+                0.79
+              ],
+              "golfer_median_range": [
+                0.591,
+                0.668
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "1-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 529,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": -0.14,
+              "shot_median": -0.17,
+              "observed_reference_range": [
+                -0.48,
+                0.02
+              ],
+              "observed_outer_range": [
+                -0.688,
+                0.076
+              ],
+              "golfer_median_range": [
+                -0.205,
+                0.003
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "1-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 8.1325,
+              "shot_median": 7.355,
+              "observed_reference_range": [
+                0.048,
+                15.059
+              ],
+              "observed_outer_range": [
+                0.0,
+                17.6535
+              ],
+              "golfer_median_range": [
+                4.575,
+                8.6745
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "1-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 528,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.1775,
+              "shot_median": -0.26,
+              "observed_reference_range": [
+                -0.66,
+                -0.02
+              ],
+              "observed_outer_range": [
+                -0.7665,
+                0.05
+              ],
+              "golfer_median_range": [
+                -0.4215,
+                -0.104
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 167.225,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                156.93,
+                180.0
+              ],
+              "observed_outer_range": [
+                133.9155,
+                180.0
+              ],
+              "golfer_median_range": [
+                163.161,
+                171.89
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 157.325,
+              "shot_median": 155.51,
+              "observed_reference_range": [
+                141.169,
+                171.89
+              ],
+              "observed_outer_range": [
+                131.993,
+                180.0
+              ],
+              "golfer_median_range": [
+                149.308,
+                163.046
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "1-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 34.385,
+              "shot_median": 37.09,
+              "observed_reference_range": [
+                16.496,
+                50.0
+              ],
+              "observed_outer_range": [
+                5.6835,
+                54.663
+              ],
+              "golfer_median_range": [
+                21.2475,
+                45.2345
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "2-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 529,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": -0.285,
+              "shot_median": -0.33,
+              "observed_reference_range": [
+                -0.7,
+                -0.038
+              ],
+              "observed_outer_range": [
+                -0.86,
+                0.08
+              ],
+              "golfer_median_range": [
+                -0.418,
+                -0.046
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "2-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 8.27,
+              "shot_median": 8.095,
+              "observed_reference_range": [
+                0.149,
+                18.47
+              ],
+              "observed_outer_range": [
+                0.0,
+                27.097
+              ],
+              "golfer_median_range": [
+                3.353,
+                60.994
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "2-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 528,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.3125,
+              "shot_median": -0.37,
+              "observed_reference_range": [
+                -0.81,
+                -0.02
+              ],
+              "observed_outer_range": [
+                -0.89,
+                0.05
+              ],
+              "golfer_median_range": [
+                -0.552,
+                -0.086
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "2-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 163.87,
+              "shot_median": 163.74,
+              "observed_reference_range": [
+                144.1,
+                180.0
+              ],
+              "observed_outer_range": [
+                102.71,
+                180.0
+              ],
+              "golfer_median_range": [
+                146.963,
+                168.6245
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "2-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 529,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": 51.255,
+              "shot_median": 51.51,
+              "observed_reference_range": [
+                25.776,
+                66.56
+              ],
+              "observed_outer_range": [
+                14.344,
+                70.996
+              ],
+              "golfer_median_range": [
+                29.643,
+                60.425
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "2-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.79,
+              "shot_median": 0.78,
+              "observed_reference_range": [
+                0.7,
+                0.86
+              ],
+              "observed_outer_range": [
+                0.6745,
+                0.8855
+              ],
+              "golfer_median_range": [
+                0.708,
+                0.8115
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "3-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 529,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": -0.45,
+              "shot_median": -0.4,
+              "observed_reference_range": [
+                -0.83,
+                0.132
+              ],
+              "observed_outer_range": [
+                -0.92,
+                0.262
+              ],
+              "golfer_median_range": [
+                -0.6205,
+                -0.2345
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "3-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 8.035,
+              "shot_median": 8.49,
+              "observed_reference_range": [
+                0.0,
+                21.397
+              ],
+              "observed_outer_range": [
+                0.0,
+                173.978
+              ],
+              "golfer_median_range": [
+                4.144,
+                11.487
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "3-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 529,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": -0.4525,
+              "shot_median": -0.4,
+              "observed_reference_range": [
+                -0.742,
+                -0.048
+              ],
+              "observed_outer_range": [
+                -0.85,
+                0.04
+              ],
+              "golfer_median_range": [
+                -0.651,
+                -0.1675
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 530,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 175.945,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                158.43,
+                180.0
+              ],
+              "observed_outer_range": [
+                154.16,
+                180.0
+              ],
+              "golfer_median_range": [
+                166.507,
+                180.0
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "3-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 528,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 57.395,
+              "shot_median": 56.4,
+              "observed_reference_range": [
+                25.574,
+                86.112
+              ],
+              "observed_outer_range": [
+                10.6485,
+                93.011
+              ],
+              "golfer_median_range": [
+                41.582,
+                65.556
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "4-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 527,
+              "coverage": 0.9943,
+              "golfer_count": 8,
+              "target": -0.265,
+              "shot_median": -0.21,
+              "observed_reference_range": [
+                -0.604,
+                0.28
+              ],
+              "observed_outer_range": [
+                -0.74,
+                0.417
+              ],
+              "golfer_median_range": [
+                -0.406,
+                -0.0535
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "4-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 525,
+              "coverage": 0.9906,
+              "golfer_count": 8,
+              "target": 0.295,
+              "shot_median": 0.27,
+              "observed_reference_range": [
+                0.11,
+                0.39
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.438
+              ],
+              "golfer_median_range": [
+                0.206,
+                0.4035
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "4-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 527,
+              "coverage": 0.9943,
+              "golfer_count": 8,
+              "target": 5.835,
+              "shot_median": 5.44,
+              "observed_reference_range": [
+                0.0,
+                16.466
+              ],
+              "observed_outer_range": [
+                0.0,
+                157.278
+              ],
+              "golfer_median_range": [
+                3.955,
+                10.0635
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "4-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 526,
+              "coverage": 0.9925,
+              "golfer_count": 8,
+              "target": 0.005,
+              "shot_median": 0.03,
+              "observed_reference_range": [
+                -0.26,
+                0.25
+              ],
+              "observed_outer_range": [
+                -0.3575,
+                0.31
+              ],
+              "golfer_median_range": [
+                -0.294,
+                0.122
+              ]
+            },
+            "right_armpit_angle": {
+              "source_column": "4-RIGHT-ARMPIT-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 팔꿈치·어깨·골반이 이루는 각도",
+              "value_count": 527,
+              "coverage": 0.9943,
+              "golfer_count": 8,
+              "target": 41.825,
+              "shot_median": 40.54,
+              "observed_reference_range": [
+                19.95,
+                76.11
+              ],
+              "observed_outer_range": [
+                16.26,
+                86.389
+              ],
+              "golfer_median_range": [
+                35.3275,
+                51.512
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "4-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 525,
+              "coverage": 0.9906,
+              "golfer_count": 8,
+              "target": 0.3875,
+              "shot_median": 0.33,
+              "observed_reference_range": [
+                0.084,
+                0.53
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.57
+              ],
+              "golfer_median_range": [
+                0.2555,
+                0.509
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "5-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 522,
+              "coverage": 0.9849,
+              "golfer_count": 8,
+              "target": -0.3025,
+              "shot_median": -0.2,
+              "observed_reference_range": [
+                -0.719,
+                0.3
+              ],
+              "observed_outer_range": [
+                -0.88,
+                0.47
+              ],
+              "golfer_median_range": [
+                -0.4805,
+                0.022
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "5-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 524,
+              "coverage": 0.9887,
+              "golfer_count": 8,
+              "target": 0.1625,
+              "shot_median": 0.15,
+              "observed_reference_range": [
+                0.03,
+                0.26
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.31
+              ],
+              "golfer_median_range": [
+                0.087,
+                0.25
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "5-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 523,
+              "coverage": 0.9868,
+              "golfer_count": 8,
+              "target": 0.3825,
+              "shot_median": 0.4,
+              "observed_reference_range": [
+                0.092,
+                0.658
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.779
+              ],
+              "golfer_median_range": [
+                0.0355,
+                0.493
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "5-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 524,
+              "coverage": 0.9887,
+              "golfer_count": 8,
+              "target": 161.4125,
+              "shot_median": 160.05,
+              "observed_reference_range": [
+                138.59,
+                180.0
+              ],
+              "observed_outer_range": [
+                129.9025,
+                180.0
+              ],
+              "golfer_median_range": [
+                146.828,
+                170.7105
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "5-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 524,
+              "coverage": 0.9887,
+              "golfer_count": 8,
+              "target": 150.8175,
+              "shot_median": 155.51,
+              "observed_reference_range": [
+                129.79,
+                168.52
+              ],
+              "observed_outer_range": [
+                120.402,
+                180.0
+              ],
+              "golfer_median_range": [
+                138.981,
+                156.93
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 523,
+              "coverage": 0.9868,
+              "golfer_count": 8,
+              "target": 18.0875,
+              "shot_median": 18.2,
+              "observed_reference_range": [
+                10.916,
+                27.774
+              ],
+              "observed_outer_range": [
+                9.464,
+                30.025
+              ],
+              "golfer_median_range": [
+                14.705,
+                24.609
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "5-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 524,
+              "coverage": 0.9887,
+              "golfer_count": 8,
+              "target": 0.24,
+              "shot_median": 0.21,
+              "observed_reference_range": [
+                0.04,
+                0.38
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.44
+              ],
+              "golfer_median_range": [
+                0.118,
+                0.354
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "6-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 520,
+              "coverage": 0.9811,
+              "golfer_count": 8,
+              "target": -0.2025,
+              "shot_median": -0.22,
+              "observed_reference_range": [
+                -0.802,
+                0.31
+              ],
+              "observed_outer_range": [
+                -0.9505,
+                0.4105
+              ],
+              "golfer_median_range": [
+                -0.5205,
+                0.1485
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "6-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 520,
+              "coverage": 0.9811,
+              "golfer_count": 8,
+              "target": 0.54,
+              "shot_median": 0.57,
+              "observed_reference_range": [
+                0.189,
+                0.84
+              ],
+              "observed_outer_range": [
+                0.07,
+                0.95
+              ],
+              "golfer_median_range": [
+                0.105,
+                0.719
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "6-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 521,
+              "coverage": 0.983,
+              "golfer_count": 8,
+              "target": 164.725,
+              "shot_median": 165.93,
+              "observed_reference_range": [
+                131.3,
+                180.0
+              ],
+              "observed_outer_range": [
+                70.73,
+                180.0
+              ],
+              "golfer_median_range": [
+                140.083,
+                169.531
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "6-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 521,
+              "coverage": 0.983,
+              "golfer_count": 8,
+              "target": 166.13,
+              "shot_median": 163.74,
+              "observed_reference_range": [
+                148.21,
+                171.89
+              ],
+              "observed_outer_range": [
+                144.1,
+                180.0
+              ],
+              "golfer_median_range": [
+                156.504,
+                170.7105
+              ]
+            },
+            "weight_shift": {
+              "source_column": "6-WEIGHT-SHIFT",
+              "unit": "degree",
+              "description": "왼쪽 발목과 왼쪽 골반을 잇는 선의 각도",
+              "value_count": 521,
+              "coverage": 0.983,
+              "golfer_count": 8,
+              "target": 94.2475,
+              "shot_median": 94.46,
+              "observed_reference_range": [
+                0.0,
+                98.53
+              ],
+              "observed_outer_range": [
+                0.0,
+                98.6
+              ],
+              "golfer_median_range": [
+                88.7205,
+                96.118
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "finish_angle": {
+              "source_column": "7-FINISH-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 발목과 오른쪽 골반을 잇는 선의 각도",
+              "value_count": 515,
+              "coverage": 0.9717,
+              "golfer_count": 8,
+              "target": 86.365,
+              "shot_median": 85.85,
+              "observed_reference_range": [
+                70.754,
+                88.746
+              ],
+              "observed_outer_range": [
+                68.17,
+                90.0
+              ],
+              "golfer_median_range": [
+                71.705,
+                87.375
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "7-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 514,
+              "coverage": 0.9698,
+              "golfer_count": 8,
+              "target": 0.66,
+              "shot_median": 0.66,
+              "observed_reference_range": [
+                0.23,
+                1.03
+              ],
+              "observed_outer_range": [
+                -0.0835,
+                1.1435
+              ],
+              "golfer_median_range": [
+                0.3735,
+                1.015
+              ]
+            }
+          }
+        }
+      }
+    },
+    "faceon_w1": {
+      "view": "FACEON",
+      "club_type": "W1",
+      "candidate_shots": 613,
+      "selected_reference_shots": 265,
+      "selected_golfers": 8,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "shoulder_angle": {
+              "source_column": "0-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 10.385,
+              "shot_median": 11.93,
+              "observed_reference_range": [
+                6.768,
+                16.798
+              ],
+              "observed_outer_range": [
+                5.324,
+                18.194
+              ],
+              "golfer_median_range": [
+                7.985,
+                14.812
+              ]
+            },
+            "stance_ratio": {
+              "source_column": "0-STANCE-RATIO",
+              "unit": "ratio",
+              "description": "어깨 너비 대비 스탠스 너비 비율",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 1.44,
+              "shot_median": 1.47,
+              "observed_reference_range": [
+                1.274,
+                1.8
+              ],
+              "observed_outer_range": [
+                1.22,
+                1.876
+              ],
+              "golfer_median_range": [
+                1.37,
+                1.734
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "0-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.6175,
+              "shot_median": 0.63,
+              "observed_reference_range": [
+                0.53,
+                0.75
+              ],
+              "observed_outer_range": [
+                0.512,
+                0.77
+              ],
+              "golfer_median_range": [
+                0.5895,
+                0.675
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "1-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": -0.085,
+              "shot_median": -0.14,
+              "observed_reference_range": [
+                -0.43,
+                0.05
+              ],
+              "observed_outer_range": [
+                -0.596,
+                0.108
+              ],
+              "golfer_median_range": [
+                -0.2275,
+                -0.0005
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "1-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 8.12,
+              "shot_median": 7.41,
+              "observed_reference_range": [
+                0.234,
+                14.202
+              ],
+              "observed_outer_range": [
+                0.0,
+                16.966
+              ],
+              "golfer_median_range": [
+                4.4645,
+                8.811
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "1-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.175,
+              "shot_median": -0.235,
+              "observed_reference_range": [
+                -0.627,
+                -0.07
+              ],
+              "observed_outer_range": [
+                -0.7185,
+                -0.02
+              ],
+              "golfer_median_range": [
+                -0.4305,
+                -0.122
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 168.52,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                156.93,
+                180.0
+              ],
+              "observed_outer_range": [
+                149.32,
+                180.0
+              ],
+              "golfer_median_range": [
+                163.252,
+                173.1065
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 154.835,
+              "shot_median": 155.51,
+              "observed_reference_range": [
+                137.73,
+                171.89
+              ],
+              "observed_outer_range": [
+                126.024,
+                180.0
+              ],
+              "golfer_median_range": [
+                147.3585,
+                163.046
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "1-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 36.725,
+              "shot_median": 41.64,
+              "observed_reference_range": [
+                27.3,
+                53.84
+              ],
+              "observed_outer_range": [
+                22.674,
+                57.152
+              ],
+              "golfer_median_range": [
+                29.936,
+                47.5845
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "2-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": -0.3,
+              "shot_median": -0.29,
+              "observed_reference_range": [
+                -0.65,
+                0.01
+              ],
+              "observed_outer_range": [
+                -0.814,
+                0.21
+              ],
+              "golfer_median_range": [
+                -0.3945,
+                -0.025
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "2-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 7.99,
+              "shot_median": 7.95,
+              "observed_reference_range": [
+                0.0,
+                18.864
+              ],
+              "observed_outer_range": [
+                0.0,
+                165.078
+              ],
+              "golfer_median_range": [
+                3.522,
+                60.994
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "2-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 263,
+              "coverage": 0.9925,
+              "golfer_count": 8,
+              "target": -0.28,
+              "shot_median": -0.32,
+              "observed_reference_range": [
+                -0.76,
+                -0.102
+              ],
+              "observed_outer_range": [
+                -0.849,
+                -0.061
+              ],
+              "golfer_median_range": [
+                -0.5595,
+                -0.117
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "2-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 168.52,
+              "shot_median": 165.93,
+              "observed_reference_range": [
+                146.1,
+                180.0
+              ],
+              "observed_outer_range": [
+                125.758,
+                180.0
+              ],
+              "golfer_median_range": [
+                146.963,
+                171.89
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "2-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 52.68,
+              "shot_median": 55.755,
+              "observed_reference_range": [
+                32.721,
+                68.814
+              ],
+              "observed_outer_range": [
+                10.97,
+                72.3485
+              ],
+              "golfer_median_range": [
+                30.966,
+                62.138
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "2-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.775,
+              "shot_median": 0.77,
+              "observed_reference_range": [
+                0.7,
+                0.84
+              ],
+              "observed_outer_range": [
+                0.68,
+                0.86
+              ],
+              "golfer_median_range": [
+                0.7045,
+                0.8115
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "3-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.475,
+              "shot_median": -0.38,
+              "observed_reference_range": [
+                -0.75,
+                0.197
+              ],
+              "observed_outer_range": [
+                -0.83,
+                0.3285
+              ],
+              "golfer_median_range": [
+                -0.663,
+                -0.181
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "3-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 7.97,
+              "shot_median": 8.37,
+              "observed_reference_range": [
+                1.04,
+                21.04
+              ],
+              "observed_outer_range": [
+                0.0,
+                174.538
+              ],
+              "golfer_median_range": [
+                5.5795,
+                11.487
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "3-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.445,
+              "shot_median": -0.375,
+              "observed_reference_range": [
+                -0.7,
+                -0.08
+              ],
+              "observed_outer_range": [
+                -0.7585,
+                -0.0215
+              ],
+              "golfer_median_range": [
+                -0.6215,
+                -0.218
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 173.9175,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                158.43,
+                180.0
+              ],
+              "observed_outer_range": [
+                155.51,
+                180.0
+              ],
+              "golfer_median_range": [
+                165.979,
+                180.0
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "3-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 58.66,
+              "shot_median": 58.31,
+              "observed_reference_range": [
+                33.378,
+                86.594
+              ],
+              "observed_outer_range": [
+                3.786,
+                96.246
+              ],
+              "golfer_median_range": [
+                46.689,
+                66.2655
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "4-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": -0.2525,
+              "shot_median": -0.19,
+              "observed_reference_range": [
+                -0.55,
+                0.302
+              ],
+              "observed_outer_range": [
+                -0.666,
+                0.42
+              ],
+              "golfer_median_range": [
+                -0.406,
+                -0.0135
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "4-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.31,
+              "shot_median": 0.29,
+              "observed_reference_range": [
+                0.16,
+                0.426
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.46
+              ],
+              "golfer_median_range": [
+                0.251,
+                0.4035
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "4-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 5.205,
+              "shot_median": 4.86,
+              "observed_reference_range": [
+                0.0,
+                16.802
+              ],
+              "observed_outer_range": [
+                0.0,
+                167.348
+              ],
+              "golfer_median_range": [
+                3.976,
+                10.333
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "4-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.03,
+              "shot_median": 0.02,
+              "observed_reference_range": [
+                -0.34,
+                0.217
+              ],
+              "observed_outer_range": [
+                -0.3985,
+                0.28
+              ],
+              "golfer_median_range": [
+                -0.294,
+                0.096
+              ]
+            },
+            "right_armpit_angle": {
+              "source_column": "4-RIGHT-ARMPIT-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 팔꿈치·어깨·골반이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 41.41,
+              "shot_median": 37.81,
+              "observed_reference_range": [
+                19.95,
+                77.644
+              ],
+              "observed_outer_range": [
+                16.26,
+                87.13
+              ],
+              "golfer_median_range": [
+                31.51,
+                50.6835
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "4-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.4525,
+              "shot_median": 0.4,
+              "observed_reference_range": [
+                0.22,
+                0.57
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.628
+              ],
+              "golfer_median_range": [
+                0.322,
+                0.509
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "5-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": -0.365,
+              "shot_median": -0.24,
+              "observed_reference_range": [
+                -0.777,
+                0.387
+              ],
+              "observed_outer_range": [
+                -0.927,
+                0.5285
+              ],
+              "golfer_median_range": [
+                -0.5155,
+                0.2275
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "5-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.1875,
+              "shot_median": 0.18,
+              "observed_reference_range": [
+                0.08,
+                0.29
+              ],
+              "observed_outer_range": [
+                0.03,
+                0.33
+              ],
+              "golfer_median_range": [
+                0.145,
+                0.25
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "5-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 0.365,
+              "shot_median": 0.35,
+              "observed_reference_range": [
+                0.043,
+                0.6
+              ],
+              "observed_outer_range": [
+                -0.05,
+                0.6885
+              ],
+              "golfer_median_range": [
+                0.0355,
+                0.4665
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "5-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 162.585,
+              "shot_median": 161.81,
+              "observed_reference_range": [
+                140.714,
+                180.0
+              ],
+              "observed_outer_range": [
+                134.59,
+                180.0
+              ],
+              "golfer_median_range": [
+                146.675,
+                171.89
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "5-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 149.32,
+              "shot_median": 151.64,
+              "observed_reference_range": [
+                129.05,
+                163.74
+              ],
+              "observed_outer_range": [
+                120.536,
+                168.52
+              ],
+              "golfer_median_range": [
+                140.7975,
+                154.088
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 20.2975,
+              "shot_median": 20.84,
+              "observed_reference_range": [
+                12.455,
+                29.596
+              ],
+              "observed_outer_range": [
+                9.641,
+                32.237
+              ],
+              "golfer_median_range": [
+                13.869,
+                25.0325
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "5-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 265,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 0.2725,
+              "shot_median": 0.29,
+              "observed_reference_range": [
+                0.17,
+                0.436
+              ],
+              "observed_outer_range": [
+                0.112,
+                0.48
+              ],
+              "golfer_median_range": [
+                0.1835,
+                0.354
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "6-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 263,
+              "coverage": 0.9925,
+              "golfer_count": 8,
+              "target": -0.1875,
+              "shot_median": -0.27,
+              "observed_reference_range": [
+                -0.89,
+                0.318
+              ],
+              "observed_outer_range": [
+                -0.977,
+                0.45
+              ],
+              "golfer_median_range": [
+                -0.608,
+                0.259
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "6-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 263,
+              "coverage": 0.9925,
+              "golfer_count": 8,
+              "target": 0.4675,
+              "shot_median": 0.47,
+              "observed_reference_range": [
+                0.102,
+                0.72
+              ],
+              "observed_outer_range": [
+                0.05,
+                0.819
+              ],
+              "golfer_median_range": [
+                0.105,
+                0.6835
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "6-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 162.775,
+              "shot_median": 165.93,
+              "observed_reference_range": [
+                132.239,
+                180.0
+              ],
+              "observed_outer_range": [
+                98.0805,
+                180.0
+              ],
+              "golfer_median_range": [
+                143.318,
+                170.7105
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "6-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 166.6775,
+              "shot_median": 165.93,
+              "observed_reference_range": [
+                151.64,
+                171.89
+              ],
+              "observed_outer_range": [
+                148.21,
+                180.0
+              ],
+              "golfer_median_range": [
+                155.712,
+                171.89
+              ]
+            },
+            "weight_shift": {
+              "source_column": "6-WEIGHT-SHIFT",
+              "unit": "degree",
+              "description": "왼쪽 발목과 왼쪽 골반을 잇는 선의 각도",
+              "value_count": 264,
+              "coverage": 0.9962,
+              "golfer_count": 8,
+              "target": 92.795,
+              "shot_median": 92.89,
+              "observed_reference_range": [
+                86.906,
+                97.189
+              ],
+              "observed_outer_range": [
+                84.3755,
+                98.497
+              ],
+              "golfer_median_range": [
+                88.7205,
+                95.693
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "finish_angle": {
+              "source_column": "7-FINISH-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 발목과 오른쪽 골반을 잇는 선의 각도",
+              "value_count": 261,
+              "coverage": 0.9849,
+              "golfer_count": 8,
+              "target": 83.815,
+              "shot_median": 82.64,
+              "observed_reference_range": [
+                68.96,
+                88.7
+              ],
+              "observed_outer_range": [
+                65.22,
+                90.0
+              ],
+              "golfer_median_range": [
+                71.446,
+                86.479
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "7-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 260,
+              "coverage": 0.9811,
+              "golfer_count": 8,
+              "target": 0.6575,
+              "shot_median": 0.6,
+              "observed_reference_range": [
+                0.139,
+                0.981
+              ],
+              "observed_outer_range": [
+                -0.0705,
+                1.0715
+              ],
+              "golfer_median_range": [
+                0.2335,
+                0.899
+              ]
+            }
+          }
+        }
+      }
+    },
+    "faceon_i7": {
+      "view": "FACEON",
+      "club_type": "I7",
+      "candidate_shots": 159,
+      "selected_reference_shots": 136,
+      "selected_golfers": 4,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "shoulder_angle": {
+              "source_column": "0-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 8.425,
+              "shot_median": 8.73,
+              "observed_reference_range": [
+                5.245,
+                12.21
+              ],
+              "observed_outer_range": [
+                3.46,
+                12.495
+              ],
+              "golfer_median_range": [
+                6.5095,
+                9.182
+              ]
+            },
+            "stance_ratio": {
+              "source_column": "0-STANCE-RATIO",
+              "unit": "ratio",
+              "description": "어깨 너비 대비 스탠스 너비 비율",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 1.185,
+              "shot_median": 1.17,
+              "observed_reference_range": [
+                1.0,
+                1.305
+              ],
+              "observed_outer_range": [
+                0.9575,
+                1.36
+              ],
+              "golfer_median_range": [
+                1.072,
+                1.242
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "0-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 0.675,
+              "shot_median": 0.63,
+              "observed_reference_range": [
+                0.54,
+                0.77
+              ],
+              "observed_outer_range": [
+                0.51,
+                0.81
+              ],
+              "golfer_median_range": [
+                0.5885,
+                0.751
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "1-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 135,
+              "coverage": 0.9926,
+              "golfer_count": 4,
+              "target": -0.13,
+              "shot_median": -0.19,
+              "observed_reference_range": [
+                -0.436,
+                0.006
+              ],
+              "observed_outer_range": [
+                -0.49,
+                0.023
+              ],
+              "golfer_median_range": [
+                -0.2155,
+                -0.034
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "1-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 7.165,
+              "shot_median": 7.405,
+              "observed_reference_range": [
+                0.0,
+                16.03
+              ],
+              "observed_outer_range": [
+                0.0,
+                19.13
+              ],
+              "golfer_median_range": [
+                5.2055,
+                7.959
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "1-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": -0.19,
+              "shot_median": -0.37,
+              "observed_reference_range": [
+                -0.635,
+                -0.015
+              ],
+              "observed_outer_range": [
+                -0.6675,
+                0.0725
+              ],
+              "golfer_median_range": [
+                -0.451,
+                -0.069
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 167.225,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                155.51,
+                180.0
+              ],
+              "observed_outer_range": [
+                122.955,
+                180.0
+              ],
+              "golfer_median_range": [
+                158.636,
+                170.879
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 156.93,
+              "shot_median": 156.93,
+              "observed_reference_range": [
+                143.13,
+                168.52
+              ],
+              "observed_outer_range": [
+                140.1275,
+                173.9175
+              ],
+              "golfer_median_range": [
+                152.401,
+                159.114
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "1-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 20.7475,
+              "shot_median": 30.82,
+              "observed_reference_range": [
+                11.52,
+                42.44
+              ],
+              "observed_outer_range": [
+                5.3375,
+                45.28
+              ],
+              "golfer_median_range": [
+                12.486,
+                34.4795
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "2-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 135,
+              "coverage": 0.9926,
+              "golfer_count": 4,
+              "target": -0.315,
+              "shot_median": -0.38,
+              "observed_reference_range": [
+                -0.672,
+                -0.11
+              ],
+              "observed_outer_range": [
+                -0.81,
+                -0.027
+              ],
+              "golfer_median_range": [
+                -0.4385,
+                -0.1775
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "2-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 8.32,
+              "shot_median": 8.11,
+              "observed_reference_range": [
+                0.9,
+                18.935
+              ],
+              "observed_outer_range": [
+                0.0,
+                22.4375
+              ],
+              "golfer_median_range": [
+                4.2795,
+                9.361
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "2-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": -0.295,
+              "shot_median": -0.54,
+              "observed_reference_range": [
+                -0.795,
+                -0.005
+              ],
+              "observed_outer_range": [
+                -0.8625,
+                0.05
+              ],
+              "golfer_median_range": [
+                -0.589,
+                -0.0675
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "2-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 163.2575,
+              "shot_median": 163.74,
+              "observed_reference_range": [
+                146.62,
+                171.89
+              ],
+              "observed_outer_range": [
+                81.1275,
+                180.0
+              ],
+              "golfer_median_range": [
+                155.411,
+                165.273
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "2-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 35.5275,
+              "shot_median": 45.485,
+              "observed_reference_range": [
+                25.82,
+                62.75
+              ],
+              "observed_outer_range": [
+                18.9275,
+                66.5875
+              ],
+              "golfer_median_range": [
+                28.6085,
+                48.3335
+              ]
+            },
+            "upper_tilt": {
+              "source_column": "2-UPPER-TILT",
+              "unit": "ratio",
+              "description": "하체 대비 상체 기울기 비율",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 0.815,
+              "shot_median": 0.8,
+              "observed_reference_range": [
+                0.71,
+                0.89
+              ],
+              "observed_outer_range": [
+                0.68,
+                0.905
+              ],
+              "golfer_median_range": [
+                0.74,
+                0.862
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "3-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": -0.385,
+              "shot_median": -0.44,
+              "observed_reference_range": [
+                -0.875,
+                0.0
+              ],
+              "observed_outer_range": [
+                -0.9875,
+                0.12
+              ],
+              "golfer_median_range": [
+                -0.691,
+                -0.198
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "3-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 10.05,
+              "shot_median": 8.665,
+              "observed_reference_range": [
+                0.435,
+                22.62
+              ],
+              "observed_outer_range": [
+                0.0,
+                174.655
+              ],
+              "golfer_median_range": [
+                2.7525,
+                16.343
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "3-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": -0.32,
+              "shot_median": -0.445,
+              "observed_reference_range": [
+                -0.78,
+                -0.12
+              ],
+              "observed_outer_range": [
+                -0.8525,
+                -0.01
+              ],
+              "golfer_median_range": [
+                -0.535,
+                -0.1995
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 175.945,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                157.68,
+                180.0
+              ],
+              "observed_outer_range": [
+                154.16,
+                180.0
+              ],
+              "golfer_median_range": [
+                164.834,
+                180.0
+              ]
+            },
+            "shoulder_loc": {
+              "source_column": "3-SHOULDER-LOC",
+              "unit": "ratio",
+              "description": "스탠스 너비 안에서 왼쪽 어깨의 상대 위치",
+              "value_count": 136,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 46.435,
+              "shot_median": 51.86,
+              "observed_reference_range": [
+                25.025,
+                83.085
+              ],
+              "observed_outer_range": [
+                15.105,
+                97.9
+              ],
+              "golfer_median_range": [
+                37.441,
+                63.3915
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "4-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 134,
+              "coverage": 0.9853,
+              "golfer_count": 4,
+              "target": -0.1975,
+              "shot_median": -0.21,
+              "observed_reference_range": [
+                -0.634,
+                0.114
+              ],
+              "observed_outer_range": [
+                -0.7335,
+                0.2435
+              ],
+              "golfer_median_range": [
+                -0.3995,
+                0.0395
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "4-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 133,
+              "coverage": 0.9779,
+              "golfer_count": 4,
+              "target": 0.235,
+              "shot_median": 0.26,
+              "observed_reference_range": [
+                0.11,
+                0.36
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.398
+              ],
+              "golfer_median_range": [
+                0.1655,
+                0.287
+              ]
+            },
+            "hip_rotation": {
+              "source_column": "4-HIP-ROTATION",
+              "unit": "degree",
+              "description": "어드레스 대비 골반 회전 각도",
+              "value_count": 134,
+              "coverage": 0.9853,
+              "golfer_count": 4,
+              "target": 7.6,
+              "shot_median": 7.55,
+              "observed_reference_range": [
+                0.0,
+                18.986
+              ],
+              "observed_outer_range": [
+                0.0,
+                167.6345
+              ],
+              "golfer_median_range": [
+                5.5045,
+                14.319
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "4-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 134,
+              "coverage": 0.9853,
+              "golfer_count": 4,
+              "target": 0.0425,
+              "shot_median": 0.02,
+              "observed_reference_range": [
+                -0.227,
+                0.224
+              ],
+              "observed_outer_range": [
+                -0.267,
+                0.28
+              ],
+              "golfer_median_range": [
+                -0.017,
+                0.116
+              ]
+            },
+            "right_armpit_angle": {
+              "source_column": "4-RIGHT-ARMPIT-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 팔꿈치·어깨·골반이 이루는 각도",
+              "value_count": 134,
+              "coverage": 0.9853,
+              "golfer_count": 4,
+              "target": 53.04,
+              "shot_median": 44.77,
+              "observed_reference_range": [
+                23.07,
+                79.456
+              ],
+              "observed_outer_range": [
+                18.19,
+                84.463
+              ],
+              "golfer_median_range": [
+                41.186,
+                66.406
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "4-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 133,
+              "coverage": 0.9779,
+              "golfer_count": 4,
+              "target": 0.22,
+              "shot_median": 0.28,
+              "observed_reference_range": [
+                0.072,
+                0.44
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.48
+              ],
+              "golfer_median_range": [
+                0.1655,
+                0.2955
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "5-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 131,
+              "coverage": 0.9632,
+              "golfer_count": 4,
+              "target": -0.165,
+              "shot_median": -0.13,
+              "observed_reference_range": [
+                -0.61,
+                0.13
+              ],
+              "observed_outer_range": [
+                -0.695,
+                0.27
+              ],
+              "golfer_median_range": [
+                -0.438,
+                -0.095
+              ]
+            },
+            "hip_hanging_back": {
+              "source_column": "5-HIP-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 골반의 상대 거리",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 0.11,
+              "shot_median": 0.13,
+              "observed_reference_range": [
+                0.003,
+                0.219
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.2345
+              ],
+              "golfer_median_range": [
+                0.066,
+                0.154
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "5-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 0.44,
+              "shot_median": 0.43,
+              "observed_reference_range": [
+                0.221,
+                0.669
+              ],
+              "observed_outer_range": [
+                0.1655,
+                0.7045
+              ],
+              "golfer_median_range": [
+                0.3645,
+                0.4945
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "5-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 160.12,
+              "shot_median": 158.43,
+              "observed_reference_range": [
+                140.441,
+                171.553
+              ],
+              "observed_outer_range": [
+                130.958,
+                171.89
+              ],
+              "golfer_median_range": [
+                153.264,
+                166.507
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "5-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 156.595,
+              "shot_median": 160.05,
+              "observed_reference_range": [
+                133.79,
+                171.89
+              ],
+              "observed_outer_range": [
+                124.9845,
+                180.0
+              ],
+              "golfer_median_range": [
+                147.057,
+                160.358
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 15.6,
+              "shot_median": 15.495,
+              "observed_reference_range": [
+                10.558,
+                21.45
+              ],
+              "observed_outer_range": [
+                8.922,
+                23.8505
+              ],
+              "golfer_median_range": [
+                14.564,
+                17.448
+              ]
+            },
+            "shoulder_hanging_back": {
+              "source_column": "5-SHOULDER-HANGING-BACK",
+              "unit": "ratio",
+              "description": "스탠스 너비 대비 왼쪽 발목과 어깨의 상대 거리",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 0.1025,
+              "shot_median": 0.13,
+              "observed_reference_range": [
+                0.03,
+                0.24
+              ],
+              "observed_outer_range": [
+                0.0,
+                0.3
+              ],
+              "golfer_median_range": [
+                0.0745,
+                0.155
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "head_loc": {
+              "source_column": "6-HEAD-LOC",
+              "unit": "ratio",
+              "description": "어드레스 대비 머리 위치 변화",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": -0.05,
+              "shot_median": -0.095,
+              "observed_reference_range": [
+                -0.675,
+                0.25
+              ],
+              "observed_outer_range": [
+                -0.7445,
+                0.3335
+              ],
+              "golfer_median_range": [
+                -0.381,
+                0.001
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "6-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 0.6175,
+              "shot_median": 0.63,
+              "observed_reference_range": [
+                0.381,
+                0.84
+              ],
+              "observed_outer_range": [
+                0.201,
+                0.92
+              ],
+              "golfer_median_range": [
+                0.5915,
+                0.731
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "6-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 168.91,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                139.549,
+                180.0
+              ],
+              "observed_outer_range": [
+                64.1205,
+                180.0
+              ],
+              "golfer_median_range": [
+                165.1635,
+                177.567
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "6-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 156.93,
+              "shot_median": 158.43,
+              "observed_reference_range": [
+                144.198,
+                171.553
+              ],
+              "observed_outer_range": [
+                143.13,
+                180.0
+              ],
+              "golfer_median_range": [
+                156.93,
+                167.402
+              ]
+            },
+            "weight_shift": {
+              "source_column": "6-WEIGHT-SHIFT",
+              "unit": "degree",
+              "description": "왼쪽 발목과 왼쪽 골반을 잇는 선의 각도",
+              "value_count": 132,
+              "coverage": 0.9706,
+              "golfer_count": 4,
+              "target": 96.285,
+              "shot_median": 96.8,
+              "observed_reference_range": [
+                0.0,
+                98.589
+              ],
+              "observed_outer_range": [
+                0.0,
+                98.6345
+              ],
+              "golfer_median_range": [
+                95.594,
+                97.018
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "finish_angle": {
+              "source_column": "7-FINISH-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 발목과 오른쪽 골반을 잇는 선의 각도",
+              "value_count": 131,
+              "coverage": 0.9632,
+              "golfer_count": 4,
+              "target": 87.85,
+              "shot_median": 87.29,
+              "observed_reference_range": [
+                83.55,
+                88.84
+              ],
+              "observed_outer_range": [
+                82.665,
+                90.0
+              ],
+              "golfer_median_range": [
+                85.679,
+                88.572
+              ]
+            },
+            "hip_shifted": {
+              "source_column": "7-HIP-SHIFTED",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반 위치 이동",
+              "value_count": 131,
+              "coverage": 0.9632,
+              "golfer_count": 4,
+              "target": 0.835,
+              "shot_median": 0.71,
+              "observed_reference_range": [
+                0.39,
+                0.99
+              ],
+              "observed_outer_range": [
+                -5.765,
+                1.075
+              ],
+              "golfer_median_range": [
+                0.677,
+                0.8705
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dtl_all": {
+      "view": "DTL",
+      "club_type": "ALL",
+      "candidate_shots": 833,
+      "selected_reference_shots": 520,
+      "selected_golfers": 8,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "lower_angle": {
+              "source_column": "0-LOWER-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 502,
+              "coverage": 0.9654,
+              "golfer_count": 8,
+              "target": 163.74,
+              "shot_median": 160.05,
+              "observed_reference_range": [
+                149.32,
+                168.52
+              ],
+              "observed_outer_range": [
+                147.14,
+                171.89
+              ],
+              "golfer_median_range": [
+                154.291,
+                166.707
+              ]
+            },
+            "spine_angle": {
+              "source_column": "0-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 493,
+              "coverage": 0.9481,
+              "golfer_count": 8,
+              "target": 71.51,
+              "shot_median": 66.84,
+              "observed_reference_range": [
+                57.36,
+                78.478
+              ],
+              "observed_outer_range": [
+                55.382,
+                81.17
+              ],
+              "golfer_median_range": [
+                62.6215,
+                78.481
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "1-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 447,
+              "coverage": 0.8596,
+              "golfer_count": 8,
+              "target": 0.0625,
+              "shot_median": 0.06,
+              "observed_reference_range": [
+                -0.08,
+                0.174
+              ],
+              "observed_outer_range": [
+                -0.127,
+                0.21
+              ],
+              "golfer_median_range": [
+                -0.024,
+                0.2245
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 387,
+              "coverage": 0.7442,
+              "golfer_count": 8,
+              "target": 170.205,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                150.46,
+                180.0
+              ],
+              "observed_outer_range": [
+                144.1,
+                180.0
+              ],
+              "golfer_median_range": [
+                159.564,
+                180.0
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 503,
+              "coverage": 0.9673,
+              "golfer_count": 8,
+              "target": 128.5025,
+              "shot_median": 132.07,
+              "observed_reference_range": [
+                115.47,
+                149.32
+              ],
+              "observed_outer_range": [
+                109.27,
+                154.031
+              ],
+              "golfer_median_range": [
+                120.1425,
+                138.465
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "1-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 517,
+              "coverage": 0.9942,
+              "golfer_count": 8,
+              "target": 24.23,
+              "shot_median": 25.18,
+              "observed_reference_range": [
+                15.528,
+                36.148
+              ],
+              "observed_outer_range": [
+                12.96,
+                37.622
+              ],
+              "golfer_median_range": [
+                17.5045,
+                28.0915
+              ]
+            },
+            "spine_angle": {
+              "source_column": "1-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 508,
+              "coverage": 0.9769,
+              "golfer_count": 8,
+              "target": 73.1525,
+              "shot_median": 71.4,
+              "observed_reference_range": [
+                60.81,
+                80.452
+              ],
+              "observed_outer_range": [
+                58.9445,
+                82.3925
+              ],
+              "golfer_median_range": [
+                65.9095,
+                79.155
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "2-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 520,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 11.19,
+              "shot_median": 10.51,
+              "observed_reference_range": [
+                4.86,
+                18.272
+              ],
+              "observed_outer_range": [
+                4.267,
+                20.6305
+              ],
+              "golfer_median_range": [
+                8.922,
+                12.8445
+              ]
+            },
+            "hip_line": {
+              "source_column": "2-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 461,
+              "coverage": 0.8865,
+              "golfer_count": 8,
+              "target": 0.0975,
+              "shot_median": 0.1,
+              "observed_reference_range": [
+                -0.06,
+                0.22
+              ],
+              "observed_outer_range": [
+                -0.1,
+                0.25
+              ],
+              "golfer_median_range": [
+                0.0095,
+                0.199
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "2-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 512,
+              "coverage": 0.9846,
+              "golfer_count": 8,
+              "target": 21.53,
+              "shot_median": 24.175,
+              "observed_reference_range": [
+                13.92,
+                33.69
+              ],
+              "observed_outer_range": [
+                11.7055,
+                35.689
+              ],
+              "golfer_median_range": [
+                15.936,
+                27.93
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "3-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 520,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 10.6075,
+              "shot_median": 10.37,
+              "observed_reference_range": [
+                0.0,
+                17.101
+              ],
+              "observed_outer_range": [
+                0.0,
+                18.6485
+              ],
+              "golfer_median_range": [
+                5.623,
+                12.88
+              ]
+            },
+            "hip_line": {
+              "source_column": "3-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 489,
+              "coverage": 0.9404,
+              "golfer_count": 8,
+              "target": 0.17,
+              "shot_median": 0.15,
+              "observed_reference_range": [
+                -0.04,
+                0.28
+              ],
+              "observed_outer_range": [
+                -0.09,
+                0.33
+              ],
+              "golfer_median_range": [
+                0.083,
+                0.256
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "3-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 482,
+              "coverage": 0.9269,
+              "golfer_count": 8,
+              "target": 145.08,
+              "shot_median": 140.35,
+              "observed_reference_range": [
+                129.05,
+                156.93
+              ],
+              "observed_outer_range": [
+                126.906,
+                160.05
+              ],
+              "golfer_median_range": [
+                133.63,
+                162.428
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "3-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 508,
+              "coverage": 0.9769,
+              "golfer_count": 8,
+              "target": 68.895,
+              "shot_median": 72.54,
+              "observed_reference_range": [
+                55.25,
+                89.43
+              ],
+              "observed_outer_range": [
+                50.21,
+                95.914
+              ],
+              "golfer_median_range": [
+                60.4495,
+                85.2825
+              ]
+            },
+            "right_distance": {
+              "source_column": "3-RIGHT-DISTANCE",
+              "unit": "ratio",
+              "description": "오른쪽 팔꿈치와 몸통 사이 거리",
+              "value_count": 512,
+              "coverage": 0.9846,
+              "golfer_count": 8,
+              "target": 0.6125,
+              "shot_median": 0.63,
+              "observed_reference_range": [
+                0.491,
+                0.71
+              ],
+              "observed_outer_range": [
+                0.4555,
+                0.73
+              ],
+              "golfer_median_range": [
+                0.567,
+                0.652
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 519,
+              "coverage": 0.9981,
+              "golfer_count": 8,
+              "target": 173.9175,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                155.51,
+                180.0
+              ],
+              "observed_outer_range": [
+                150.346,
+                180.0
+              ],
+              "golfer_median_range": [
+                166.243,
+                180.0
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "3-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 473,
+              "coverage": 0.9096,
+              "golfer_count": 8,
+              "target": 16.865,
+              "shot_median": 19.19,
+              "observed_reference_range": [
+                9.052,
+                27.716
+              ],
+              "observed_outer_range": [
+                6.962,
+                28.95
+              ],
+              "golfer_median_range": [
+                14.485,
+                21.874
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "4-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 514,
+              "coverage": 0.9885,
+              "golfer_count": 8,
+              "target": 8.7975,
+              "shot_median": 7.78,
+              "observed_reference_range": [
+                0.0,
+                18.964
+              ],
+              "observed_outer_range": [
+                0.0,
+                21.5765
+              ],
+              "golfer_median_range": [
+                5.7635,
+                14.178
+              ]
+            },
+            "hip_line": {
+              "source_column": "4-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 501,
+              "coverage": 0.9635,
+              "golfer_count": 8,
+              "target": 0.255,
+              "shot_median": 0.23,
+              "observed_reference_range": [
+                0.11,
+                0.39
+              ],
+              "observed_outer_range": [
+                0.07,
+                0.43
+              ],
+              "golfer_median_range": [
+                0.185,
+                0.3435
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "4-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 508,
+              "coverage": 0.9769,
+              "golfer_count": 8,
+              "target": 49.8025,
+              "shot_median": 54.195,
+              "observed_reference_range": [
+                16.26,
+                92.87
+              ],
+              "observed_outer_range": [
+                9.2895,
+                109.8495
+              ],
+              "golfer_median_range": [
+                26.125,
+                66.168
+              ]
+            },
+            "spine_angle": {
+              "source_column": "4-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 512,
+              "coverage": 0.9846,
+              "golfer_count": 8,
+              "target": 72.88,
+              "shot_median": 73.125,
+              "observed_reference_range": [
+                64.48,
+                83.379
+              ],
+              "observed_outer_range": [
+                62.363,
+                86.0705
+              ],
+              "golfer_median_range": [
+                69.721,
+                80.447
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "5-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 476,
+              "coverage": 0.9154,
+              "golfer_count": 8,
+              "target": 0.265,
+              "shot_median": 0.2,
+              "observed_reference_range": [
+                0.02,
+                0.4
+              ],
+              "observed_outer_range": [
+                -0.0625,
+                0.4725
+              ],
+              "golfer_median_range": [
+                0.067,
+                0.369
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "5-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 508,
+              "coverage": 0.9769,
+              "golfer_count": 8,
+              "target": 168.52,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                161.81,
+                180.0
+              ],
+              "observed_outer_range": [
+                158.43,
+                180.0
+              ],
+              "golfer_median_range": [
+                164.6425,
+                171.89
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 480,
+              "coverage": 0.9231,
+              "golfer_count": 8,
+              "target": 27.83,
+              "shot_median": 26.57,
+              "observed_reference_range": [
+                0.0,
+                63.43
+              ],
+              "observed_outer_range": [
+                0.0,
+                71.93
+              ],
+              "golfer_median_range": [
+                13.3435,
+                43.9205
+              ]
+            },
+            "spine_angle": {
+              "source_column": "5-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 504,
+              "coverage": 0.9692,
+              "golfer_count": 8,
+              "target": 74.26,
+              "shot_median": 73.67,
+              "observed_reference_range": [
+                63.773,
+                86.421
+              ],
+              "observed_outer_range": [
+                62.4405,
+                88.1255
+              ],
+              "golfer_median_range": [
+                70.3525,
+                86.322
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "6-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 491,
+              "coverage": 0.9442,
+              "golfer_count": 8,
+              "target": 15.805,
+              "shot_median": 15.72,
+              "observed_reference_range": [
+                5.39,
+                25.88
+              ],
+              "observed_outer_range": [
+                0.0,
+                29.52
+              ],
+              "golfer_median_range": [
+                4.214,
+                19.113
+              ]
+            },
+            "hip_line": {
+              "source_column": "6-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 473,
+              "coverage": 0.9096,
+              "golfer_count": 8,
+              "target": 0.29,
+              "shot_median": 0.21,
+              "observed_reference_range": [
+                0.032,
+                0.4
+              ],
+              "observed_outer_range": [
+                -0.02,
+                0.46
+              ],
+              "golfer_median_range": [
+                0.079,
+                0.3365
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "6-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 501,
+              "coverage": 0.9635,
+              "golfer_count": 8,
+              "target": 39.1925,
+              "shot_median": 42.81,
+              "observed_reference_range": [
+                25.02,
+                56.31
+              ],
+              "observed_outer_range": [
+                21.33,
+                61.05
+              ],
+              "golfer_median_range": [
+                23.222,
+                46.941
+              ]
+            },
+            "spine_angle": {
+              "source_column": "6-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 495,
+              "coverage": 0.9519,
+              "golfer_count": 8,
+              "target": 72.47,
+              "shot_median": 73.73,
+              "observed_reference_range": [
+                63.162,
+                84.764
+              ],
+              "observed_outer_range": [
+                60.991,
+                87.017
+              ],
+              "golfer_median_range": [
+                70.9595,
+                82.922
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "7-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 493,
+              "coverage": 0.9481,
+              "golfer_count": 8,
+              "target": 5.31,
+              "shot_median": 4.99,
+              "observed_reference_range": [
+                0.0,
+                11.168
+              ],
+              "observed_outer_range": [
+                0.0,
+                14.592
+              ],
+              "golfer_median_range": [
+                0.0,
+                6.9225
+              ]
+            },
+            "hip_line": {
+              "source_column": "7-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 481,
+              "coverage": 0.925,
+              "golfer_count": 8,
+              "target": 0.5225,
+              "shot_median": 0.53,
+              "observed_reference_range": [
+                0.32,
+                0.74
+              ],
+              "observed_outer_range": [
+                0.26,
+                0.79
+              ],
+              "golfer_median_range": [
+                0.467,
+                0.7795
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "7-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 494,
+              "coverage": 0.95,
+              "golfer_count": 8,
+              "target": 10.7125,
+              "shot_median": 12.045,
+              "observed_reference_range": [
+                3.356,
+                25.272
+              ],
+              "observed_outer_range": [
+                0.0,
+                29.6685
+              ],
+              "golfer_median_range": [
+                4.0775,
+                18.583
+              ]
+            },
+            "spine_angle": {
+              "source_column": "7-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 496,
+              "coverage": 0.9538,
+              "golfer_count": 8,
+              "target": 83.525,
+              "shot_median": 83.39,
+              "observed_reference_range": [
+                75.43,
+                89.105
+              ],
+              "observed_outer_range": [
+                73.0175,
+                89.545
+              ],
+              "golfer_median_range": [
+                78.8275,
+                86.956
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dtl_w1": {
+      "view": "DTL",
+      "club_type": "W1",
+      "candidate_shots": 524,
+      "selected_reference_shots": 256,
+      "selected_golfers": 8,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "lower_angle": {
+              "source_column": "0-LOWER-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 240,
+              "coverage": 0.9375,
+              "golfer_count": 8,
+              "target": 163.74,
+              "shot_median": 161.81,
+              "observed_reference_range": [
+                151.64,
+                171.89
+              ],
+              "observed_outer_range": [
+                149.2645,
+                171.89
+              ],
+              "golfer_median_range": [
+                156.504,
+                168.52
+              ]
+            },
+            "spine_angle": {
+              "source_column": "0-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 229,
+              "coverage": 0.8945,
+              "golfer_count": 8,
+              "target": 72.655,
+              "shot_median": 73.23,
+              "observed_reference_range": [
+                67.356,
+                81.746
+              ],
+              "observed_outer_range": [
+                64.996,
+                83.0
+              ],
+              "golfer_median_range": [
+                69.6865,
+                78.571
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "1-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 206,
+              "coverage": 0.8047,
+              "golfer_count": 8,
+              "target": 0.06,
+              "shot_median": 0.045,
+              "observed_reference_range": [
+                -0.13,
+                0.19
+              ],
+              "observed_outer_range": [
+                -0.14,
+                0.2375
+              ],
+              "golfer_median_range": [
+                -0.08,
+                0.2245
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 188,
+              "coverage": 0.7344,
+              "golfer_count": 8,
+              "target": 170.205,
+              "shot_median": 168.52,
+              "observed_reference_range": [
+                144.1,
+                180.0
+              ],
+              "observed_outer_range": [
+                139.7715,
+                180.0
+              ],
+              "golfer_median_range": [
+                158.0325,
+                174.323
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 252,
+              "coverage": 0.9844,
+              "golfer_count": 8,
+              "target": 129.43,
+              "shot_median": 129.05,
+              "observed_reference_range": [
+                110.49,
+                145.998
+              ],
+              "observed_outer_range": [
+                105.66,
+                152.87
+              ],
+              "golfer_median_range": [
+                120.1425,
+                134.287
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "1-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 256,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 20.54,
+              "shot_median": 20.03,
+              "observed_reference_range": [
+                12.84,
+                26.445
+              ],
+              "observed_outer_range": [
+                10.135,
+                27.85
+              ],
+              "golfer_median_range": [
+                16.576,
+                22.8245
+              ]
+            },
+            "spine_angle": {
+              "source_column": "1-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 248,
+              "coverage": 0.9688,
+              "golfer_count": 8,
+              "target": 75.26,
+              "shot_median": 76.745,
+              "observed_reference_range": [
+                71.522,
+                82.515
+              ],
+              "observed_outer_range": [
+                70.283,
+                84.0185
+              ],
+              "golfer_median_range": [
+                73.204,
+                79.155
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "2-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 256,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 10.205,
+              "shot_median": 9.685,
+              "observed_reference_range": [
+                4.75,
+                14.62
+              ],
+              "observed_outer_range": [
+                0.0,
+                16.9
+              ],
+              "golfer_median_range": [
+                5.7155,
+                12.8165
+              ]
+            },
+            "hip_line": {
+              "source_column": "2-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 210,
+              "coverage": 0.8203,
+              "golfer_count": 8,
+              "target": 0.0925,
+              "shot_median": 0.07,
+              "observed_reference_range": [
+                -0.111,
+                0.23
+              ],
+              "observed_outer_range": [
+                -0.16,
+                0.26
+              ],
+              "golfer_median_range": [
+                -0.053,
+                0.199
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "2-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 252,
+              "coverage": 0.9844,
+              "golfer_count": 8,
+              "target": 18.435,
+              "shot_median": 17.5,
+              "observed_reference_range": [
+                11.701,
+                24.068
+              ],
+              "observed_outer_range": [
+                10.3,
+                26.4245
+              ],
+              "golfer_median_range": [
+                15.563,
+                20.7165
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "3-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 256,
+              "coverage": 1.0,
+              "golfer_count": 8,
+              "target": 9.14,
+              "shot_median": 5.49,
+              "observed_reference_range": [
+                0.0,
+                12.955
+              ],
+              "observed_outer_range": [
+                0.0,
+                15.6
+              ],
+              "golfer_median_range": [
+                5.166,
+                11.8655
+              ]
+            },
+            "hip_line": {
+              "source_column": "3-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 237,
+              "coverage": 0.9258,
+              "golfer_count": 8,
+              "target": 0.1675,
+              "shot_median": 0.12,
+              "observed_reference_range": [
+                -0.09,
+                0.284
+              ],
+              "observed_outer_range": [
+                -0.14,
+                0.35
+              ],
+              "golfer_median_range": [
+                0.0135,
+                0.2265
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "3-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 232,
+              "coverage": 0.9062,
+              "golfer_count": 8,
+              "target": 147.2,
+              "shot_median": 140.35,
+              "observed_reference_range": [
+                129.05,
+                158.43
+              ],
+              "observed_outer_range": [
+                126.16,
+                161.81
+              ],
+              "golfer_median_range": [
+                134.0715,
+                162.428
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "3-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 251,
+              "coverage": 0.9805,
+              "golfer_count": 8,
+              "target": 68.895,
+              "shot_median": 72.54,
+              "observed_reference_range": [
+                53.84,
+                89.43
+              ],
+              "observed_outer_range": [
+                49.835,
+                97.18
+              ],
+              "golfer_median_range": [
+                60.005,
+                81.3265
+              ]
+            },
+            "right_distance": {
+              "source_column": "3-RIGHT-DISTANCE",
+              "unit": "ratio",
+              "description": "오른쪽 팔꿈치와 몸통 사이 거리",
+              "value_count": 250,
+              "coverage": 0.9766,
+              "golfer_count": 8,
+              "target": 0.6325,
+              "shot_median": 0.66,
+              "observed_reference_range": [
+                0.57,
+                0.73
+              ],
+              "observed_outer_range": [
+                0.55,
+                0.7455
+              ],
+              "golfer_median_range": [
+                0.595,
+                0.686
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 255,
+              "coverage": 0.9961,
+              "golfer_count": 8,
+              "target": 175.945,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                158.43,
+                180.0
+              ],
+              "observed_outer_range": [
+                154.16,
+                180.0
+              ],
+              "golfer_median_range": [
+                165.979,
+                180.0
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "3-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 215,
+              "coverage": 0.8398,
+              "golfer_count": 8,
+              "target": 14.0175,
+              "shot_median": 12.03,
+              "observed_reference_range": [
+                6.746,
+                18.43
+              ],
+              "observed_outer_range": [
+                6.096,
+                20.212
+              ],
+              "golfer_median_range": [
+                10.8945,
+                18.106
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "4-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 250,
+              "coverage": 0.9766,
+              "golfer_count": 8,
+              "target": 7.61,
+              "shot_median": 6.49,
+              "observed_reference_range": [
+                0.0,
+                17.734
+              ],
+              "observed_outer_range": [
+                0.0,
+                20.6175
+              ],
+              "golfer_median_range": [
+                5.6635,
+                14.7805
+              ]
+            },
+            "hip_line": {
+              "source_column": "4-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 247,
+              "coverage": 0.9648,
+              "golfer_count": 8,
+              "target": 0.265,
+              "shot_median": 0.26,
+              "observed_reference_range": [
+                0.11,
+                0.43
+              ],
+              "observed_outer_range": [
+                0.063,
+                0.47
+              ],
+              "golfer_median_range": [
+                0.171,
+                0.316
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "4-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 246,
+              "coverage": 0.9609,
+              "golfer_count": 8,
+              "target": 51.84,
+              "shot_median": 53.84,
+              "observed_reference_range": [
+                18.105,
+                92.295
+              ],
+              "observed_outer_range": [
+                8.9525,
+                110.0325
+              ],
+              "golfer_median_range": [
+                26.125,
+                66.913
+              ]
+            },
+            "spine_angle": {
+              "source_column": "4-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 251,
+              "coverage": 0.9805,
+              "golfer_count": 8,
+              "target": 76.5725,
+              "shot_median": 77.94,
+              "observed_reference_range": [
+                72.78,
+                86.12
+              ],
+              "observed_outer_range": [
+                70.96,
+                87.34
+              ],
+              "golfer_median_range": [
+                72.488,
+                80.1485
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "5-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 230,
+              "coverage": 0.8984,
+              "golfer_count": 8,
+              "target": 0.2825,
+              "shot_median": 0.25,
+              "observed_reference_range": [
+                -0.022,
+                0.48
+              ],
+              "observed_outer_range": [
+                -0.1,
+                0.52
+              ],
+              "golfer_median_range": [
+                0.0425,
+                0.369
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "5-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 246,
+              "coverage": 0.9609,
+              "golfer_count": 8,
+              "target": 170.205,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                161.81,
+                180.0
+              ],
+              "observed_outer_range": [
+                155.865,
+                180.0
+              ],
+              "golfer_median_range": [
+                164.089,
+                171.89
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 235,
+              "coverage": 0.918,
+              "golfer_count": 8,
+              "target": 24.27,
+              "shot_median": 26.22,
+              "observed_reference_range": [
+                0.0,
+                62.306
+              ],
+              "observed_outer_range": [
+                0.0,
+                70.863
+              ],
+              "golfer_median_range": [
+                12.719,
+                43.9205
+              ]
+            },
+            "spine_angle": {
+              "source_column": "5-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 247,
+              "coverage": 0.9648,
+              "golfer_count": 8,
+              "target": 80.445,
+              "shot_median": 80.94,
+              "observed_reference_range": [
+                72.126,
+                88.112
+              ],
+              "observed_outer_range": [
+                69.102,
+                89.016
+              ],
+              "golfer_median_range": [
+                73.5325,
+                86.34
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "6-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 234,
+              "coverage": 0.9141,
+              "golfer_count": 8,
+              "target": 13.48,
+              "shot_median": 14.805,
+              "observed_reference_range": [
+                4.832,
+                26.198
+              ],
+              "observed_outer_range": [
+                0.0,
+                30.4665
+              ],
+              "golfer_median_range": [
+                5.0225,
+                18.71
+              ]
+            },
+            "hip_line": {
+              "source_column": "6-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 230,
+              "coverage": 0.8984,
+              "golfer_count": 8,
+              "target": 0.3125,
+              "shot_median": 0.255,
+              "observed_reference_range": [
+                0.049,
+                0.461
+              ],
+              "observed_outer_range": [
+                -0.0355,
+                0.5
+              ],
+              "golfer_median_range": [
+                0.1245,
+                0.3365
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "6-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 241,
+              "coverage": 0.9414,
+              "golfer_count": 8,
+              "target": 28.525,
+              "shot_median": 36.87,
+              "observed_reference_range": [
+                22.27,
+                49.72
+              ],
+              "observed_outer_range": [
+                19.24,
+                54.06
+              ],
+              "golfer_median_range": [
+                22.526,
+                43.2955
+              ]
+            },
+            "spine_angle": {
+              "source_column": "6-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 242,
+              "coverage": 0.9453,
+              "golfer_count": 8,
+              "target": 78.77,
+              "shot_median": 79.36,
+              "observed_reference_range": [
+                70.994,
+                87.071
+              ],
+              "observed_outer_range": [
+                68.8145,
+                88.3725
+              ],
+              "golfer_median_range": [
+                72.353,
+                83.3365
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "7-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 235,
+              "coverage": 0.918,
+              "golfer_count": 8,
+              "target": 5.32,
+              "shot_median": 5.29,
+              "observed_reference_range": [
+                0.0,
+                12.53
+              ],
+              "observed_outer_range": [
+                0.0,
+                17.629
+              ],
+              "golfer_median_range": [
+                0.0,
+                7.2565
+              ]
+            },
+            "hip_line": {
+              "source_column": "7-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 230,
+              "coverage": 0.8984,
+              "golfer_count": 8,
+              "target": 0.54,
+              "shot_median": 0.55,
+              "observed_reference_range": [
+                0.359,
+                0.78
+              ],
+              "observed_outer_range": [
+                0.2435,
+                0.83
+              ],
+              "golfer_median_range": [
+                0.495,
+                0.711
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "7-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 238,
+              "coverage": 0.9297,
+              "golfer_count": 8,
+              "target": 8.185,
+              "shot_median": 10.605,
+              "observed_reference_range": [
+                0.0,
+                26.486
+              ],
+              "observed_outer_range": [
+                0.0,
+                31.165
+              ],
+              "golfer_median_range": [
+                2.779,
+                15.6575
+              ]
+            },
+            "spine_angle": {
+              "source_column": "7-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 238,
+              "coverage": 0.9297,
+              "golfer_count": 8,
+              "target": 83.3925,
+              "shot_median": 82.375,
+              "observed_reference_range": [
+                74.958,
+                88.993
+              ],
+              "observed_outer_range": [
+                73.4375,
+                89.543
+              ],
+              "golfer_median_range": [
+                79.219,
+                85.998
+              ]
+            }
+          }
+        }
+      }
+    },
+    "dtl_i7": {
+      "view": "DTL",
+      "club_type": "I7",
+      "candidate_shots": 160,
+      "selected_reference_shots": 138,
+      "selected_golfers": 4,
+      "stages": {
+        "address": {
+          "source_stage_index": 0,
+          "evaluation_items": {
+            "lower_angle": {
+              "source_column": "0-LOWER-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 154.835,
+              "shot_median": 155.51,
+              "observed_reference_range": [
+                148.21,
+                165.93
+              ],
+              "observed_outer_range": [
+                146.1,
+                168.52
+              ],
+              "golfer_median_range": [
+                151.983,
+                161.271
+              ]
+            },
+            "spine_angle": {
+              "source_column": "0-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 61.0575,
+              "shot_median": 61.175,
+              "observed_reference_range": [
+                56.894,
+                65.958
+              ],
+              "observed_outer_range": [
+                55.3995,
+                67.8705
+              ],
+              "golfer_median_range": [
+                60.8155,
+                65.4925
+              ]
+            }
+          }
+        },
+        "takeaway": {
+          "source_stage_index": 1,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "1-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 130,
+              "coverage": 0.942,
+              "golfer_count": 4,
+              "target": 0.12,
+              "shot_median": 0.065,
+              "observed_reference_range": [
+                -0.031,
+                0.16
+              ],
+              "observed_outer_range": [
+                -0.06,
+                0.1855
+              ],
+              "golfer_median_range": [
+                0.04,
+                0.151
+              ]
+            },
+            "left_arm_angle": {
+              "source_column": "1-LEFT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 109,
+              "coverage": 0.7899,
+              "golfer_count": 4,
+              "target": 171.0475,
+              "shot_median": 180.0,
+              "observed_reference_range": [
+                161.81,
+                180.0
+              ],
+              "observed_outer_range": [
+                159.078,
+                180.0
+              ],
+              "golfer_median_range": [
+                163.0965,
+                177.567
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "1-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 131,
+              "coverage": 0.9493,
+              "golfer_count": 4,
+              "target": 132.89,
+              "shot_median": 136.05,
+              "observed_reference_range": [
+                120.0,
+                147.14
+              ],
+              "observed_outer_range": [
+                117.065,
+                151.095
+              ],
+              "golfer_median_range": [
+                129.497,
+                142.128
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "1-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 32.5425,
+              "shot_median": 31.36,
+              "observed_reference_range": [
+                25.372,
+                38.07
+              ],
+              "observed_outer_range": [
+                24.376,
+                39.09
+              ],
+              "golfer_median_range": [
+                30.2755,
+                35.2085
+              ]
+            },
+            "spine_angle": {
+              "source_column": "1-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 65.8075,
+              "shot_median": 64.49,
+              "observed_reference_range": [
+                59.095,
+                69.023
+              ],
+              "observed_outer_range": [
+                58.3765,
+                70.6375
+              ],
+              "golfer_median_range": [
+                63.6885,
+                70.744
+              ]
+            }
+          }
+        },
+        "backswing": {
+          "source_stage_index": 2,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "2-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 11.9325,
+              "shot_median": 12.57,
+              "observed_reference_range": [
+                6.572,
+                19.444
+              ],
+              "observed_outer_range": [
+                5.344,
+                22.619
+              ],
+              "golfer_median_range": [
+                11.309,
+                13.2035
+              ]
+            },
+            "hip_line": {
+              "source_column": "2-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 133,
+              "coverage": 0.9638,
+              "golfer_count": 4,
+              "target": 0.14,
+              "shot_median": 0.11,
+              "observed_reference_range": [
+                0.01,
+                0.2
+              ],
+              "observed_outer_range": [
+                -0.024,
+                0.24
+              ],
+              "golfer_median_range": [
+                0.084,
+                0.168
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "2-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 136,
+              "coverage": 0.9855,
+              "golfer_count": 4,
+              "target": 30.76,
+              "shot_median": 30.26,
+              "observed_reference_range": [
+                26.02,
+                35.305
+              ],
+              "observed_outer_range": [
+                24.095,
+                37.085
+              ],
+              "golfer_median_range": [
+                29.057,
+                34.346
+              ]
+            }
+          }
+        },
+        "top": {
+          "source_stage_index": 3,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "3-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 14.77,
+              "shot_median": 13.875,
+              "observed_reference_range": [
+                9.522,
+                20.225
+              ],
+              "observed_outer_range": [
+                5.7605,
+                22.1615
+              ],
+              "golfer_median_range": [
+                11.694,
+                20.093
+              ]
+            },
+            "hip_line": {
+              "source_column": "3-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 0.185,
+              "shot_median": 0.17,
+              "observed_reference_range": [
+                0.07,
+                0.27
+              ],
+              "observed_outer_range": [
+                0.008,
+                0.306
+              ],
+              "golfer_median_range": [
+                0.149,
+                0.235
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "3-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 135,
+              "coverage": 0.9783,
+              "golfer_count": 4,
+              "target": 139.4225,
+              "shot_median": 140.35,
+              "observed_reference_range": [
+                129.79,
+                155.51
+              ],
+              "observed_outer_range": [
+                129.05,
+                156.93
+              ],
+              "golfer_median_range": [
+                133.557,
+                145.3545
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "3-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 134,
+              "coverage": 0.971,
+              "golfer_count": 4,
+              "target": 69.96,
+              "shot_median": 70.12,
+              "observed_reference_range": [
+                57.926,
+                89.139
+              ],
+              "observed_outer_range": [
+                50.21,
+                94.042
+              ],
+              "golfer_median_range": [
+                67.419,
+                84.492
+              ]
+            },
+            "right_distance": {
+              "source_column": "3-RIGHT-DISTANCE",
+              "unit": "ratio",
+              "description": "오른쪽 팔꿈치와 몸통 사이 거리",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 0.5325,
+              "shot_median": 0.59,
+              "observed_reference_range": [
+                0.48,
+                0.673
+              ],
+              "observed_outer_range": [
+                0.4485,
+                0.69
+              ],
+              "golfer_median_range": [
+                0.5215,
+                0.603
+              ]
+            },
+            "right_leg_angle": {
+              "source_column": "3-RIGHT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 164.835,
+              "shot_median": 165.93,
+              "observed_reference_range": [
+                151.64,
+                180.0
+              ],
+              "observed_outer_range": [
+                147.14,
+                180.0
+              ],
+              "golfer_median_range": [
+                161.773,
+                175.779
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "3-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 24.545,
+              "shot_median": 23.645,
+              "observed_reference_range": [
+                19.276,
+                28.21
+              ],
+              "observed_outer_range": [
+                18.2685,
+                29.4735
+              ],
+              "golfer_median_range": [
+                22.593,
+                25.4855
+              ]
+            }
+          }
+        },
+        "downswing": {
+          "source_stage_index": 4,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "4-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 138,
+              "coverage": 1.0,
+              "golfer_count": 4,
+              "target": 11.54,
+              "shot_median": 11.525,
+              "observed_reference_range": [
+                5.142,
+                18.218
+              ],
+              "observed_outer_range": [
+                0.0,
+                21.0045
+              ],
+              "golfer_median_range": [
+                10.425,
+                11.591
+              ]
+            },
+            "hip_line": {
+              "source_column": "4-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 136,
+              "coverage": 0.9855,
+              "golfer_count": 4,
+              "target": 0.235,
+              "shot_median": 0.22,
+              "observed_reference_range": [
+                0.12,
+                0.29
+              ],
+              "observed_outer_range": [
+                0.08,
+                0.3325
+              ],
+              "golfer_median_range": [
+                0.1925,
+                0.267
+              ]
+            },
+            "right_arm_angle": {
+              "source_column": "4-RIGHT-ARM-ANGLE",
+              "unit": "degree",
+              "description": "오른쪽 어깨·팔꿈치·손목이 이루는 각도",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 52.1175,
+              "shot_median": 54.55,
+              "observed_reference_range": [
+                16.26,
+                88.398
+              ],
+              "observed_outer_range": [
+                11.48,
+                94.936
+              ],
+              "golfer_median_range": [
+                33.523,
+                63.8765
+              ]
+            },
+            "spine_angle": {
+              "source_column": "4-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 67.71,
+              "shot_median": 67.5,
+              "observed_reference_range": [
+                62.784,
+                72.444
+              ],
+              "observed_outer_range": [
+                61.468,
+                73.234
+              ],
+              "golfer_median_range": [
+                67.004,
+                68.199
+              ]
+            }
+          }
+        },
+        "impact": {
+          "source_stage_index": 5,
+          "evaluation_items": {
+            "hip_line": {
+              "source_column": "5-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 132,
+              "coverage": 0.9565,
+              "golfer_count": 4,
+              "target": 0.16,
+              "shot_median": 0.16,
+              "observed_reference_range": [
+                0.05,
+                0.3
+              ],
+              "observed_outer_range": [
+                0.02,
+                0.3345
+              ],
+              "golfer_median_range": [
+                0.1325,
+                0.2295
+              ]
+            },
+            "left_leg_angle": {
+              "source_column": "5-LEFT-LEG-ANGLE",
+              "unit": "degree",
+              "description": "왼쪽 골반·무릎·발목이 이루는 각도",
+              "value_count": 137,
+              "coverage": 0.9928,
+              "golfer_count": 4,
+              "target": 171.89,
+              "shot_median": 171.89,
+              "observed_reference_range": [
+                161.106,
+                180.0
+              ],
+              "observed_outer_range": [
+                156.93,
+                180.0
+              ],
+              "golfer_median_range": [
+                167.718,
+                171.89
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "5-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 129,
+              "coverage": 0.9348,
+              "golfer_count": 4,
+              "target": 29.89,
+              "shot_median": 34.92,
+              "observed_reference_range": [
+                0.0,
+                69.49
+              ],
+              "observed_outer_range": [
+                0.0,
+                73.494
+              ],
+              "golfer_median_range": [
+                19.075,
+                43.68
+              ]
+            },
+            "spine_angle": {
+              "source_column": "5-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 134,
+              "coverage": 0.971,
+              "golfer_count": 4,
+              "target": 66.845,
+              "shot_median": 67.59,
+              "observed_reference_range": [
+                62.149,
+                73.457
+              ],
+              "observed_outer_range": [
+                59.826,
+                76.244
+              ],
+              "golfer_median_range": [
+                64.971,
+                70.007
+              ]
+            }
+          }
+        },
+        "follow_through": {
+          "source_stage_index": 6,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "6-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 134,
+              "coverage": 0.971,
+              "golfer_count": 4,
+              "target": 15.1675,
+              "shot_median": 15.72,
+              "observed_reference_range": [
+                8.99,
+                24.995
+              ],
+              "observed_outer_range": [
+                5.191,
+                27.7965
+              ],
+              "golfer_median_range": [
+                11.951,
+                18.9265
+              ]
+            },
+            "hip_line": {
+              "source_column": "6-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 129,
+              "coverage": 0.9348,
+              "golfer_count": 4,
+              "target": 0.215,
+              "shot_median": 0.18,
+              "observed_reference_range": [
+                0.02,
+                0.312
+              ],
+              "observed_outer_range": [
+                -0.02,
+                0.346
+              ],
+              "golfer_median_range": [
+                0.092,
+                0.303
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "6-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 136,
+              "coverage": 0.9855,
+              "golfer_count": 4,
+              "target": 45.0,
+              "shot_median": 46.84,
+              "observed_reference_range": [
+                35.355,
+                58.965
+              ],
+              "observed_outer_range": [
+                31.1025,
+                63.3325
+              ],
+              "golfer_median_range": [
+                43.8345,
+                52.3535
+              ]
+            },
+            "spine_angle": {
+              "source_column": "6-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 131,
+              "coverage": 0.9493,
+              "golfer_count": 4,
+              "target": 68.1475,
+              "shot_median": 68.09,
+              "observed_reference_range": [
+                60.9,
+                74.61
+              ],
+              "observed_outer_range": [
+                59.785,
+                76.95
+              ],
+              "golfer_median_range": [
+                63.1605,
+                71.1185
+              ]
+            }
+          }
+        },
+        "finish": {
+          "source_stage_index": 7,
+          "evaluation_items": {
+            "hip_angle": {
+              "source_column": "7-HIP-ANGLE",
+              "unit": "degree",
+              "description": "골반 회전 각도",
+              "value_count": 135,
+              "coverage": 0.9783,
+              "golfer_count": 4,
+              "target": 4.925,
+              "shot_median": 4.6,
+              "observed_reference_range": [
+                0.0,
+                10.212
+              ],
+              "observed_outer_range": [
+                0.0,
+                13.276
+              ],
+              "golfer_median_range": [
+                1.446,
+                5.093
+              ]
+            },
+            "hip_line": {
+              "source_column": "7-HIP-LINE",
+              "unit": "ratio",
+              "description": "어드레스 대비 골반선 이동",
+              "value_count": 134,
+              "coverage": 0.971,
+              "golfer_count": 4,
+              "target": 0.505,
+              "shot_median": 0.5,
+              "observed_reference_range": [
+                0.273,
+                0.647
+              ],
+              "observed_outer_range": [
+                0.2265,
+                0.6735
+              ],
+              "golfer_median_range": [
+                0.354,
+                0.551
+              ]
+            },
+            "shoulder_angle": {
+              "source_column": "7-SHOULDER-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 어깨선 각도",
+              "value_count": 132,
+              "coverage": 0.9565,
+              "golfer_count": 4,
+              "target": 16.33,
+              "shot_median": 14.04,
+              "observed_reference_range": [
+                3.889,
+                26.429
+              ],
+              "observed_outer_range": [
+                0.0,
+                29.6795
+              ],
+              "golfer_median_range": [
+                12.352,
+                17.942
+              ]
+            },
+            "spine_angle": {
+              "source_column": "7-SPINE-ANGLE",
+              "unit": "degree",
+              "description": "수평선에 대한 척추 각도",
+              "value_count": 134,
+              "coverage": 0.971,
+              "golfer_count": 4,
+              "target": 81.545,
+              "shot_median": 84.73,
+              "observed_reference_range": [
+                74.562,
+                89.087
+              ],
+              "observed_outer_range": [
+                70.844,
+                89.639
+              ],
+              "golfer_median_range": [
+                77.028,
+                85.4005
+              ]
+            }
+          }
+        }
+      }
+    }
+  }
+}
