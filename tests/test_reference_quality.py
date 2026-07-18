@@ -121,6 +121,69 @@ class AuditReferenceSamplesTests(unittest.TestCase):
         self.assertEqual("accepted", manifest["samples"][sample_key]["human_review"]["status"])
         self.assertEqual("직접 확인함", manifest["samples"][sample_key]["human_review"]["note"])
 
+    def test_semantic_check_rejects_finish_pose_labeled_as_top(self):
+        base_pose = {
+            index: (0.0, 0.0)
+            for index in audit.REQUIRED_LANDMARKS
+        }
+        address_pose = copy.deepcopy(base_pose)
+        address_pose[audit.LEFT_ANKLE] = (-1.0, 1.0)
+        address_pose[audit.RIGHT_ANKLE] = (1.0, 1.0)
+        finish_pose = copy.deepcopy(base_pose)
+        finish_pose[audit.LEFT_WRIST] = (-0.2, -0.5)
+        finish_pose[audit.RIGHT_WRIST] = (0.2, -0.5)
+        finish_pose[audit.LEFT_ANKLE] = (-0.2, 1.0)
+        finish_pose[audit.RIGHT_ANKLE] = (0.2, 1.0)
+        samples = {
+            "address": {
+                "stage": "address",
+                "source": "reference_data/extracted_landmarks/address/pro01_video_address_auto.json",
+                "auto_check": {
+                    "status": "pass",
+                    "reasons": [],
+                    "metrics": {"shoulder_to_body_ratio": 0.3},
+                },
+                "_normalized_pose": address_pose,
+            },
+            "top": {
+                "stage": "top",
+                "source": "reference_data/extracted_landmarks/top/pro01_video_top_auto.json",
+                "auto_check": {
+                    "status": "pass",
+                    "reasons": [],
+                    "metrics": {"shoulder_to_body_ratio": 0.3},
+                },
+                "_normalized_pose": finish_pose,
+            },
+        }
+
+        audit.add_stage_semantic_checks(samples)
+
+        reason_codes = {reason["code"] for reason in samples["top"]["auto_check"]["reasons"]}
+        self.assertEqual("fail", samples["top"]["auto_check"]["status"])
+        self.assertIn("top_stance_looks_finished", reason_codes)
+
+    def test_semantic_check_rejects_top_pose_labeled_as_downswing(self):
+        pose = {
+            index: (0.0, 0.0)
+            for index in audit.REQUIRED_LANDMARKS
+        }
+        pose[audit.LEFT_WRIST] = (-0.3, -0.5)
+        pose[audit.RIGHT_WRIST] = (0.3, -0.5)
+        pose[audit.LEFT_ANKLE] = (-1.0, 1.0)
+        pose[audit.RIGHT_ANKLE] = (1.0, 1.0)
+        sample = {
+            "stage": "downswing",
+            "source": "reference_data/extracted_landmarks/downswing/pro01_video_downswing_auto.json",
+            "auto_check": {"status": "pass", "reasons": [], "metrics": {}},
+            "_normalized_pose": pose,
+        }
+
+        audit.add_stage_semantic_checks({"sample": sample})
+
+        reason_codes = {reason["code"] for reason in sample["auto_check"]["reasons"]}
+        self.assertIn("downswing_hands_still_at_top", reason_codes)
+
 
 class GuidePoseInclusionTests(unittest.TestCase):
     def setUp(self):

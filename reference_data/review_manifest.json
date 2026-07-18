@@ -35,14 +35,17 @@
     "shaft_fail_score": 0.4,
     "shaft_warning_score": 0.5,
     "max_grip_endpoint_distance": 0.12,
-    "stage_outlier_method": "median_pose_distance_with_mad"
+    "stage_outlier_method": "median_pose_distance_with_mad",
+    "min_dynamic_stance_ratio": 0.55,
+    "max_finish_stance_ratio": 1.0,
+    "stage_semantic_checks": "normalized_wrist_height_and_stance_vs_address"
   },
   "summary": {
     "total": 64,
     "auto_check": {
-      "pass": 25,
-      "warning": 14,
-      "fail": 25
+      "pass": 18,
+      "warning": 13,
+      "fail": 33
     }
   },
   "samples": {
@@ -61,7 +64,12 @@
           "shaft_grip_endpoint_distance": 0.00905,
           "shaft_score": 0.7036,
           "stage_pose_deviation": 0.03308,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.48952,
+          "normalized_hip_y": 0.33073,
+          "normalized_stance_width": 1.35499,
+          "normalized_stance_to_body_height": 0.35428,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -85,7 +93,12 @@
           "shaft_grip_endpoint_distance": 0.00705,
           "shaft_score": 0.8651,
           "stage_pose_deviation": 0.08044,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.51442,
+          "normalized_hip_y": 0.33309,
+          "normalized_stance_width": 0.89404,
+          "normalized_stance_to_body_height": 0.43476,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -120,7 +133,12 @@
           "shaft_grip_endpoint_distance": 0.4369,
           "shaft_score": 0.45,
           "stage_pose_deviation": 0.07173,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.44729,
+          "normalized_hip_y": 0.34118,
+          "normalized_stance_width": 1.36676,
+          "normalized_stance_to_body_height": 0.42929,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -144,7 +162,12 @@
           "shaft_grip_endpoint_distance": 0.03985,
           "shaft_score": 0.5796,
           "stage_pose_deviation": 0.06229,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.48288,
+          "normalized_hip_y": 0.35478,
+          "normalized_stance_width": 1.2003,
+          "normalized_stance_to_body_height": 0.3937,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -168,7 +191,12 @@
           "shaft_grip_endpoint_distance": 0.01587,
           "shaft_score": 0.6735,
           "stage_pose_deviation": 0.04277,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.45807,
+          "normalized_hip_y": 0.36967,
+          "normalized_stance_width": 1.35669,
+          "normalized_stance_to_body_height": 0.40315,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -198,7 +226,12 @@
           "shaft_grip_endpoint_distance": 0.15469,
           "shaft_score": 0.775,
           "stage_pose_deviation": 0.1138,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.48271,
+          "normalized_hip_y": 0.32184,
+          "normalized_stance_width": 1.23398,
+          "normalized_stance_to_body_height": 0.38563,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -222,7 +255,12 @@
           "shaft_grip_endpoint_distance": 0.03441,
           "shaft_score": 0.6867,
           "stage_pose_deviation": 0.07452,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.50273,
+          "normalized_hip_y": 0.31366,
+          "normalized_stance_width": 1.12147,
+          "normalized_stance_to_body_height": 0.42588,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -246,7 +284,12 @@
           "shaft_grip_endpoint_distance": 0.04122,
           "shaft_score": 0.7502,
           "stage_pose_deviation": 0.11578,
-          "stage_outlier_threshold": 0.32312
+          "stage_outlier_threshold": 0.32312,
+          "normalized_wrist_y": 0.47245,
+          "normalized_hip_y": 0.37718,
+          "normalized_stance_width": 1.48731,
+          "normalized_stance_to_body_height": 0.47775,
+          "stance_to_address_ratio": 1.0
         }
       },
       "human_review": {
@@ -270,7 +313,12 @@
           "shaft_grip_endpoint_distance": 0.03192,
           "shaft_score": 0.7048,
           "stage_pose_deviation": 0.06576,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.46788,
+          "normalized_hip_y": 0.35713,
+          "normalized_stance_width": 1.51672,
+          "normalized_stance_to_body_height": 0.36254,
+          "stance_to_address_ratio": 1.02333
         }
       },
       "human_review": {
@@ -300,7 +348,12 @@
           "shaft_grip_endpoint_distance": 0.07683,
           "shaft_score": 0.6451,
           "stage_pose_deviation": 0.75363,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.0124,
+          "normalized_hip_y": 0.41806,
+          "normalized_stance_width": 2.1962,
+          "normalized_stance_to_body_height": 0.43318,
+          "stance_to_address_ratio": 0.99637
         }
       },
       "human_review": {
@@ -330,7 +383,12 @@
           "shaft_grip_endpoint_distance": 0.03337,
           "shaft_score": 0.6298,
           "stage_pose_deviation": 0.40062,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.08037,
+          "normalized_hip_y": 0.36781,
+          "normalized_stance_width": 2.08197,
+          "normalized_stance_to_body_height": 0.4206,
+          "stance_to_address_ratio": 0.97976
         }
       },
       "human_review": {
@@ -354,7 +412,12 @@
           "shaft_grip_endpoint_distance": 0.08035,
           "shaft_score": 0.6825,
           "stage_pose_deviation": 0.12724,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.4764,
+          "normalized_hip_y": 0.35681,
+          "normalized_stance_width": 1.31596,
+          "normalized_stance_to_body_height": 0.41279,
+          "stance_to_address_ratio": 1.0485
         }
       },
       "human_review": {
@@ -378,7 +441,12 @@
           "shaft_grip_endpoint_distance": 0.0446,
           "shaft_score": 0.6168,
           "stage_pose_deviation": 0.09251,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.44545,
+          "normalized_hip_y": 0.358,
+          "normalized_stance_width": 1.34246,
+          "normalized_stance_to_body_height": 0.4067,
+          "stance_to_address_ratio": 1.00879
         }
       },
       "human_review": {
@@ -408,7 +476,12 @@
           "shaft_grip_endpoint_distance": 0.05569,
           "shaft_score": 0.4933,
           "stage_pose_deviation": 0.06465,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.46933,
+          "normalized_hip_y": 0.32866,
+          "normalized_stance_width": 1.47032,
+          "normalized_stance_to_body_height": 0.39741,
+          "stance_to_address_ratio": 1.03055
         }
       },
       "human_review": {
@@ -432,7 +505,12 @@
           "shaft_grip_endpoint_distance": 0.05532,
           "shaft_score": 0.8583,
           "stage_pose_deviation": 0.13144,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.48136,
+          "normalized_hip_y": 0.29331,
+          "normalized_stance_width": 1.20109,
+          "normalized_stance_to_body_height": 0.44243,
+          "stance_to_address_ratio": 1.03887
         }
       },
       "human_review": {
@@ -467,7 +545,12 @@
           "shaft_grip_endpoint_distance": 0.22681,
           "shaft_score": 0.732,
           "stage_pose_deviation": 0.68814,
-          "stage_outlier_threshold": 0.37934
+          "stage_outlier_threshold": 0.37934,
+          "normalized_wrist_y": 0.17458,
+          "normalized_hip_y": 0.38264,
+          "normalized_stance_width": 2.77147,
+          "normalized_stance_to_body_height": 0.46289,
+          "stance_to_address_ratio": 0.96889
         }
       },
       "human_review": {
@@ -495,7 +578,12 @@
           "shoulder_to_body_ratio": 0.16508,
           "min_visibility": 0.59237,
           "stage_pose_deviation": 0.10933,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.07558,
+          "normalized_hip_y": 0.36267,
+          "normalized_stance_width": 2.25146,
+          "normalized_stance_to_body_height": 0.37167,
+          "stance_to_address_ratio": 1.0491
         }
       },
       "human_review": {
@@ -525,7 +613,12 @@
           "shaft_grip_endpoint_distance": 0.09143,
           "shaft_score": 0.5351,
           "stage_pose_deviation": 0.19673,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.06937,
+          "normalized_hip_y": 0.39362,
+          "normalized_stance_width": 1.36064,
+          "normalized_stance_to_body_height": 0.47334,
+          "stance_to_address_ratio": 1.08875
         }
       },
       "human_review": {
@@ -560,7 +653,12 @@
           "shaft_grip_endpoint_distance": 0.12044,
           "shaft_score": 0.641,
           "stage_pose_deviation": 0.15496,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": -0.1052,
+          "normalized_hip_y": 0.36146,
+          "normalized_stance_width": 2.39082,
+          "normalized_stance_to_body_height": 0.4506,
+          "stance_to_address_ratio": 1.04964
         }
       },
       "human_review": {
@@ -584,7 +682,12 @@
           "shaft_grip_endpoint_distance": 0.04023,
           "shaft_score": 0.6284,
           "stage_pose_deviation": 0.12541,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.04553,
+          "normalized_hip_y": 0.39899,
+          "normalized_stance_width": 1.83624,
+          "normalized_stance_to_body_height": 0.40032,
+          "stance_to_address_ratio": 1.01681
         }
       },
       "human_review": {
@@ -608,7 +711,12 @@
           "shaft_grip_endpoint_distance": 0.05536,
           "shaft_score": 0.6562,
           "stage_pose_deviation": 0.0983,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.04291,
+          "normalized_hip_y": 0.4274,
+          "normalized_stance_width": 1.90828,
+          "normalized_stance_to_body_height": 0.38242,
+          "stance_to_address_ratio": 0.94857
         }
       },
       "human_review": {
@@ -643,7 +751,12 @@
           "shaft_grip_endpoint_distance": 0.10341,
           "shaft_score": 0.6934,
           "stage_pose_deviation": 0.54479,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.15787,
+          "normalized_hip_y": 0.41127,
+          "normalized_stance_width": 2.09364,
+          "normalized_stance_to_body_height": 0.35175,
+          "stance_to_address_ratio": 0.91215
         }
       },
       "human_review": {
@@ -667,7 +780,12 @@
           "shaft_grip_endpoint_distance": 0.0571,
           "shaft_score": 0.5855,
           "stage_pose_deviation": 0.11275,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": 0.14456,
+          "normalized_hip_y": 0.37708,
+          "normalized_stance_width": 1.78933,
+          "normalized_stance_to_body_height": 0.40956,
+          "stance_to_address_ratio": 0.96168
         }
       },
       "human_review": {
@@ -697,7 +815,12 @@
           "shaft_grip_endpoint_distance": 0.30461,
           "shaft_score": 0.8568,
           "stage_pose_deviation": 0.23416,
-          "stage_outlier_threshold": 0.39019
+          "stage_outlier_threshold": 0.39019,
+          "normalized_wrist_y": -0.1601,
+          "normalized_hip_y": 0.40139,
+          "normalized_stance_width": 1.99267,
+          "normalized_stance_to_body_height": 0.44064,
+          "stance_to_address_ratio": 0.92232
         }
       },
       "human_review": {
@@ -727,7 +850,12 @@
           "shaft_grip_endpoint_distance": 0.04387,
           "shaft_score": 0.5927,
           "stage_pose_deviation": 0.4573,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.26405,
+          "normalized_hip_y": 0.43443,
+          "normalized_stance_width": 2.5672,
+          "normalized_stance_to_body_height": 0.34542,
+          "stance_to_address_ratio": 0.97499
         }
       },
       "human_review": {
@@ -762,7 +890,12 @@
           "shaft_grip_endpoint_distance": 0.21114,
           "shaft_score": 0.5345,
           "stage_pose_deviation": 0.65416,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.22192,
+          "normalized_hip_y": 0.42889,
+          "normalized_stance_width": 1.40249,
+          "normalized_stance_to_body_height": 0.32754,
+          "stance_to_address_ratio": 0.75338
         }
       },
       "human_review": {
@@ -797,7 +930,12 @@
           "shaft_grip_endpoint_distance": 0.02895,
           "shaft_score": 0.7038,
           "stage_pose_deviation": 1.17916,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.10947,
+          "normalized_hip_y": 0.43766,
+          "normalized_stance_width": 4.42986,
+          "normalized_stance_to_body_height": 0.47205,
+          "stance_to_address_ratio": 1.09961
         }
       },
       "human_review": {
@@ -821,7 +959,12 @@
           "shaft_grip_endpoint_distance": 0.03013,
           "shaft_score": 0.7594,
           "stage_pose_deviation": 0.30848,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.19492,
+          "normalized_hip_y": 0.41015,
+          "normalized_stance_width": 1.96497,
+          "normalized_stance_to_body_height": 0.37629,
+          "stance_to_address_ratio": 0.95578
         }
       },
       "human_review": {
@@ -845,7 +988,12 @@
           "shaft_grip_endpoint_distance": 0.06486,
           "shaft_score": 0.6287,
           "stage_pose_deviation": 0.40278,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.24238,
+          "normalized_hip_y": 0.41841,
+          "normalized_stance_width": 2.4657,
+          "normalized_stance_to_body_height": 0.3901,
+          "stance_to_address_ratio": 0.96761
         }
       },
       "human_review": {
@@ -875,7 +1023,12 @@
           "shaft_grip_endpoint_distance": 0.24283,
           "shaft_score": 0.6974,
           "stage_pose_deviation": 0.47033,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.28453,
+          "normalized_hip_y": 0.39734,
+          "normalized_stance_width": 2.19579,
+          "normalized_stance_to_body_height": 0.36241,
+          "stance_to_address_ratio": 0.93979
         }
       },
       "human_review": {
@@ -899,7 +1052,12 @@
           "shaft_grip_endpoint_distance": 0.08571,
           "shaft_score": 0.6439,
           "stage_pose_deviation": 0.16342,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.20671,
+          "normalized_hip_y": 0.40499,
+          "normalized_stance_width": 1.51955,
+          "normalized_stance_to_body_height": 0.41774,
+          "stance_to_address_ratio": 0.98089
         }
       },
       "human_review": {
@@ -929,7 +1087,12 @@
           "shaft_grip_endpoint_distance": 0.14599,
           "shaft_score": 0.8689,
           "stage_pose_deviation": 0.15465,
-          "stage_outlier_threshold": 0.94856
+          "stage_outlier_threshold": 0.94856,
+          "normalized_wrist_y": -0.25954,
+          "normalized_hip_y": 0.40462,
+          "normalized_stance_width": 1.81042,
+          "normalized_stance_to_body_height": 0.44388,
+          "stance_to_address_ratio": 0.9291
         }
       },
       "human_review": {
@@ -949,6 +1112,11 @@
             "code": "low_landmark_visibility",
             "severity": "fail",
             "message": "관절 가시성이 낮습니다: 15=0.3444642722606659<0.5"
+          },
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
           }
         ],
         "metrics": {
@@ -959,7 +1127,12 @@
           "shaft_grip_endpoint_distance": 0.055,
           "shaft_score": 0.6615,
           "stage_pose_deviation": 0.51583,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.16224,
+          "normalized_hip_y": 0.44633,
+          "normalized_stance_width": 1.76656,
+          "normalized_stance_to_body_height": 0.30438,
+          "stance_to_address_ratio": 0.85916
         }
       },
       "human_review": {
@@ -989,6 +1162,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.327>0.737"
+          },
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
           }
         ],
         "metrics": {
@@ -999,7 +1177,12 @@
           "shaft_grip_endpoint_distance": 0.22557,
           "shaft_score": 0.6172,
           "stage_pose_deviation": 1.32661,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.16365,
+          "normalized_hip_y": 0.41577,
+          "normalized_stance_width": 2.46827,
+          "normalized_stance_to_body_height": 0.24483,
+          "stance_to_address_ratio": 0.56314
         }
       },
       "human_review": {
@@ -1029,6 +1212,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.687>0.737"
+          },
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
           }
         ],
         "metrics": {
@@ -1039,7 +1227,12 @@
           "shaft_grip_endpoint_distance": 0.07602,
           "shaft_score": 0.4131,
           "stage_pose_deviation": 1.68729,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.1313,
+          "normalized_hip_y": 0.43668,
+          "normalized_stance_width": 6.69083,
+          "normalized_stance_to_body_height": 0.49813,
+          "stance_to_address_ratio": 1.16037
         }
       },
       "human_review": {
@@ -1053,8 +1246,14 @@
       "source": "reference_data/extracted_landmarks/downswing/pro05_video_downswing_auto.json",
       "image": "reference_data\\raw_images\\downswing\\pro05_video_downswing_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.11497,
           "body_height": 0.52645,
@@ -1063,7 +1262,12 @@
           "shaft_grip_endpoint_distance": 0.03778,
           "shaft_score": 0.7164,
           "stage_pose_deviation": 0.21089,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.13108,
+          "normalized_hip_y": 0.39451,
+          "normalized_stance_width": 1.75465,
+          "normalized_stance_to_body_height": 0.3832,
+          "stance_to_address_ratio": 0.97333
         }
       },
       "human_review": {
@@ -1077,8 +1281,14 @@
       "source": "reference_data/extracted_landmarks/downswing/pro06_video_downswing_auto.json",
       "image": "reference_data\\raw_images\\downswing\\pro06_video_downswing_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.11872,
           "body_height": 0.48477,
@@ -1087,7 +1297,12 @@
           "shaft_grip_endpoint_distance": 0.01039,
           "shaft_score": 0.6964,
           "stage_pose_deviation": 0.26976,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.22479,
+          "normalized_hip_y": 0.41164,
+          "normalized_stance_width": 1.64267,
+          "normalized_stance_to_body_height": 0.40229,
+          "stance_to_address_ratio": 0.99785
         }
       },
       "human_review": {
@@ -1101,8 +1316,14 @@
       "source": "reference_data/extracted_landmarks/downswing/pro07_video_downswing_auto.json",
       "image": "reference_data\\raw_images\\downswing\\pro07_video_downswing_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.09115,
           "body_height": 0.52579,
@@ -1111,7 +1332,12 @@
           "shaft_grip_endpoint_distance": 0.05162,
           "shaft_score": 0.7095,
           "stage_pose_deviation": 0.35459,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.17503,
+          "normalized_hip_y": 0.38758,
+          "normalized_stance_width": 2.18596,
+          "normalized_stance_to_body_height": 0.37894,
+          "stance_to_address_ratio": 0.98264
         }
       },
       "human_review": {
@@ -1125,12 +1351,17 @@
       "source": "reference_data/extracted_landmarks/downswing/pro08_video_downswing_auto.json",
       "image": "reference_data\\raw_images\\downswing\\pro08_video_downswing_auto.jpg",
       "auto_check": {
-        "status": "warning",
+        "status": "fail",
         "reasons": [
           {
             "code": "shaft_score_low",
             "severity": "warning",
             "message": "샤프트 점수가 낮습니다: 0.453"
+          },
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
           }
         ],
         "metrics": {
@@ -1141,7 +1372,12 @@
           "shaft_grip_endpoint_distance": 0.10324,
           "shaft_score": 0.4534,
           "stage_pose_deviation": 0.20801,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.12475,
+          "normalized_hip_y": 0.35363,
+          "normalized_stance_width": 2.02076,
+          "normalized_stance_to_body_height": 0.444,
+          "stance_to_address_ratio": 1.04255
         }
       },
       "human_review": {
@@ -1155,8 +1391,14 @@
       "source": "reference_data/extracted_landmarks/downswing/pro09_video_downswing_auto.json",
       "image": "reference_data\\raw_images\\downswing\\pro09_video_downswing_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "downswing_hands_still_at_top",
+            "severity": "fail",
+            "message": "다운스윙인데 손이 아직 탑 높이에 있습니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.10958,
           "body_height": 0.50846,
@@ -1165,7 +1407,12 @@
           "shaft_grip_endpoint_distance": 0.05033,
           "shaft_score": 0.8668,
           "stage_pose_deviation": 0.13286,
-          "stage_outlier_threshold": 0.7374
+          "stage_outlier_threshold": 0.7374,
+          "normalized_wrist_y": -0.23468,
+          "normalized_hip_y": 0.38475,
+          "normalized_stance_width": 2.14307,
+          "normalized_stance_to_body_height": 0.46185,
+          "stance_to_address_ratio": 0.96672
         }
       },
       "human_review": {
@@ -1190,6 +1437,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.662>0.366"
+          },
+          {
+            "code": "impact_hands_too_high",
+            "severity": "fail",
+            "message": "임팩트인데 손이 어깨 근처 또는 그 위에 있습니다."
           }
         ],
         "metrics": {
@@ -1200,7 +1452,12 @@
           "shaft_grip_endpoint_distance": 0.03718,
           "shaft_score": 0.67,
           "stage_pose_deviation": 0.66186,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": -0.15066,
+          "normalized_hip_y": 0.44426,
+          "normalized_stance_width": 1.84608,
+          "normalized_stance_to_body_height": 0.3006,
+          "stance_to_address_ratio": 0.84848
         }
       },
       "human_review": {
@@ -1230,6 +1487,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 0.841>0.366"
+          },
+          {
+            "code": "impact_stance_looks_finished",
+            "severity": "fail",
+            "message": "임팩트인데 스탠스가 피니시처럼 지나치게 좁습니다."
           }
         ],
         "metrics": {
@@ -1240,7 +1502,12 @@
           "shaft_grip_endpoint_distance": 0.09937,
           "shaft_score": 0.4023,
           "stage_pose_deviation": 0.8412,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.10587,
+          "normalized_hip_y": 0.41765,
+          "normalized_stance_width": 1.51254,
+          "normalized_stance_to_body_height": 0.18184,
+          "stance_to_address_ratio": 0.41825
         }
       },
       "human_review": {
@@ -1265,6 +1532,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.697>0.366"
+          },
+          {
+            "code": "impact_hands_too_high",
+            "severity": "fail",
+            "message": "임팩트인데 손이 어깨 근처 또는 그 위에 있습니다."
           }
         ],
         "metrics": {
@@ -1275,7 +1547,12 @@
           "shaft_grip_endpoint_distance": 0.0444,
           "shaft_score": 0.6843,
           "stage_pose_deviation": 1.69724,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.08815,
+          "normalized_hip_y": 0.44675,
+          "normalized_stance_width": 6.72228,
+          "normalized_stance_to_body_height": 0.45806,
+          "stance_to_address_ratio": 1.06702
         }
       },
       "human_review": {
@@ -1299,7 +1576,12 @@
           "shaft_grip_endpoint_distance": 0.05298,
           "shaft_score": 0.6211,
           "stage_pose_deviation": 0.05253,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.47718,
+          "normalized_hip_y": 0.37933,
+          "normalized_stance_width": 1.20632,
+          "normalized_stance_to_body_height": 0.41341,
+          "stance_to_address_ratio": 1.05006
         }
       },
       "human_review": {
@@ -1334,7 +1616,12 @@
           "shaft_grip_endpoint_distance": 0.62971,
           "shaft_score": 0.45,
           "stage_pose_deviation": 0.07874,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.46437,
+          "normalized_hip_y": 0.3774,
+          "normalized_stance_width": 1.39512,
+          "normalized_stance_to_body_height": 0.44146,
+          "stance_to_address_ratio": 1.09501
         }
       },
       "human_review": {
@@ -1358,7 +1645,12 @@
           "shaft_grip_endpoint_distance": 0.05684,
           "shaft_score": 0.6035,
           "stage_pose_deviation": 0.09467,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.41557,
+          "normalized_hip_y": 0.33568,
+          "normalized_stance_width": 1.34332,
+          "normalized_stance_to_body_height": 0.42483,
+          "stance_to_address_ratio": 1.10164
         }
       },
       "human_review": {
@@ -1388,7 +1680,12 @@
           "shaft_grip_endpoint_distance": 0.07745,
           "shaft_score": 0.4052,
           "stage_pose_deviation": 0.10898,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.43,
+          "normalized_hip_y": 0.32924,
+          "normalized_stance_width": 1.11256,
+          "normalized_stance_to_body_height": 0.42669,
+          "stance_to_address_ratio": 1.0019
         }
       },
       "human_review": {
@@ -1418,7 +1715,12 @@
           "shaft_grip_endpoint_distance": 0.13494,
           "shaft_score": 0.8584,
           "stage_pose_deviation": 0.12218,
-          "stage_outlier_threshold": 0.36558
+          "stage_outlier_threshold": 0.36558,
+          "normalized_wrist_y": 0.44177,
+          "normalized_hip_y": 0.36899,
+          "normalized_stance_width": 1.79647,
+          "normalized_stance_to_body_height": 0.49839,
+          "stance_to_address_ratio": 1.0432
         }
       },
       "human_review": {
@@ -1448,7 +1750,12 @@
           "shaft_grip_endpoint_distance": 0.03334,
           "shaft_score": 0.6526,
           "stage_pose_deviation": 0.39453,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": -0.13216,
+          "normalized_hip_y": 0.43286,
+          "normalized_stance_width": 1.53367,
+          "normalized_stance_to_body_height": 0.30489,
+          "stance_to_address_ratio": 0.86061
         }
       },
       "human_review": {
@@ -1478,6 +1785,11 @@
             "code": "stage_pose_outlier",
             "severity": "warning",
             "message": "같은 단계의 중앙 자세에서 크게 벗어났습니다: 1.200>1.167"
+          },
+          {
+            "code": "follow_through_stance_looks_finished",
+            "severity": "fail",
+            "message": "팔로우스루인데 양발이 이미 피니시처럼 모였습니다."
           }
         ],
         "metrics": {
@@ -1488,7 +1800,12 @@
           "shaft_grip_endpoint_distance": 0.14044,
           "shaft_score": 0.6199,
           "stage_pose_deviation": 1.19961,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": -0.19202,
+          "normalized_hip_y": 0.41245,
+          "normalized_stance_width": 2.69841,
+          "normalized_stance_to_body_height": 0.23592,
+          "stance_to_address_ratio": 0.54266
         }
       },
       "human_review": {
@@ -1528,7 +1845,12 @@
           "shaft_grip_endpoint_distance": 0.07066,
           "shaft_score": 0.4698,
           "stage_pose_deviation": 1.26812,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": 0.15418,
+          "normalized_hip_y": 0.42681,
+          "normalized_stance_width": 7.16577,
+          "normalized_stance_to_body_height": 0.43876,
+          "stance_to_address_ratio": 1.02207
         }
       },
       "human_review": {
@@ -1563,7 +1885,12 @@
           "shaft_grip_endpoint_distance": 0.24181,
           "shaft_score": 0.7746,
           "stage_pose_deviation": 0.71158,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": -0.24085,
+          "normalized_hip_y": 0.4146,
+          "normalized_stance_width": 3.25612,
+          "normalized_stance_to_body_height": 0.35466,
+          "stance_to_address_ratio": 0.90083
         }
       },
       "human_review": {
@@ -1593,7 +1920,12 @@
           "shaft_grip_endpoint_distance": 0.0993,
           "shaft_score": 0.5855,
           "stage_pose_deviation": 0.42043,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": -0.23527,
+          "normalized_hip_y": 0.4291,
+          "normalized_stance_width": 1.46734,
+          "normalized_stance_to_body_height": 0.28047,
+          "stance_to_address_ratio": 0.69568
         }
       },
       "human_review": {
@@ -1623,7 +1955,12 @@
           "shaft_grip_endpoint_distance": 0.11139,
           "shaft_score": 0.723,
           "stage_pose_deviation": 0.48319,
-          "stage_outlier_threshold": 1.1671
+          "stage_outlier_threshold": 1.1671,
+          "normalized_wrist_y": -0.31447,
+          "normalized_hip_y": 0.41062,
+          "normalized_stance_width": 2.59157,
+          "normalized_stance_to_body_height": 0.40973,
+          "stance_to_address_ratio": 1.06248
         }
       },
       "human_review": {
@@ -1729,7 +2066,12 @@
           "shaft_grip_endpoint_distance": 0.04342,
           "shaft_score": 0.6559,
           "stage_pose_deviation": 0.60557,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": -0.13902,
+          "normalized_hip_y": 0.43539,
+          "normalized_stance_width": 1.95978,
+          "normalized_stance_to_body_height": 0.30136,
+          "stance_to_address_ratio": 0.85062
         }
       },
       "human_review": {
@@ -1764,7 +2106,12 @@
           "shaft_grip_endpoint_distance": 0.07803,
           "shaft_score": 0.7077,
           "stage_pose_deviation": 0.74577,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": -0.17085,
+          "normalized_hip_y": 0.42058,
+          "normalized_stance_width": 1.87593,
+          "normalized_stance_to_body_height": 0.23168,
+          "stance_to_address_ratio": 0.53289
         }
       },
       "human_review": {
@@ -1778,8 +2125,19 @@
       "source": "reference_data/extracted_landmarks/finish/pro04_video_finish_auto.json",
       "image": "reference_data\\raw_images\\finish\\pro04_video_finish_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "finish_hands_too_low",
+            "severity": "fail",
+            "message": "피니시인데 손이 어깨보다 아래에 있습니다."
+          },
+          {
+            "code": "finish_stance_still_address_width",
+            "severity": "fail",
+            "message": "피니시인데 스탠스가 어드레스와 거의 같은 폭입니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.15804,
           "body_height": 0.5453,
@@ -1788,7 +2146,12 @@
           "shaft_grip_endpoint_distance": 0.07447,
           "shaft_score": 0.6886,
           "stage_pose_deviation": 0.31607,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": 0.45281,
+          "normalized_hip_y": 0.3386,
+          "normalized_stance_width": 1.6926,
+          "normalized_stance_to_body_height": 0.49055,
+          "stance_to_address_ratio": 1.14271
         }
       },
       "human_review": {
@@ -1823,7 +2186,12 @@
           "shaft_grip_endpoint_distance": 0.07556,
           "shaft_score": 0.7318,
           "stage_pose_deviation": 0.79289,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": -0.17163,
+          "normalized_hip_y": 0.42417,
+          "normalized_stance_width": 3.57729,
+          "normalized_stance_to_body_height": 0.29566,
+          "stance_to_address_ratio": 0.75099
         }
       },
       "human_review": {
@@ -1837,8 +2205,19 @@
       "source": "reference_data/extracted_landmarks/finish/pro06_video_finish_auto.json",
       "image": "reference_data\\raw_images\\finish\\pro06_video_finish_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "finish_hands_too_low",
+            "severity": "fail",
+            "message": "피니시인데 손이 어깨보다 아래에 있습니다."
+          },
+          {
+            "code": "finish_stance_still_address_width",
+            "severity": "fail",
+            "message": "피니시인데 스탠스가 어드레스와 거의 같은 폭입니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.15438,
           "body_height": 0.53351,
@@ -1847,7 +2226,12 @@
           "shaft_grip_endpoint_distance": 0.02256,
           "shaft_score": 0.9123,
           "stage_pose_deviation": 0.29748,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": 0.43563,
+          "normalized_hip_y": 0.33762,
+          "normalized_stance_width": 1.64516,
+          "normalized_stance_to_body_height": 0.47604,
+          "stance_to_address_ratio": 1.1808
         }
       },
       "human_review": {
@@ -1861,8 +2245,19 @@
       "source": "reference_data/extracted_landmarks/finish/pro07_video_finish_auto.json",
       "image": "reference_data\\raw_images\\finish\\pro07_video_finish_auto.jpg",
       "auto_check": {
-        "status": "pass",
-        "reasons": [],
+        "status": "fail",
+        "reasons": [
+          {
+            "code": "finish_hands_too_low",
+            "severity": "fail",
+            "message": "피니시인데 손이 어깨보다 아래에 있습니다."
+          },
+          {
+            "code": "finish_stance_still_address_width",
+            "severity": "fail",
+            "message": "피니시인데 스탠스가 어드레스와 거의 같은 폭입니다."
+          }
+        ],
         "metrics": {
           "shoulder_width": 0.16056,
           "body_height": 0.53623,
@@ -1871,7 +2266,12 @@
           "shaft_grip_endpoint_distance": 0.11244,
           "shaft_score": 0.7289,
           "stage_pose_deviation": 0.32703,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": 0.47597,
+          "normalized_hip_y": 0.36679,
+          "normalized_stance_width": 1.59674,
+          "normalized_stance_to_body_height": 0.47809,
+          "stance_to_address_ratio": 1.23977
         }
       },
       "human_review": {
@@ -1901,7 +2301,12 @@
           "shaft_grip_endpoint_distance": 0.01222,
           "shaft_score": 0.7017,
           "stage_pose_deviation": 0.49966,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": -0.25105,
+          "normalized_hip_y": 0.42952,
+          "normalized_stance_width": 1.12589,
+          "normalized_stance_to_body_height": 0.25651,
+          "stance_to_address_ratio": 0.60231
         }
       },
       "human_review": {
@@ -1931,7 +2336,12 @@
           "shaft_grip_endpoint_distance": 0.11936,
           "shaft_score": 0.8643,
           "stage_pose_deviation": 0.33259,
-          "stage_outlier_threshold": 0.74417
+          "stage_outlier_threshold": 0.74417,
+          "normalized_wrist_y": -0.1402,
+          "normalized_hip_y": 0.3988,
+          "normalized_stance_width": 1.24385,
+          "normalized_stance_to_body_height": 0.22394,
+          "stance_to_address_ratio": 0.46874
         }
       },
       "human_review": {

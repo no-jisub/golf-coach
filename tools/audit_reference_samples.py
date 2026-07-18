@@ -74,6 +74,8 @@ SHAFT_WARNING_SCORE = 0.50
 MAX_GRIP_ENDPOINT_DISTANCE = 0.12
 OUTLIER_MIN_MARGIN = 0.25
 OUTLIER_MAD_MULTIPLIER = 3.0
+MIN_DYNAMIC_STANCE_RATIO = 0.55
+MAX_FINISH_STANCE_RATIO = 1.00
 
 
 def load_json(path):
@@ -377,6 +379,132 @@ def add_stage_outlier_checks(samples):
                 sample["auto_check"]["status"] = status_from_reasons(sample["auto_check"]["reasons"])
 
 
+def get_source_id(sample):
+    stem = Path(sample["source"]).stem
+    return stem.split("_video_", 1)[0]
+
+
+def add_semantic_reason(sample, code, message):
+    sample["auto_check"]["reasons"].append(make_reason(code, "fail", message))
+    sample["auto_check"]["status"] = status_from_reasons(sample["auto_check"]["reasons"])
+
+
+def add_stage_semantic_checks(samples):
+    """단계 라벨과 명백히 맞지 않는 손 높이·스탠스 변화를 걸러냅니다."""
+    address_stance_by_source = {}
+    for sample in samples.values():
+        pose = sample.get("_normalized_pose")
+        if pose is None or sample.get("stage") != "address":
+            continue
+        stance_width = abs(pose[RIGHT_ANKLE][0] - pose[LEFT_ANKLE][0])
+        body_ratio = sample["auto_check"]["metrics"].get("shoulder_to_body_ratio")
+        stance_to_body = stance_width * body_ratio if body_ratio else None
+        if stance_to_body and stance_to_body > 0:
+            address_stance_by_source[get_source_id(sample)] = stance_to_body
+
+    for sample in samples.values():
+        pose = sample.get("_normalized_pose")
+        if pose is None:
+            continue
+
+        stage = sample.get("stage")
+        wrist_y = (pose[LEFT_WRIST][1] + pose[RIGHT_WRIST][1]) / 2.0
+        hip_y = (pose[LEFT_HIP][1] + pose[RIGHT_HIP][1]) / 2.0
+        stance_width = abs(pose[RIGHT_ANKLE][0] - pose[LEFT_ANKLE][0])
+        metrics = sample["auto_check"]["metrics"]
+        metrics["normalized_wrist_y"] = round(wrist_y, 5)
+        metrics["normalized_hip_y"] = round(hip_y, 5)
+        metrics["normalized_stance_width"] = round(stance_width, 5)
+        body_ratio = metrics.get("shoulder_to_body_ratio")
+        stance_to_body = stance_width * body_ratio if body_ratio else None
+        if stance_to_body is not None:
+            metrics["normalized_stance_to_body_height"] = round(stance_to_body, 5)
+
+        address_stance = address_stance_by_source.get(get_source_id(sample))
+        stance_ratio = None
+        if address_stance and stance_to_body is not None:
+            stance_ratio = stance_to_body / address_stance
+            metrics["stance_to_address_ratio"] = round(stance_ratio, 5)
+
+        if stage == "address" and wrist_y < hip_y - 0.08:
+            add_semantic_reason(
+                sample,
+                "address_hands_too_high",
+                "어드레스인데 손이 골반보다 지나치게 높습니다.",
+            )
+        elif stage == "takeaway" and wrist_y < -0.08:
+            add_semantic_reason(
+                sample,
+                "takeaway_hands_too_high",
+                "테이크어웨이인데 손이 이미 어깨 위에 있습니다.",
+            )
+        elif stage == "backswing" and wrist_y > hip_y + 0.08:
+            add_semantic_reason(
+                sample,
+                "backswing_hands_too_low",
+                "백스윙인데 손이 골반 아래에 있습니다.",
+            )
+        elif stage == "top":
+            if wrist_y > -0.03:
+                add_semantic_reason(
+                    sample,
+                    "top_hands_not_high_enough",
+                    "백스윙 탑인데 손이 어깨 위에 있지 않습니다.",
+                )
+            if stance_ratio is not None and stance_ratio < MIN_DYNAMIC_STANCE_RATIO:
+                add_semantic_reason(
+                    sample,
+                    "top_stance_looks_finished",
+                    "백스윙 탑인데 스탠스가 피니시처럼 지나치게 좁습니다.",
+                )
+        elif stage == "downswing":
+            if wrist_y < -0.12:
+                add_semantic_reason(
+                    sample,
+                    "downswing_hands_still_at_top",
+                    "다운스윙인데 손이 아직 탑 높이에 있습니다.",
+                )
+            if stance_ratio is not None and stance_ratio < MIN_DYNAMIC_STANCE_RATIO:
+                add_semantic_reason(
+                    sample,
+                    "downswing_stance_looks_finished",
+                    "다운스윙인데 스탠스가 피니시처럼 지나치게 좁습니다.",
+                )
+        elif stage == "impact":
+            if wrist_y < 0.10:
+                add_semantic_reason(
+                    sample,
+                    "impact_hands_too_high",
+                    "임팩트인데 손이 어깨 근처 또는 그 위에 있습니다.",
+                )
+            if stance_ratio is not None and stance_ratio < MIN_DYNAMIC_STANCE_RATIO:
+                add_semantic_reason(
+                    sample,
+                    "impact_stance_looks_finished",
+                    "임팩트인데 스탠스가 피니시처럼 지나치게 좁습니다.",
+                )
+        elif stage == "follow_through":
+            if stance_ratio is not None and stance_ratio < MIN_DYNAMIC_STANCE_RATIO:
+                add_semantic_reason(
+                    sample,
+                    "follow_through_stance_looks_finished",
+                    "팔로우스루인데 양발이 이미 피니시처럼 모였습니다.",
+                )
+        elif stage == "finish":
+            if wrist_y > 0.05:
+                add_semantic_reason(
+                    sample,
+                    "finish_hands_too_low",
+                    "피니시인데 손이 어깨보다 아래에 있습니다.",
+                )
+            if stance_ratio is not None and stance_ratio > MAX_FINISH_STANCE_RATIO:
+                add_semantic_reason(
+                    sample,
+                    "finish_stance_still_address_width",
+                    "피니시인데 스탠스가 어드레스와 거의 같은 폭입니다.",
+                )
+
+
 def load_existing_reviews(manifest_path):
     if manifest_path is None or not manifest_path.exists():
         return {}
@@ -406,6 +534,7 @@ def build_manifest(
             samples[sample["source"]] = sample
 
     add_stage_outlier_checks(samples)
+    add_stage_semantic_checks(samples)
 
     if preserve_reviews:
         existing_reviews = load_existing_reviews(existing_manifest_path)
@@ -430,6 +559,9 @@ def build_manifest(
             "shaft_warning_score": SHAFT_WARNING_SCORE,
             "max_grip_endpoint_distance": MAX_GRIP_ENDPOINT_DISTANCE,
             "stage_outlier_method": "median_pose_distance_with_mad",
+            "min_dynamic_stance_ratio": MIN_DYNAMIC_STANCE_RATIO,
+            "max_finish_stance_ratio": MAX_FINISH_STANCE_RATIO,
+            "stage_semantic_checks": "normalized_wrist_height_and_stance_vs_address",
         },
         "summary": {
             "total": len(samples),
