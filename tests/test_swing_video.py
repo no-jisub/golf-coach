@@ -1,3 +1,4 @@
+import math
 import tempfile
 import unittest
 from pathlib import Path
@@ -7,6 +8,12 @@ import cv2
 import numpy as np
 
 from utils.swing_video import LANDMARK_SCHEMA, extract_video_landmarks
+from utils.guide_alignment import STAGE_KEYS
+from utils.swing_stage_detector import (
+    STAGE_SCHEMA,
+    detect_stage_events,
+    save_representative_frames,
+)
 
 
 def make_landmark(index):
@@ -51,6 +58,67 @@ def write_test_video(path, frame_count=4, fps=20.0):
     writer.release()
 
 
+def make_pose_record(frame_index, wrist_x, wrist_y, shoulder_angle=0.0):
+    points = []
+    coordinates = {
+        11: (0.42, 0.28),
+        12: (0.58, 0.28 + math.tan(math.radians(shoulder_angle)) * 0.16),
+        15: (wrist_x - 0.02, wrist_y),
+        16: (wrist_x + 0.02, wrist_y),
+        23: (0.45, 0.52),
+        24: (0.55, 0.52),
+        27: (0.38, 0.92),
+        28: (0.62, 0.92),
+    }
+    for index in range(33):
+        x, y = coordinates.get(index, (0.5, 0.5))
+        points.append(
+            {
+                "index": index,
+                "x": x,
+                "y": y,
+                "z": 0.0,
+                "visibility": 0.99,
+            }
+        )
+    return {
+        "frame_index": frame_index,
+        "timestamp_ms": frame_index * 20,
+        "detected": True,
+        "landmarks": points,
+        "world_landmarks": [],
+    }
+
+
+def make_synthetic_swing_payload(frame_count=81):
+    anchors = [
+        (0, 0.50, 0.60, 0.0),
+        (10, 0.50, 0.60, 0.0),
+        (35, 0.30, 0.16, -18.0),
+        (58, 0.50, 0.59, 2.0),
+        (72, 0.72, 0.24, 16.0),
+        (80, 0.72, 0.24, 16.0),
+    ]
+    frames = []
+    for frame_index in range(frame_count):
+        for anchor_index in range(len(anchors) - 1):
+            start = anchors[anchor_index]
+            end = anchors[anchor_index + 1]
+            if start[0] <= frame_index <= end[0]:
+                ratio = (frame_index - start[0]) / max(end[0] - start[0], 1)
+                values = [
+                    start[value_index] + (end[value_index] - start[value_index]) * ratio
+                    for value_index in range(1, 4)
+                ]
+                frames.append(make_pose_record(frame_index, *values))
+                break
+    return {
+        "source_video": "synthetic.avi",
+        "sampling": {"detection_ratio": 1.0},
+        "frames": frames,
+    }
+
+
 class SwingVideoLandmarkTests(unittest.TestCase):
     def test_extracts_timeline_and_keeps_detection_failures(self):
         with tempfile.TemporaryDirectory() as temp_dir:
@@ -91,6 +159,37 @@ class SwingVideoLandmarkTests(unittest.TestCase):
     def test_rejects_invalid_sample_step(self):
         with self.assertRaises(ValueError):
             extract_video_landmarks("swing.mp4", "model.task", sample_step=0)
+
+
+class SwingStageDetectorTests(unittest.TestCase):
+    def test_detects_eight_strictly_ordered_stages(self):
+        result = detect_stage_events(make_synthetic_swing_payload())
+
+        self.assertEqual(result["schema"], STAGE_SCHEMA)
+        self.assertEqual(result["stage_order"], list(STAGE_KEYS))
+        frames = [result["stages"][stage]["frame_index"] for stage in STAGE_KEYS]
+        self.assertEqual(frames, sorted(set(frames)))
+        self.assertTrue(25 <= result["stages"]["top"]["frame_index"] <= 45)
+        self.assertTrue(45 <= result["stages"]["impact"]["frame_index"] <= 68)
+        self.assertGreaterEqual(result["stages"]["finish"]["frame_index"], 70)
+        self.assertGreater(result["stages"]["top"]["motion"]["shoulder_turn"], 5.0)
+
+    def test_saves_one_representative_image_per_stage(self):
+        result = detect_stage_events(make_synthetic_swing_payload())
+        with tempfile.TemporaryDirectory() as temp_dir:
+            video_path = Path(temp_dir) / "swing.avi"
+            output_dir = Path(temp_dir) / "stages"
+            write_test_video(video_path, frame_count=81, fps=50.0)
+            saved = save_representative_frames(video_path, result, output_dir)
+            sizes = [Path(path).stat().st_size for path in saved.values()]
+
+        self.assertEqual(tuple(saved), STAGE_KEYS)
+        self.assertTrue(all(size > 0 for size in sizes))
+
+    def test_rejects_too_few_valid_pose_frames(self):
+        payload = make_synthetic_swing_payload(frame_count=7)
+        with self.assertRaises(ValueError):
+            detect_stage_events(payload)
 
 
 if __name__ == "__main__":
