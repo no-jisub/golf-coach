@@ -106,6 +106,12 @@ def get_sample_inclusion(json_path, review_manifest):
     return True, "included"
 
 
+def get_sample_shaft_inclusion(json_path, review_manifest):
+    review_key = get_sample_review_key(json_path)
+    sample_review = review_manifest.get("samples", {}).get(review_key, {})
+    return sample_review.get("human_review", {}).get("include_shaft", True)
+
+
 def normalize_landmarks(landmarks):
     """어깨 중심/어깨 너비/어깨-발목 높이 기준으로 프로 좌표를 정규화합니다."""
     left_shoulder = landmarks[11]
@@ -234,6 +240,8 @@ def build_stage_pose(stage, review_manifest):
         "invalid_human_status": 0,
         "invalid_auto_status": 0,
         "unusable_landmarks": 0,
+        "shaft_included": 0,
+        "shaft_excluded_by_review": 0,
     }
 
     for json_path in json_paths:
@@ -254,8 +262,12 @@ def build_stage_pose(stage, review_manifest):
 
         guide_poses.append(denormalize_to_guide_space(normalized))
         normalized_shaft = normalize_shaft(shaft, landmarks)
-        if normalized_shaft is not None:
+        include_shaft = get_sample_shaft_inclusion(json_path, review_manifest)
+        if normalized_shaft is not None and include_shaft:
             shaft_guides.append(denormalize_shaft_to_guide_space(normalized_shaft))
+            review_stats["shaft_included"] += 1
+        elif normalized_shaft is not None:
+            review_stats["shaft_excluded_by_review"] += 1
         used_files.append(get_sample_review_key(json_path))
         review_stats["included"] += 1
 

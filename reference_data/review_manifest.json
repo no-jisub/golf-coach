@@ -46,6 +46,12 @@
       "pass": 18,
       "warning": 13,
       "fail": 33
+    },
+    "human_review": {
+      "pending": 0,
+      "accepted": 34,
+      "rejected": 30,
+      "auto_fail_overrides": 7
     }
   },
   "samples": {
@@ -73,9 +79,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro03_video_address_auto.json": {
@@ -102,9 +109,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro04_video_address_auto.json": {
@@ -142,9 +150,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro05_video_address_auto.json": {
@@ -171,9 +180,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro06_video_address_auto.json": {
@@ -200,9 +210,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro07_video_address_auto.json": {
@@ -235,9 +246,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro08_video_address_auto.json": {
@@ -264,9 +276,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/address/pro09_video_address_auto.json": {
@@ -293,9 +306,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro01_video_takeaway_auto.json": {
@@ -322,9 +336,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro03_video_takeaway_auto.json": {
@@ -357,9 +372,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro04_video_takeaway_auto.json": {
@@ -392,9 +408,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro05_video_takeaway_auto.json": {
@@ -421,9 +438,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro06_video_takeaway_auto.json": {
@@ -450,9 +468,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro07_video_takeaway_auto.json": {
@@ -485,9 +504,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro08_video_takeaway_auto.json": {
@@ -514,9 +534,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/takeaway/pro09_video_takeaway_auto.json": {
@@ -554,9 +575,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro01_video_backswing_auto.json": {
@@ -587,9 +609,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro03_video_backswing_auto.json": {
@@ -622,9 +645,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro04_video_backswing_auto.json": {
@@ -662,9 +686,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro05_video_backswing_auto.json": {
@@ -691,9 +716,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro06_video_backswing_auto.json": {
@@ -720,9 +746,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro07_video_backswing_auto.json": {
@@ -760,9 +787,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro08_video_backswing_auto.json": {
@@ -789,9 +817,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/backswing/pro09_video_backswing_auto.json": {
@@ -824,9 +853,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/top/pro01_video_top_auto.json": {
@@ -859,9 +889,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/top/pro03_video_top_auto.json": {
@@ -899,9 +930,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/top/pro04_video_top_auto.json": {
@@ -939,9 +971,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/top/pro05_video_top_auto.json": {
@@ -968,9 +1001,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/top/pro06_video_top_auto.json": {
@@ -997,9 +1031,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/top/pro07_video_top_auto.json": {
@@ -1032,9 +1067,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/top/pro08_video_top_auto.json": {
@@ -1061,9 +1097,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/top/pro09_video_top_auto.json": {
@@ -1096,9 +1133,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro01_video_downswing_auto.json": {
@@ -1136,9 +1174,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro03_video_downswing_auto.json": {
@@ -1186,9 +1225,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro04_video_downswing_auto.json": {
@@ -1236,9 +1276,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro05_video_downswing_auto.json": {
@@ -1271,9 +1312,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro06_video_downswing_auto.json": {
@@ -1306,9 +1348,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro07_video_downswing_auto.json": {
@@ -1341,9 +1384,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro08_video_downswing_auto.json": {
@@ -1381,9 +1425,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/downswing/pro09_video_downswing_auto.json": {
@@ -1416,9 +1461,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/impact/pro01_video_impact_auto.json": {
@@ -1461,9 +1507,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/impact/pro03_video_impact_auto.json": {
@@ -1511,9 +1558,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/impact/pro04_video_impact_auto.json": {
@@ -1556,9 +1604,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/impact/pro05_video_impact_auto.json": {
@@ -1585,9 +1634,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/impact/pro06_video_impact_auto.json": {
@@ -1625,9 +1675,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/impact/pro07_video_impact_auto.json": {
@@ -1654,9 +1705,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": false,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/impact/pro08_video_impact_auto.json": {
@@ -1689,9 +1741,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/impact/pro09_video_impact_auto.json": {
@@ -1724,9 +1777,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "accepted",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro01_video_follow_through_auto.json": {
@@ -1759,9 +1813,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro03_video_follow_through_auto.json": {
@@ -1809,9 +1864,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro04_video_follow_through_auto.json": {
@@ -1854,9 +1910,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro05_video_follow_through_auto.json": {
@@ -1894,9 +1951,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro06_video_follow_through_auto.json": {
@@ -1929,9 +1987,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro07_video_follow_through_auto.json": {
@@ -1964,9 +2023,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro08_video_follow_through_auto.json": {
@@ -2002,9 +2062,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/follow_through/pro09_video_follow_through_auto.json": {
@@ -2040,9 +2101,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/finish/pro01_video_finish_auto.json": {
@@ -2075,9 +2137,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/finish/pro03_video_finish_auto.json": {
@@ -2115,9 +2178,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/finish/pro04_video_finish_auto.json": {
@@ -2155,9 +2219,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/finish/pro05_video_finish_auto.json": {
@@ -2195,9 +2260,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/finish/pro06_video_finish_auto.json": {
@@ -2235,9 +2301,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/finish/pro07_video_finish_auto.json": {
@@ -2275,9 +2342,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
+        "status": "rejected",
         "override_auto_fail": false,
-        "note": ""
+        "include_shaft": true,
+        "note": "시각 검수: 단계 라벨 또는 관절/자세 불일치"
       }
     },
     "reference_data/extracted_landmarks/finish/pro08_video_finish_auto.json": {
@@ -2310,9 +2378,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     },
     "reference_data/extracted_landmarks/finish/pro09_video_finish_auto.json": {
@@ -2345,9 +2414,10 @@
         }
       },
       "human_review": {
-        "status": "pending",
-        "override_auto_fail": false,
-        "note": ""
+        "status": "accepted",
+        "override_auto_fail": true,
+        "include_shaft": true,
+        "note": "시각 검수: 단계와 관절 좌표 확인"
       }
     }
   }

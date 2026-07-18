@@ -236,7 +236,11 @@ class GuidePoseInclusionTests(unittest.TestCase):
                 "samples": {
                     accepted_key: {
                         "auto_check": {"status": "pass"},
-                        "human_review": {"status": "accepted", "override_auto_fail": False},
+                        "human_review": {
+                            "status": "accepted",
+                            "override_auto_fail": False,
+                            "include_shaft": False,
+                        },
                     },
                     pending_key: {
                         "auto_check": {"status": "pass"},
@@ -248,12 +252,14 @@ class GuidePoseInclusionTests(unittest.TestCase):
             with mock.patch.object(builder, "PROJECT_ROOT", root), mock.patch.object(
                 builder, "EXTRACTED_DIR", root / "reference_data" / "extracted_landmarks"
             ):
-                pose, _, used_files, stats = builder.build_stage_pose("address", manifest)
+                pose, shaft, used_files, stats = builder.build_stage_pose("address", manifest)
 
         self.assertIsNotNone(pose)
+        self.assertIsNone(shaft)
         self.assertEqual([accepted_key], used_files)
         self.assertEqual(1, stats["included"])
         self.assertEqual(1, stats["pending"])
+        self.assertEqual(1, stats["shaft_excluded_by_review"])
 
 
 class ReviewReferenceSamplesTests(unittest.TestCase):
@@ -306,6 +312,13 @@ class ReviewReferenceSamplesTests(unittest.TestCase):
         self.assertEqual(2, summary["accepted"])
         self.assertEqual(0, summary["pending"])
         self.assertEqual(1, summary["auto_fail_overrides"])
+
+    def test_shaft_inclusion_can_be_reviewed_separately(self):
+        sample = self.make_manifest()["samples"]["address-pass.json"]
+
+        reviewer.set_shaft_inclusion(sample, False)
+
+        self.assertFalse(sample["human_review"]["include_shaft"])
 
 
 if __name__ == "__main__":

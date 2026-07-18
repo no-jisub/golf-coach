@@ -178,6 +178,7 @@ def default_human_review():
     return {
         "status": "pending",
         "override_auto_fail": False,
+        "include_shaft": True,
         "note": "",
     }
 
@@ -512,10 +513,12 @@ def load_existing_reviews(manifest_path):
         manifest = load_json(manifest_path)
     except (OSError, UnicodeDecodeError, json.JSONDecodeError):
         return {}
-    return {
-        key: sample.get("human_review", default_human_review())
-        for key, sample in manifest.get("samples", {}).items()
-    }
+    reviews = {}
+    for key, sample in manifest.get("samples", {}).items():
+        normalized = default_human_review()
+        normalized.update(sample.get("human_review", {}))
+        reviews[key] = normalized
+    return reviews
 
 
 def build_manifest(

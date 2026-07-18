@@ -73,10 +73,17 @@ def apply_decision(sample, status, override_auto_fail=False, note=None):
     human_review = sample.setdefault("human_review", {})
     human_review["status"] = status
     human_review["override_auto_fail"] = bool(status == "accepted" and override_auto_fail)
+    human_review.setdefault("include_shaft", True)
     if note is not None:
         human_review["note"] = note
     else:
         human_review.setdefault("note", "")
+    return human_review
+
+
+def set_shaft_inclusion(sample, include_shaft):
+    human_review = sample.setdefault("human_review", {})
+    human_review["include_shaft"] = bool(include_shaft)
     return human_review
 
 
@@ -199,7 +206,8 @@ def build_review_frame(sample_key, sample, current_index, total_count, message="
 
     header = (
         f"[{current_index + 1}/{total_count}] {sample.get('stage')} | "
-        f"AUTO={auto_status} | REVIEW={human_status} | override={human_review.get('override_auto_fail', False)}"
+        f"AUTO={auto_status} | REVIEW={human_status} | override={human_review.get('override_auto_fail', False)} | "
+        f"shaft={human_review.get('include_shaft', True)}"
     )
     cv2.putText(
         canvas,
@@ -240,7 +248,7 @@ def build_review_frame(sample_key, sample, current_index, total_count, message="
     ) or "No selected metrics"
     y = put_lines(canvas, textwrap.wrap(metric_text, width=max(55, image_row.shape[1] // 13))[:2], 18, y)
 
-    help_text = "A accept | O override auto-fail | R reject | P pending | LEFT/J previous | RIGHT/K next | Q quit"
+    help_text = "A accept | O override | R reject | P pending | S toggle shaft | LEFT/J previous | RIGHT/K next | Q quit"
     cv2.putText(
         canvas,
         help_text,
@@ -316,6 +324,10 @@ def review_interactively(manifest, manifest_path, rows, start_key=None):
             elif key in {ord("p"), ord("P")}:
                 apply_decision(sample, "pending")
                 message = "Saved: pending"
+            elif key in {ord("s"), ord("S")}:
+                current = sample.get("human_review", {}).get("include_shaft", True)
+                set_shaft_inclusion(sample, not current)
+                message = f"Saved: include_shaft={not current}"
             else:
                 continue
         except ValueError as error:
