@@ -2,53 +2,74 @@
 
 초보자를 위한 단계별 골프 자세 코칭 프로그램입니다.
 
-MediaPipe Tasks API의 Pose Landmarker로 웹캠 화면에서 사람 관절을 인식하고, 주요 관절 점과 선을 OpenCV 화면에 표시합니다. 사용자가 각 자세를 천천히 잡고 멈추면 최근 프레임 평균값으로 자세를 1차 판단합니다.
+현재 목표는 빠른 풀스윙을 실시간으로 완벽하게 분석하는 것이 아닙니다. 사용자가 각 자세를 천천히 잡고 잠시 멈추면, PC 웹캠 화면에서 사람 관절을 인식하고 보조 스켈레톤과 비교해서 통과 여부와 수정 피드백을 주는 방식으로 개발하고 있습니다.
 
-## 실행 환경
+이 문서는 다른 개발자나 다른 AI가 프로젝트 의도와 현재 방향을 이어받을 수 있도록 작성한 개발 인수인계 문서입니다.
 
-- Windows
-- Python 3.12.0
-- PowerShell
+## 개발 환경
 
-## 설치
+- OS: Windows
+- Shell: PowerShell
+- Python: 3.12.0
+- 실행 기준: `py -3.12`
+- 프로젝트 경로: `C:\project\golf-coach`
+
+설치:
 
 ```powershell
 cd C:\project\golf-coach
 py -3.12 -m pip install -r requirements.txt
 ```
 
-## 모델 파일
-
-프로젝트 루트에 다음 파일이 필요합니다.
+현재 의존성:
 
 ```text
-pose_landmarker_full.task
+opencv-python
+mediapipe
+numpy
+Pillow
 ```
 
-파일이 없으면 `main.py` 실행 시 안내 메시지가 출력됩니다.
+`Pillow`는 OpenCV 화면 하단에 한국어 피드백을 출력하기 위해 사용합니다.
 
-## 실행
+## 실행 방법
 
 ```powershell
 cd C:\project\golf-coach
 py -3.12 main.py
 ```
 
-웹캠 화면이 열리고 사람이 인식되면 어깨, 팔꿈치, 손목, 골반, 무릎, 발목 등에 점과 선이 표시됩니다.
-현재 보조 스켈레톤과 판정 기준은 기본적으로 우타 기준입니다. 좌타 기준으로 테스트하려면 `utils/guide_skeleton.py`의 `SWING_HAND` 값을 `"left"`로 바꾸면 됩니다.
+필수 모델 파일:
 
-프로그램 시작 후 먼저 캘리브레이션이 진행됩니다. 사용자는 어드레스 보조 스켈레톤에 몸을 맞추고, 머리부터 발목까지 보이도록 선 상태에서 5초 동안 자세를 유지하면 됩니다. 캘리브레이션 중에는 보조 스켈레톤이 사용자 위치와 체형 비율에 맞춰 따라옵니다.
+```text
+pose_landmarker_full.task
+```
 
-5초 유지가 끝나면 그 순간까지의 평균 어깨 중심, 어깨 너비, 어깨-발목 세로 비율을 기준으로 보조 스켈레톤 위치와 크기가 고정됩니다. 중간에 몸이 크게 움직이거나 인식이 끊기면 캘리브레이션은 다시 시작됩니다. 다시 보정하려면 `c` 키를 누릅니다.
+이 파일은 프로젝트 루트에 있어야 합니다. 없으면 `main.py`가 친절한 오류 메시지를 출력하고 종료합니다.
 
-종료하려면 OpenCV 창에서 `q` 키를 누릅니다.
+기본 카메라 인덱스는 `0`입니다. 카메라가 열리지 않으면 `main.py`의 `CAMERA_INDEX` 값을 `1`, `2` 등으로 바꿔 테스트합니다.
 
-## 8단계 자세
+종료는 OpenCV 창에서 `q`를 누릅니다.
 
-현재 지원하는 골프 스윙 단계는 다음과 같습니다.
+## 핵심 목표
+
+최종 목표는 다음 흐름입니다.
+
+1. 사용자가 어드레스 자세를 잡고 멈춤
+2. 프로그램이 웹캠 프레임에서 관절 좌표를 추출
+3. 보조 스켈레톤과 현재 사용자 자세를 비교
+4. 통과 또는 수정 피드백을 화면 하단에 표시
+5. 다음 단계로 이동
+6. 8단계 완료 후 단계별 점수와 피드백 제공
+
+현재 MVP는 8단계 전체 화면 흐름과 보조 스켈레톤 비교까지 들어가 있지만, 판정 기준은 아직 실제 레슨 품질 수준이 아닙니다. 우선 “단계별 자세를 잡고 피드백을 받는 제품 흐름”을 만든 뒤, 기준 자세 데이터를 점진적으로 개선하는 방향입니다.
+
+## 현재 8단계
+
+프로그램은 정면 웹캠 기준으로 아래 8단계를 지원합니다.
 
 - `1`: 어드레스 Address
-- `2`: 테이크백 Takeaway
+- `2`: 테이크어웨이 Takeaway
 - `3`: 백스윙 Backswing
 - `4`: 백스윙 탑 Top of Swing
 - `5`: 다운스윙 Downswing
@@ -56,145 +77,302 @@ py -3.12 main.py
 - `7`: 팔로우스루 Follow-through
 - `8`: 피니쉬 Finish
 
-추가 조작:
+키 조작:
 
+- `1`~`8`: 단계 직접 선택
 - `n`: 다음 단계
 - `p`: 이전 단계
-- `c`: 캘리브레이션 다시 시작
+- `c`: 사용자 체형/위치 보정 다시 시작
 - `q`: 종료
 
-## 현재 분석 방식
+## 현재 앱 동작 방식
 
-사람이 인식되면 최근 프레임을 약 2초 동안 모아 평균값으로 현재 선택된 단계의 자세를 판단합니다. 사용자 관절 좌표와 보조 스켈레톤 좌표를 어깨 중심, 어깨 너비, 어깨-발목 높이 기준으로 정규화한 뒤, 머리/팔/몸통/하체 차이를 계산합니다.
+`main.py`가 메인 실행 파일입니다.
 
-현재 기준은 MVP용 1차 기준입니다. 실제 골프 레슨 수준의 정밀 판정이 아니라, 단계별 자세를 잡고 피드백을 확인하는 흐름을 먼저 만들기 위한 기준입니다.
+동작 순서:
 
-## 기준 자세 데이터 생성
+1. `pose_landmarker_full.task` 모델 파일 확인
+2. OpenCV로 웹캠 열기
+3. MediaPipe Tasks API `PoseLandmarker`를 `VIDEO` 모드로 실행
+4. 웹캠 프레임을 좌우 반전해서 거울처럼 표시
+5. 사람 관절 좌표 추출
+6. 사용자 관절점 표시
+7. 보조 스켈레톤과 샤프트 표시
+8. 최근 2초 정도의 관절 좌표를 모아 평균 자세 계산
+9. 현재 단계 기준과 비교해서 피드백 생성
+10. 화면 하단에 한국어 피드백 표시
 
-프로 골프 자세 캡처 이미지는 `reference_data/raw_images` 아래 단계별 폴더에 저장합니다. 원본 이미지는 `.gitignore`로 제외되어 GitHub에 올라가지 않습니다.
+중요한 방향:
 
-이미지에서 관절 좌표를 추출하려면 다음을 실행합니다.
+- `mp.solutions.pose` 방식은 예전 테스트용입니다.
+- 최종 방향은 MediaPipe Tasks API `PoseLandmarker`입니다.
+- 실시간 빠른 스윙 분석보다, 멈춘 자세를 1~2초 동안 안정적으로 수집해 판단하는 방식입니다.
+
+## 사용자 보정 단계
+
+프로그램 시작 직후 바로 자세 판정을 하지 않습니다.
+
+먼저 사용자가 어드레스 보조 스켈레톤에 몸을 맞춘 상태로 약 5초 동안 멈추면, 프로그램이 사용자의 위치와 체형 비율을 기준으로 보조 스켈레톤 크기와 위치를 고정합니다.
+
+보정에서 사용하는 주요 기준:
+
+- 어깨 중심
+- 어깨 너비
+- 어깨에서 발목까지의 세로 길이
+- 사용자 위치 변화량
+
+사용자가 보정 중 크게 움직이면 보정이 다시 시작됩니다. 보정이 완료되면 화면에 `Calibration: LOCKED`가 표시됩니다.
+
+## 보조 스켈레톤과 판정 기준 관계
+
+현재 구조에서 보조 스켈레톤은 단순한 그림이 아닙니다.
+
+`utils/guide_skeleton.py`의 `GUIDE_POSES`가 화면에 그려지는 보조 스켈레톤 기준이고, `utils/golf_rules.py`도 이 좌표를 사용해서 사용자 자세와 비교합니다.
+
+즉 현재는:
+
+```text
+보조 스켈레톤 좌표 = 자세 판정 기준 좌표
+```
+
+따라서 보조 스켈레톤을 개선하면 판정 기준도 같이 바뀝니다. 이 방향은 의도된 것입니다. 사용자가 보는 목표 자세와 실제 판정 기준이 다르면 혼란이 생기기 때문입니다.
+
+## 좌타/우타 기준
+
+`utils/guide_skeleton.py`의 `SWING_HAND` 값으로 기준을 바꿉니다.
+
+```python
+SWING_HAND = "right"
+```
+
+- `right`: 우타 기준
+- `left`: 좌타 기준
+
+현재 기본값은 우타 기준입니다. 내부 기본 좌표가 한쪽 기준으로 만들어져 있고, 필요하면 좌우 반전해서 사용합니다.
+
+## 샤프트 표시
+
+보조 스켈레톤에는 골프 클럽을 “샤프트 막대기” 형태로 표시합니다.
+
+현재 샤프트는 정교한 클럽 헤드/페이스 방향 인식이 아닙니다. 목적은 사용자가 클럽 방향을 대략 맞출 수 있게 하는 시각 가이드입니다.
+
+샤프트 기준은 두 방식으로 동작합니다.
+
+1. `reference_data/guide_poses/generated_guide_poses.json`에 샤프트 데이터가 있으면 그것을 우선 사용
+2. 없으면 `utils/guide_skeleton.py`의 기본 샤프트 좌표 사용
+
+샤프트 자동 추출은 `tools/extract_reference_shafts.py`에서 OpenCV Canny + Hough line 기반으로 시도합니다. 영상/이미지 품질, 배경, 클럽 색상에 따라 실패하거나 엉뚱한 선을 잡을 수 있으므로 overlay 검수가 필요합니다.
+
+## 프로젝트 구조
+
+```text
+C:\project\golf-coach
+├─ main.py
+├─ main_solutions_legacy.py
+├─ requirements.txt
+├─ pose_landmarker_full.task
+├─ README.md
+├─ utils
+│  ├─ angle_calculator.py
+│  ├─ golf_rules.py
+│  ├─ guide_skeleton.py
+│  └─ pose_drawer.py
+├─ tools
+│  ├─ build_guide_poses.py
+│  ├─ detect_swing_events_mediapipe.py
+│  ├─ edit_reference_landmarks.py
+│  ├─ extract_reference_poses.py
+│  ├─ extract_reference_shafts.py
+│  ├─ extract_swing_reference_from_video.py
+│  ├─ extract_video_frames.py
+│  └─ visualize_reference_poses.py
+└─ reference_data
+   ├─ raw_videos
+   ├─ raw_images
+   ├─ extracted_landmarks
+   ├─ debug_overlay
+   ├─ debug_shaft_overlay
+   └─ guide_poses
+```
+
+`main_solutions_legacy.py`는 예전 MediaPipe Solutions 방식 테스트 파일입니다. 삭제하지 말고 참고용으로만 둡니다.
+
+## 기준 데이터 생성 흐름
+
+현재는 프로 스윙 영상 또는 캡처 이미지에서 단계별 기준 좌표를 만들어 보조 스켈레톤을 개선하는 방향으로 진행 중입니다.
+
+전체 흐름:
+
+```text
+raw_videos 또는 raw_images
+→ 단계별 프레임 추출
+→ PoseLandmarker로 관절 좌표 JSON 생성
+→ 샤프트 후보 추출
+→ overlay 이미지로 검수
+→ generated_guide_poses.json 생성
+→ main.py에서 보조 스켈레톤/판정 기준으로 사용
+```
+
+### 로컬 영상에서 자동 추출
+
+```powershell
+py -3.12 tools\extract_swing_reference_from_video.py reference_data\raw_videos\pro03_fullswing.mp4 --prefix pro03 --overwrite --event-source mediapipe --sample-step 2
+```
+
+이 도구가 하는 일:
+
+- 영상에서 8단계 후보 프레임 자동 선택
+- 단계별 JPG 저장
+- MediaPipe PoseLandmarker로 관절 JSON 생성
+- 샤프트 후보 추출
+- 관절/샤프트 overlay 이미지 생성
+
+주의: 현재 8단계 자동 선택은 완벽한 SwingNet 같은 모델이 아니라 MediaPipe 관절 움직임 기반 휴리스틱입니다. 그래서 반드시 overlay를 확인해야 합니다.
+
+### 이미지에서 관절 추출
 
 ```powershell
 py -3.12 tools\extract_reference_poses.py
 ```
 
-추출된 좌표로 보조 스켈레톤 기준 데이터를 만들려면 다음을 실행합니다.
+### 관절 overlay 생성
 
 ```powershell
-py -3.12 tools\build_guide_poses.py
+py -3.12 tools\visualize_reference_poses.py
 ```
 
-생성 결과는 다음 파일에 저장됩니다.
+결과 위치:
 
 ```text
-reference_data\guide_poses\generated_guide_poses.json
+reference_data\debug_overlay
 ```
 
-앱은 이 파일이 있으면 자동으로 프로 사진 기반 보조 스켈레톤을 우선 사용하고, 파일이 없으면 코드에 들어있는 기본 스켈레톤을 사용합니다.
-
-추출된 관절 JSON을 기준으로 OpenCV가 샤프트 후보를 자동 검출하게 하려면 다음을 실행합니다.
+### 샤프트 추출
 
 ```powershell
 py -3.12 tools\extract_reference_shafts.py
 ```
 
-특정 선수나 단계만 처리할 수도 있습니다.
-
-```powershell
-py -3.12 tools\extract_reference_shafts.py --only pro02
-py -3.12 tools\extract_reference_shafts.py --stage address
-```
-
-샤프트 검수 이미지는 다음 위치에 저장됩니다.
+결과 위치:
 
 ```text
 reference_data\debug_shaft_overlay
 ```
-추출된 좌표가 사진 위에 잘 찍혔는지 확인하려면 overlay 이미지를 생성합니다.
 
-```powershell
-py -3.12 tools\visualize_reference_poses.py
-```
-
-검수 이미지는 다음 위치에 저장됩니다.
-
-```text
-reference_data\debug_overlay
-```
-
-관절 좌표가 이상하게 찍힌 경우 JSON을 이미지 위에서 직접 보정할 수 있습니다.
-
-```powershell
-py -3.12 tools\edit_reference_landmarks.py --stage address
-```
-
-편집 도구 조작:
-
-- 마우스 드래그: 가까운 관절 이동
-- 방향키 또는 `w/a/s/d`: 선택 관절 미세 이동
-- `s`: JSON 저장
-- `q` 또는 `Esc`: 종료
-
-수동 보정 후에는 기준 스켈레톤을 다시 생성합니다.
+### 보조 스켈레톤 기준 생성
 
 ```powershell
 py -3.12 tools\build_guide_poses.py
 ```
 
-## 다음 개발 단계
-
-1. 실제 촬영 각도에 맞춰 각 단계 기준값을 조정합니다.
-2. 오른손잡이/왼손잡이 설정을 추가합니다.
-3. 단계별 점수를 저장하고 마지막에 요약 화면을 표시합니다.
-4. 단계별 통과 시 자동으로 다음 단계로 넘어가게 만듭니다.
-
-## 풀스윙 동영상에서 기준 프레임 뽑기
-
-프로 풀스윙 동영상은 `reference_data\raw_videos` 폴더에 저장합니다. 동영상 원본은 `.gitignore`로 제외되어 GitHub에 올라가지 않습니다.
-
-로컬 영상에서 8단계 후보 프레임과 관절/샤프트 JSON을 한 번에 자동 추출하려면 다음을 실행합니다.
-
-```powershell
-py -3.12 tools\extract_swing_reference_from_video.py reference_data\raw_videos\pro03_full_swing.mp4 --prefix pro03
-```
-
-이 자동 추출은 아직 SwingNet 기반이 아니라 영상 진행률 기반 후보 프레임을 사용합니다. 따라서 생성된 결과는 반드시 overlay 이미지로 검수해야 합니다.
-
-검수 위치:
+생성 결과:
 
 ```text
-reference_data\debug_overlay
-reference_data\debug_shaft_overlay
-```
-```powershell
-py -3.12 tools\extract_video_frames.py reference_data\raw_videos\pro01_full_swing.mp4
+reference_data\guide_poses\generated_guide_poses.json
 ```
 
-도구 창에서 단계별 구간을 지정한 뒤 단계 키를 누르면 해당 구간에서 여러 프레임이 자동으로 저장됩니다. 구간을 지정하지 않고 단계 키를 누르면 현재 프레임 1장만 저장됩니다.
+이 파일이 있으면 `main.py` 실행 시 기본 좌표보다 이 생성 좌표를 우선 사용합니다.
 
-- `b`: 현재 프레임을 구간 시작으로 지정
-- `e`: 현재 프레임을 구간 끝으로 지정
-- `c`: 지정한 구간 초기화
-- `Space` 또는 `p`: 재생/일시정지
-- `a`/`d` 또는 방향키: 이전/다음 프레임 이동
-- `q`: 종료
+## 데이터와 GitHub 정책
 
-구간을 잡은 뒤 다음 키를 누르면 해당 단계 폴더에 프레임이 저장됩니다.
+원본 영상, 원본 이미지, 추출 JSON, debug overlay, 생성된 guide pose JSON은 GitHub에 올리지 않는 방향입니다.
 
-- `1`: Address
-- `2`: Takeaway
-- `3`: Backswing
-- `4`: Top of Swing
-- `5`: Downswing
-- `6`: Impact
-- `7`: Follow-through
-- `8`: Finish
+현재 `.gitignore`에서 제외하는 주요 데이터:
 
-프레임 저장 후 기존 흐름을 그대로 실행합니다.
+- `reference_data/raw_videos/**/*.mp4`
+- `reference_data/raw_videos/**/*.mov`
+- `reference_data/raw_videos/**/*.avi`
+- `reference_data/raw_videos/**/*.mkv`
+- `reference_data/raw_videos/**/*.webm`
+- `reference_data/raw_images/**/*.jpg`
+- `reference_data/raw_images/**/*.png`
+- `reference_data/extracted_landmarks/**/*.json`
+- `reference_data/debug_overlay/**/*`
+- `reference_data/debug_shaft_overlay/**/*`
+- `reference_data/guide_poses/generated_guide_poses.json`
 
-```powershell
-py -3.12 tools\extract_reference_poses.py
-py -3.12 tools\visualize_reference_poses.py
-py -3.12 tools\build_guide_poses.py
+이유:
+
+- 프로 영상/이미지는 저작권 문제가 있을 수 있음
+- AIHub 같은 외부 데이터셋은 이용 약관을 따라야 함
+- 추출 JSON도 원본 데이터에서 파생된 데이터일 수 있음
+- GitHub에는 코드, 도구, 문서만 올리는 것이 안전함
+
+중요한 코드 변경은 커밋/푸시해도 되지만, 데이터 파일은 명시 요청이 있어도 법적 위험을 먼저 확인해야 합니다.
+
+## AIHub 데이터 검토 메모
+
+검토한 데이터셋:
+
+```text
+AIHub 스포츠 사람 동작 (골프)
+https://aihub.or.kr/aihubdata/data/view.do?currMenu=115&topMenu=100&aihubDataSe=data&dataSetSn=65
 ```
+
+확인된 내용:
+
+- 골프 영상 데이터
+- 사람, 공, 골프채 객체 정보
+- 관절 좌표
+- 동작 단계 라벨
+- 동작 평가 라벨
+- JSON 어노테이션
+
+AIHub 단계 라벨과 우리 단계 매핑:
+
+```text
+Adress       -> address
+Takeback     -> takeaway
+Backswing    -> backswing
+Backswingtop -> top
+Downswing    -> downswing
+Impact       -> impact
+Follow       -> follow_through
+Finish       -> finish
+```
+
+주의할 점:
+
+- 페이지 본문 기준으로는 정면/측면 카메라 방향 라벨이 명확히 확인되지 않았음
+- 우리 앱은 현재 정면 웹캠 기준이므로, AIHub 데이터를 그대로 평균내면 안 됨
+- 다운로드 후 실제 JSON에 촬영 방향 필드가 있는지 확인해야 함
+- 방향 필드가 없다면 정면 샘플만 필터링하는 도구가 필요함
+
+AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 같은 변환기를 새로 만들어, AIHub JSON을 우리 내부 기준 JSON 형식으로 변환하는 것이 다음 작업입니다.
+
+## 현재 한계
+
+현재 프로젝트는 기능 흐름을 만든 MVP 단계입니다.
+
+알려진 한계:
+
+- 소스 일부 주석/문자열 인코딩이 깨져 있음
+- 보조 스켈레톤 좌표가 아직 실제 골프 레슨 기준으로 충분히 정교하지 않음
+- 영상에서 8단계 프레임을 고르는 로직은 휴리스틱이라 오차가 있음
+- 샤프트 추출은 배경과 클럽 색상에 따라 실패 가능
+- 정면/측면 영상이 섞이면 기준 자세가 망가질 수 있음
+- 현재 판정은 “스켈레톤과 얼마나 가까운지” 중심이고, 골프 전문 각도 규칙은 아직 약함
+
+## 다음 개발 우선순위
+
+권장 순서:
+
+1. 깨진 한국어 문자열/주석 인코딩 복구
+2. 정면 기준 데이터만 따로 분리하는 구조 추가
+3. overlay 검수 결과를 기준으로 이상한 샘플 제외 기능 추가
+4. AIHub 또는 신뢰 가능한 정면 골프 데이터셋을 우리 JSON 포맷으로 변환
+5. `generated_guide_poses.json`를 정면 데이터 기반으로 다시 생성
+6. 어드레스 단계부터 실제 골프 기준 각도 규칙 강화
+7. 단계별 점수 저장과 최종 요약 화면 추가
+8. 나중에 스마트폰 카메라 입력 방식 검토
+
+가장 먼저 해야 할 실질 작업은 `main.py`, `utils/golf_rules.py`, `utils/guide_skeleton.py`, `tools/*.py`의 깨진 한국어 문자열을 UTF-8로 복구하는 것입니다. 현재 실행 자체는 가능할 수 있지만, 피드백 문구와 코드 이해성이 떨어집니다.
+
+## 개발 원칙
+
+- 처음부터 빠른 풀스윙 실시간 분석으로 가지 않는다.
+- 단계별 정지 자세 분석을 먼저 안정화한다.
+- 사용자가 보는 보조 스켈레톤과 실제 판정 기준은 같은 데이터를 사용한다.
+- 데이터 기반 기준을 만들되, 정면/측면/좌타/우타가 섞이지 않게 관리한다.
+- 외부 영상, 이미지, 데이터셋 원본과 파생 JSON은 GitHub에 올리지 않는다.
+- 기능을 추가할 때는 `main.py`를 너무 복잡하게 만들지 말고 `utils`와 `tools`로 분리한다.
