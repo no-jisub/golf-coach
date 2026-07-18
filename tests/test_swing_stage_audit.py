@@ -3,6 +3,9 @@ import tempfile
 import unittest
 from pathlib import Path
 
+import cv2
+import numpy as np
+
 from utils.guide_alignment import STAGE_KEYS
 from utils.swing_stage_audit import (
     AUDIT_SCHEMA,
@@ -13,6 +16,14 @@ from utils.swing_stage_audit import (
     validate_ground_truth_manifest,
 )
 from utils.swing_video import LANDMARK_SCHEMA
+from utils.swing_stage_contact_sheet import (
+    PANEL_HEIGHT,
+    PANEL_WIDTH,
+    SHEET_COLUMNS,
+    SHEET_ROWS,
+    build_stage_contact_sheet,
+    candidate_frame_indexes,
+)
 
 
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -146,6 +157,46 @@ class SwingStageBatchAuditTests(unittest.TestCase):
                     model_path=Path(temp_dir) / "model.task",
                     video_ids=["unknown"],
                 )
+
+
+def write_review_video(path, frame_count=80, fps=20.0):
+    writer = cv2.VideoWriter(
+        str(path),
+        cv2.VideoWriter_fourcc(*"MJPG"),
+        fps,
+        (160, 120),
+    )
+    if not writer.isOpened():
+        raise RuntimeError("검수 시트 테스트 영상을 만들 수 없습니다.")
+    for frame_index in range(frame_count):
+        frame = np.full((120, 160, 3), frame_index * 3 % 255, dtype=np.uint8)
+        cv2.putText(frame, str(frame_index), (15, 70), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 255), 2)
+        writer.write(frame)
+    writer.release()
+
+
+class SwingStageContactSheetTests(unittest.TestCase):
+    def test_candidate_indexes_are_clamped(self):
+        self.assertEqual(candidate_frame_indexes(2, 100, 5), [0, 2, 7])
+        self.assertEqual(candidate_frame_indexes(98, 100, 5), [93, 98, 99])
+
+    def test_contact_sheet_contains_all_eight_stage_panels(self):
+        events = {
+            stage_key: {"frame_index": 5 + index * 9}
+            for index, stage_key in enumerate(STAGE_KEYS)
+        }
+        ground_truth = make_manifest()["videos"]["sample"]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            video_path = Path(temp_dir) / "review.avi"
+            write_review_video(video_path)
+            sheet, metadata = build_stage_contact_sheet(video_path, events, ground_truth)
+
+        self.assertEqual(
+            sheet.shape,
+            (PANEL_HEIGHT * SHEET_ROWS, PANEL_WIDTH * SHEET_COLUMNS, 3),
+        )
+        self.assertEqual(tuple(metadata["candidates"]), STAGE_KEYS)
+        self.assertGreater(np.count_nonzero(sheet), 0)
 
 
 if __name__ == "__main__":

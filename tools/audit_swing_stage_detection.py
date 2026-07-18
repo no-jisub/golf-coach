@@ -8,6 +8,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from utils.swing_stage_audit import audit_manifest_videos, load_ground_truth_manifest
+from utils.swing_stage_contact_sheet import generate_audit_contact_sheets
 from utils.swing_video import write_json
 
 
@@ -57,12 +58,19 @@ def main():
         reuse_landmarks=not args.no_reuse,
         progress=args.progress,
     )
+    generate_audit_contact_sheets(
+        audit,
+        manifest,
+        project_root=PROJECT_ROOT,
+        output_root=output_dir,
+    )
     output_path = write_json(output_dir / "stage_detection_audit.json", audit)
     summary = audit["summary"]
     print(
         f"완료={summary['processed_count']} 실패={summary['failed_count']} "
         f"제외={summary['excluded_count']} 캐시생성={summary['created_cache_count']} "
-        f"캐시재사용={summary['reused_cache_count']}"
+        f"캐시재사용={summary['reused_cache_count']} "
+        f"검수시트={summary['contact_sheet_count']}"
     )
     print(f"감사 결과: {output_path}")
     return 1 if summary["failed_count"] else 0
