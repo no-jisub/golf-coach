@@ -29,6 +29,14 @@ py -3.12 tools\audit_swing_stage_detection.py
 
 같은 명령을 다시 실행하면 `analysis_sessions/stage_audit/stage_accuracy_report.json`이 갱신됩니다.
 
+반복 영상을 선형 영상으로 만들 때는 원본을 덮어쓰지 않고 다음 도구를 사용합니다.
+
+```powershell
+py -3.12 tools\normalize_loop_swing_video.py INPUT OUTPUT --split-frame ADDRESS_FRAME
+```
+
+정규화 영상은 Git에서 제외하며, 원본 경로·시작 프레임·프레임 매핑 규칙은 정답 매니페스트의 `derivation`에 기록합니다.
+
 기본 허용 오차는 150ms입니다. 다른 기준을 시험하려면 다음처럼 실행합니다.
 
 ```powershell

@@ -64,7 +64,11 @@ class SwingStageGroundTruthTests(unittest.TestCase):
         self.assertEqual(manifest["summary"]["video_count"], 8)
         self.assertEqual(manifest["summary"]["pending_count"], 7)
         self.assertEqual(manifest["summary"]["reviewed_count"], 1)
-        self.assertEqual(manifest["videos"]["pro03"]["sequence_mode"], "cyclic")
+        self.assertEqual(manifest["videos"]["pro03"]["sequence_mode"], "linear")
+        self.assertEqual(
+            manifest["videos"]["pro03"]["derivation"]["start_frame"],
+            243,
+        )
 
     def test_reviewed_events_must_be_complete_and_strictly_ordered(self):
         manifest = make_manifest("reviewed")
@@ -156,11 +160,23 @@ class SwingStageBatchAuditTests(unittest.TestCase):
                 landmark_extractor=fake_extractor,
                 stage_detector=fake_detector,
             )
+            changed_manifest = copy.deepcopy(manifest)
+            changed_manifest["videos"]["sample"]["source"] = "changed.mp4"
+            (root / "changed.mp4").touch()
+            changed_source = audit_manifest_videos(
+                changed_manifest,
+                project_root=root,
+                output_root=root / "audit",
+                model_path=root / "model.task",
+                landmark_extractor=fake_extractor,
+                stage_detector=fake_detector,
+            )
 
         self.assertEqual(first["schema"], AUDIT_SCHEMA)
         self.assertEqual(first["summary"]["created_cache_count"], 1)
         self.assertEqual(second["summary"]["reused_cache_count"], 1)
-        self.assertEqual(len(calls), 1)
+        self.assertEqual(changed_source["summary"]["created_cache_count"], 1)
+        self.assertEqual(len(calls), 2)
 
     def test_batch_audit_rejects_unknown_video_filter(self):
         manifest = make_manifest()

@@ -30,22 +30,40 @@
       "note": ""
     },
     "pro03": {
-      "source": "reference_data/raw_videos/pro03_fullswing.mp4",
+      "source": "reference_data/raw_videos/normalized/pro03_linear_start243_v1.mp4",
       "review_status": "reviewed",
-      "sequence_mode": "cyclic",
+      "sequence_mode": "linear",
       "events": {
-        "address": 243,
-        "takeaway": 27,
-        "backswing": 48,
-        "top": 86,
-        "downswing": 114,
-        "impact": 123,
-        "follow_through": 137,
-        "finish": 241
+        "address": 0,
+        "takeaway": 44,
+        "backswing": 65,
+        "top": 111,
+        "downswing": 125,
+        "impact": 139,
+        "follow_through": 154,
+        "finish": 229
       },
-      "reviewed_by": "user",
+      "reviewed_by": "ai-agent/pro03_visual_review",
       "reviewed_at": "2026-07-19",
-      "note": "반복 영상: 8.11초의 address 이후 프레임 경계에서 0.90초의 takeaway로 순환"
+      "note": "AI 프레임 단위 시각 검수 후 반복 영상을 address부터 시작하도록 정규화",
+      "derivation": {
+        "type": "cyclic_rotation",
+        "input": "reference_data/raw_videos/pro03_fullswing.mp4",
+        "start_frame": 243,
+        "expected_total_frames": 260,
+        "expected_fps": 30.0,
+        "mapping": "(input_frame - start_frame) mod total_frames",
+        "input_events": {
+          "address": 243,
+          "takeaway": 27,
+          "backswing": 48,
+          "top": 94,
+          "downswing": 108,
+          "impact": 122,
+          "follow_through": 137,
+          "finish": 212
+        }
+      }
     },
     "pro04": {
       "source": "reference_data/raw_videos/pro04_fullswing.mp4",

@@ -112,13 +112,19 @@ def _resolve_source(project_root, source):
     return source_path.resolve()
 
 
-def _load_cached_landmarks(path):
+def _load_cached_landmarks(path, *, expected_source=None):
     path = Path(path)
     if not path.exists():
         return None
     payload = json.loads(path.read_text(encoding="utf-8"))
     if payload.get("schema") != LANDMARK_SCHEMA:
         return None
+    if expected_source is not None:
+        cached_source = payload.get("source_video")
+        if not cached_source:
+            return None
+        if Path(cached_source).resolve() != Path(expected_source).resolve():
+            return None
     return payload
 
 
@@ -162,7 +168,10 @@ def audit_manifest_videos(
         events_path = session_dir / "stage_events.json"
         try:
             payload = (
-                _load_cached_landmarks(landmarks_path)
+                _load_cached_landmarks(
+                    landmarks_path,
+                    expected_source=source_path,
+                )
                 if reuse_landmarks
                 else None
             )
