@@ -17,7 +17,9 @@ from utils.guide_skeleton import (
     GUIDE_POSES,
     NOSE,
     SHAFT_GUIDES,
+    draw_guide_tolerance_regions,
 )
+from utils.guide_tolerance import get_stage_tolerance_regions
 
 
 DEFAULT_OUTPUT_PATH = (
@@ -78,6 +80,12 @@ def render_stage(stage_key, stage_label):
         source_color,
         1,
         cv2.LINE_AA,
+    )
+
+    draw_guide_tolerance_regions(
+        canvas,
+        get_stage_tolerance_regions(stage_key),
+        point_to_pixel,
     )
 
     for start_index, end_index in GUIDE_CONNECTIONS:

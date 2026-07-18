@@ -13,6 +13,7 @@ from mediapipe.tasks.python import vision
 from utils.caddieset_metrics import average_landmark_points
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
 from utils.guide_skeleton import SWING_HAND, create_calibration_profile, draw_guide_skeleton, get_user_anchor
+from utils.guide_tolerance import get_stage_tolerance_regions
 from utils.pose_drawer import draw_pose_landmarks
 
 
@@ -442,7 +443,13 @@ def main():
                         current_stage = STAGE_CONFIGS[current_stage_index]
                         pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
 
-                draw_guide_skeleton(frame, current_stage["key"], landmarks, calibration_profile)
+                draw_guide_skeleton(
+                    frame,
+                    current_stage["key"],
+                    landmarks,
+                    calibration_profile,
+                    get_stage_tolerance_regions(current_stage["key"]),
+                )
                 draw_pose_landmarks(frame, landmarks)
 
                 now = time.monotonic()
@@ -465,7 +472,12 @@ def main():
                 status_text = "Pose detected"
                 status_color = (0, 255, 0)
             else:
-                draw_guide_skeleton(frame, current_stage["key"], calibration_profile=calibration_profile)
+                draw_guide_skeleton(
+                    frame,
+                    current_stage["key"],
+                    calibration_profile=calibration_profile,
+                    tolerance_regions=get_stage_tolerance_regions(current_stage["key"]),
+                )
                 calibration_samples.clear()
                 calibration_start_time = None
                 calibration_base_anchor = None

@@ -484,7 +484,36 @@ def guide_point_to_user_pixel(point, guide_pose, user_anchor, body_ratio=None):
     return x, y
 
 
-def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profile=None):
+def draw_guide_tolerance_regions(canvas, tolerance_regions, to_pixel):
+    """Draw data-derived joint tolerance regions before the center guide lines."""
+    if not tolerance_regions:
+        return
+
+    fill = canvas.copy()
+    for region in tolerance_regions.values():
+        center = region["center"]
+        radius = region["radius"]
+        if radius[0] <= 0.0 and radius[1] <= 0.0:
+            continue
+        center_pixel = to_pixel(center)
+        x_edge = to_pixel((center[0] + radius[0], center[1]))
+        y_edge = to_pixel((center[0], center[1] + radius[1]))
+        axes = (
+            max(2, abs(x_edge[0] - center_pixel[0])),
+            max(2, abs(y_edge[1] - center_pixel[1])),
+        )
+        cv2.ellipse(fill, center_pixel, axes, 0, 0, 360, (70, 200, 90), -1, cv2.LINE_AA)
+        cv2.ellipse(canvas, center_pixel, axes, 0, 0, 360, (90, 235, 115), 1, cv2.LINE_AA)
+    cv2.addWeighted(fill, 0.24, canvas, 0.76, 0, canvas)
+
+
+def draw_guide_skeleton(
+    frame,
+    stage_key,
+    user_landmarks=None,
+    calibration_profile=None,
+    tolerance_regions=None,
+):
     """Draw the current stage guide, adapting to the user's position and size when possible."""
     guide_pose = GUIDE_POSES.get(stage_key)
     if not guide_pose:
@@ -518,6 +547,8 @@ def draw_guide_skeleton(frame, stage_key, user_landmarks=None, calibration_profi
         if user_anchor is not None:
             return guide_point_to_user_pixel(point, guide_pose, user_anchor, body_ratio)
         return default_guide_point_to_pixel(point, image_width, guide_top, guide_height)
+
+    draw_guide_tolerance_regions(overlay, tolerance_regions, to_pixel)
 
     for start_idx, end_idx in GUIDE_CONNECTIONS:
         cv2.line(
