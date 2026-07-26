@@ -83,6 +83,10 @@ pose_landmarker_full.task
 - `n`: 다음 단계
 - `p`: 이전 단계
 - `c`: 사용자 체형/위치 보정 다시 시작
+- `d`: 웹캠 자세 진단 패널 표시/숨김
+- `s`: 현재 프레임을 판정 라벨 없이 로컬 저장
+- `g`: 현재 프레임을 실제 좋은 자세로 라벨링해 로컬 저장
+- `b`: 현재 프레임을 실제 수정 필요 자세로 라벨링해 로컬 저장
 - `q`: 종료
 
 현재 MVP 촬영 조건:
@@ -112,6 +116,12 @@ pose_landmarker_full.task
 10. 화면 가이드와 7번 아이언 CaddieSet 범위를 통합해 피드백과 점수 생성
 11. 통과를 2초 유지하면 다음 단계로 자동 이동
 12. 화면 하단에 한국어 피드백 표시
+
+웹캠 진단 패널에는 전신 노출, 어드레스 유사도, 자세 안정 시간과 흔들림,
+가이드 점수, 7번 아이언 점수, 최종 점수, 통과 유지 시간과 현재 차단 사유가
+표시됩니다. `g`와 `b`로 저장한 테스트 자세는
+`reference_data/runtime_samples`에 원본 이미지, 오버레이 이미지, 관절 좌표 JSON으로
+남습니다. 이 폴더는 `.gitignore`에 포함되어 GitHub에 올라가지 않습니다.
 
 중요한 방향:
 
@@ -214,6 +224,28 @@ C:\project\golf-coach
 ```
 
 `main_solutions_legacy.py`는 예전 MediaPipe Solutions 방식 테스트 파일입니다. 삭제하지 말고 참고용으로만 둡니다.
+
+## 기존 영상 회귀 분석
+
+`analysis_sessions/stage_audit/pro01~09`에 이미 추출된 관절 좌표 캐시가 있으면,
+현재 웹캠의 통합 판정 기준으로 8단계를 다시 평가할 수 있습니다.
+
+```powershell
+py -3.12 tools\run_runtime_regression.py
+```
+
+결과:
+
+```text
+analysis_sessions/runtime_regression/runtime_regression.json
+analysis_sessions/runtime_regression/runtime_regression.md
+```
+
+검수 완료 상태인 영상은 `swing_stage_ground_truth.json`의 확정 프레임을 사용하고,
+나머지는 자동 단계 검출 프레임을 사용합니다. 보고서의 `strict_candidate`와
+`lenient_candidate`는 판정 기준 조정 대상을 찾는 진단값입니다. 풀스윙 단일 프레임은
+정지 자세 웹캠 조건과 다르고 자동 단계 프레임도 코치 검수 정답이 아니므로, 보고서
+결과만으로 통과 기준을 자동 변경하지 않습니다.
 
 ## 기준 데이터 생성 흐름
 
@@ -432,7 +464,7 @@ AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 
 7. 나중에 스마트폰 카메라 입력 방식 검토
 
 현재 자동 테스트는 `py -3.12 -m unittest discover -s tests -v`로 실행하며,
-보정·정지 검사·통합 판정·자동 진행을 포함한 103개 테스트가 있습니다.
+보정·정지 검사·통합 판정·자동 진행·회귀 분석을 포함한 115개 테스트가 있습니다.
 
 ## 개발 원칙
 
