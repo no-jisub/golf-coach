@@ -42,7 +42,8 @@ py -3.12 tools\convert_caddieset.py
 - `faceon_w1`, `faceon_i7`: 정면 드라이버·7번 아이언 프로필
 - `dtl_all`, `dtl_w1`, `dtl_i7`: 향후 후방 촬영 모드를 위한 프로필
 
-현재 앱은 클럽 종류를 입력받지 않으므로 `faceon_all`을 기본 프로필로 지정합니다. 실제 판정에 연결할 때는 클럽 선택 기능을 먼저 추가하고 가능한 한 `faceon_w1` 또는 `faceon_i7`처럼 같은 클럽끼리 비교해야 합니다.
+현재 MVP는 정면·7번 아이언으로 고정하고 `faceon_i7` 프로필을 사용합니다.
+향후 드라이버 모드를 추가할 때는 클럽 선택 UI와 `faceon_w1` 전환을 함께 구현해야 합니다.
 
 ## 참조 샷과 통계 기준
 
@@ -63,7 +64,8 @@ CaddieSet 논문의 직진 샷 분류 기준을 따라 다음 샷만 참조 통�
 ## 단계별 판정 연결
 
 보정이 끝난 뒤 `utils/caddieset_metrics.py`가 MediaPipe 관절에서 정면 자세 지표를 계산하고,
-`utils/caddieset_evaluator.py`가 현재 단계의 프로필을 골라 참조 범위와 비교합니다.
+`utils/caddieset_evaluator.py`가 7번 아이언 프로필을 골라 참조 범위와 비교합니다.
+`utils/golf_rules.py`가 이 결과를 고정 가이드 유사도와 합쳐 하나의 최종 판정을 만듭니다.
 
 - 참조 범위 안: `pass`
 - 참조 범위 밖, 바깥 관찰 범위 안: `warning / outside_reference`

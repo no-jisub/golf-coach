@@ -10,11 +10,19 @@ from PIL import Image, ImageDraw, ImageFont
 from mediapipe.tasks import python
 from mediapipe.tasks.python import vision
 
+from utils.app_config import MVP_CLUB_LABEL, MVP_VIEW_LABEL
 from utils.caddieset_metrics import average_landmark_points
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
 from utils.guide_skeleton import SWING_HAND, create_calibration_profile, draw_guide_skeleton, get_user_anchor
 from utils.guide_tolerance import get_stage_tolerance_regions
 from utils.pose_drawer import draw_pose_landmarks
+from utils.pose_quality import (
+    check_full_body_visibility,
+    evaluate_calibration_frame,
+    evaluate_pose_stability,
+    trim_timed_samples,
+)
+from utils.session_progress import StageProgressTracker
 
 
 # Pose Landmarker 모델 파일은 프로젝트 루트에 둡니다.
@@ -25,9 +33,11 @@ CAMERA_INDEX = 0
 
 # 자세를 멈춘 상태에서 최근 프레임을 모아 평균으로 판단합니다.
 ANALYSIS_WINDOW_SEC = 2.0
-MIN_SAMPLES_FOR_ANALYSIS = 20
+ANALYSIS_STABILITY_SEC = 1.5
 CALIBRATION_HOLD_SEC = 5.0
+CALIBRATION_STABILITY_SEC = 1.5
 CALIBRATION_MAX_ANCHOR_SHIFT_PX = 35
+AUTO_PASS_HOLD_SEC = 2.0
 
 # Windows 기본 한글 폰트입니다.
 KOREAN_FONT_PATH = Path("C:/Windows/Fonts/malgun.ttf")
@@ -57,9 +67,7 @@ def get_video_timestamp_ms(start_time, last_timestamp_ms):
 def update_pose_samples(pose_samples, landmarks, now):
     """최근 분석 구간 안의 랜드마크만 유지합니다."""
     pose_samples.append((now, landmarks))
-
-    while pose_samples and now - pose_samples[0][0] > ANALYSIS_WINDOW_SEC:
-        pose_samples.popleft()
+    trim_timed_samples(pose_samples, now, ANALYSIS_WINDOW_SEC)
 
 
 def print_feedback_if_changed(feedback, last_feedback_key):
@@ -136,10 +144,17 @@ def get_stage_status_text(current_stage, latest_feedback):
 
 def get_help_text():
     """하단 패널에 표시할 단계 조작 안내입니다."""
-    return "1-8 단계 선택 | n/p 이전/다음 | c 보정 다시 | q 종료"
+    return "통과 2초 유지 시 자동 이동 | 1-8 선택 | n/p 이동 | c 재보정 | q 종료"
 
 
-def draw_korean_feedback_panel(frame, current_stage, latest_feedback):
+def draw_korean_feedback_panel(
+    frame,
+    current_stage,
+    latest_feedback,
+    waiting_message=None,
+    session_summary=None,
+    pass_progress=0.0,
+):
     """웹캠 화면 하단에 현재 단계와 한글 자세 피드백을 표시합니다."""
     image_height, image_width, _ = frame.shape
     panel_height = 180
@@ -157,11 +172,37 @@ def draw_korean_feedback_panel(frame, current_stage, latest_feedback):
     body_font = load_korean_font(20)
     help_font = load_korean_font(15)
 
-    title, title_color = get_stage_status_text(current_stage, latest_feedback)
-    if latest_feedback is None:
-        messages = ["카메라 앞에서 전신이 보이도록 서서 현재 자세를 1~2초 유지해주세요."]
+    if session_summary and session_summary.get("completed"):
+        average_score = session_summary.get("average_score", 0)
+        title = f"8단계 코칭 완료 - 평균 {average_score}점"
+        title_color = (80, 255, 120)
+        score_items = session_summary["scores"]
+        first_half = " | ".join(
+            f"{index + 1}:{item['score']}"
+            for index, item in enumerate(score_items[:4])
+        )
+        second_half = " | ".join(
+            f"{index + 5}:{item['score']}"
+            for index, item in enumerate(score_items[4:])
+        )
+        messages = [
+            f"1~4단계 점수: {first_half}",
+            f"5~8단계 점수: {second_half}",
+            "c 키를 누르면 체형 보정부터 다시 시작합니다.",
+        ]
     else:
-        messages = latest_feedback["messages"]
+        title, title_color = get_stage_status_text(current_stage, latest_feedback)
+        if latest_feedback is None:
+            messages = [
+                waiting_message
+                or "카메라 앞에서 전신이 보이도록 서서 현재 자세를 유지해주세요."
+            ]
+        else:
+            messages = list(latest_feedback["messages"])
+            if latest_feedback.get("passed"):
+                messages.append(
+                    f"다음 단계 이동까지 통과 자세 유지: {pass_progress * 100:.0f}%"
+                )
 
     draw.text((24, panel_y + 14), title, font=title_font, fill=title_color)
     draw.text((24, panel_y + 45), get_help_text(), font=help_font, fill=(210, 210, 210))
@@ -179,7 +220,15 @@ def draw_korean_feedback_panel(frame, current_stage, latest_feedback):
     return cv2.cvtColor(np.array(pil_image), cv2.COLOR_RGB2BGR)
 
 
-def draw_status_text(frame, status_text, status_color, pose_samples, latest_feedback, current_stage_index):
+def draw_status_text(
+    frame,
+    status_text,
+    status_color,
+    pose_samples,
+    latest_feedback,
+    current_stage_index,
+    pass_progress=0.0,
+):
     """화면 좌측 상단에 현재 상태를 표시합니다."""
     current_stage = STAGE_CONFIGS[current_stage_index]
     total_stages = len(STAGE_CONFIGS)
@@ -216,7 +265,7 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
     swing_hand_text = "Right-handed" if SWING_HAND == "right" else "Left-handed"
     cv2.putText(
         frame,
-        f"Guide: {swing_hand_text}",
+        f"MVP: {MVP_VIEW_LABEL} / {MVP_CLUB_LABEL} / {swing_hand_text}",
         (30, 170),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
@@ -224,10 +273,13 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
         2,
     )
 
-    sample_progress = min(len(pose_samples) / MIN_SAMPLES_FOR_ANALYSIS, 1.0)
+    sample_duration = 0.0
+    if len(pose_samples) >= 2:
+        sample_duration = pose_samples[-1][0] - pose_samples[0][0]
+    sample_progress = min(sample_duration / ANALYSIS_STABILITY_SEC, 1.0)
     cv2.putText(
         frame,
-        f"Sample: {sample_progress * 100:.0f}%",
+        f"Stable sample: {sample_progress * 100:.0f}%",
         (30, 210),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
@@ -262,12 +314,13 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
             2,
         )
         feedback_metrics = latest_feedback.get("metrics", {})
-        if latest_feedback.get("source") == "caddieset":
-            pass_count = feedback_metrics.get("pass_count", 0)
-            measured_count = feedback_metrics.get("measured_count", 0)
+        if latest_feedback.get("source") == "combined":
+            final_score = feedback_metrics.get("final_score", 0)
+            guide_score = feedback_metrics.get("guide_score", 0)
+            caddieset_score = feedback_metrics.get("caddieset_score", 0)
             cv2.putText(
                 frame,
-                f"Items in range: {pass_count}/{measured_count}",
+                f"Score: {final_score} (Guide {guide_score} / I7 {caddieset_score})",
                 (30, 290),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 0.8,
@@ -287,14 +340,29 @@ def draw_status_text(frame, status_text, status_color, pose_samples, latest_feed
                     2,
                 )
 
+    cv2.putText(
+        frame,
+        f"Pass hold: {pass_progress * 100:.0f}%",
+        (30, 330),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        0.75,
+        (80, 255, 120) if pass_progress > 0 else (180, 180, 180),
+        2,
+    )
 
-def draw_calibration_status(frame, calibration_start_time, calibration_profile):
+
+def draw_calibration_status(
+    frame,
+    calibration_progress,
+    calibration_profile,
+    calibration_message=None,
+):
     """초기 사용자 체형 보정 상태를 표시합니다."""
     if calibration_profile is not None:
         cv2.putText(
             frame,
             "Calibration: LOCKED",
-            (30, 330),
+            (30, 370),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.8,
             (0, 255, 0),
@@ -303,7 +371,7 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
         cv2.putText(
             frame,
             "Press c to recalibrate guide position",
-            (30, 365),
+            (30, 405),
             cv2.FONT_HERSHEY_SIMPLEX,
             0.7,
             (255, 255, 255),
@@ -311,14 +379,10 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
         )
         return
 
-    elapsed = 0.0
-    if calibration_start_time is not None:
-        elapsed = time.monotonic() - calibration_start_time
-    progress = min(elapsed / CALIBRATION_HOLD_SEC, 1.0)
     cv2.putText(
         frame,
-        f"Calibration: {progress * 100:.0f}% ({elapsed:.1f}/{CALIBRATION_HOLD_SEC:.0f}s)",
-        (30, 330),
+        f"Calibration: {calibration_progress * 100:.0f}%",
+        (30, 370),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.8,
         (0, 200, 255),
@@ -326,8 +390,8 @@ def draw_calibration_status(frame, calibration_start_time, calibration_profile):
     )
     cv2.putText(
         frame,
-        "Match address guide and stand still",
-        (30, 365),
+        calibration_message or "Show full body, match address guide, and stand still",
+        (30, 405),
         cv2.FONT_HERSHEY_SIMPLEX,
         0.7,
         (255, 255, 255),
@@ -390,132 +454,274 @@ def main():
     window_name = "Golf Coach - Pose Landmarker"
     start_time = time.monotonic()
     last_timestamp_ms = -1
-    current_stage_index = 0
+    stage_keys = [stage["key"] for stage in STAGE_CONFIGS]
+    progress_tracker = StageProgressTracker(stage_keys, AUTO_PASS_HOLD_SEC)
     pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
     calibration_samples = deque()
     calibration_start_time = None
     calibration_base_anchor = None
     calibration_profile = None
+    calibration_progress = 0.0
+    calibration_message = "전신을 보이고 어드레스 가이드에 맞춰주세요."
+    analysis_message = "현재 단계 자세를 잡고 잠시 멈춰주세요."
 
-    with create_pose_landmarker() as landmarker:
-        while True:
-            ret, frame = cap.read()
-            if not ret:
-                print("카메라 프레임을 읽을 수 없습니다.")
-                break
+    try:
+        with create_pose_landmarker() as landmarker:
+            while True:
+                ret, frame = cap.read()
+                if not ret:
+                    print("카메라 프레임을 읽을 수 없습니다.")
+                    break
 
-            # 거울처럼 보이도록 좌우 반전합니다.
-            frame = cv2.flip(frame, 1)
+                now = time.monotonic()
 
-            # OpenCV는 BGR, MediaPipe는 RGB 이미지를 사용합니다.
-            rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
-            mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
+                # 거울처럼 보이도록 좌우 반전합니다.
+                frame = cv2.flip(frame, 1)
 
-            last_timestamp_ms = get_video_timestamp_ms(start_time, last_timestamp_ms)
-            result = landmarker.detect_for_video(mp_image, last_timestamp_ms)
-            display_stage_index = 0 if calibration_profile is None else current_stage_index
-            current_stage = STAGE_CONFIGS[display_stage_index]
+                # OpenCV는 BGR, MediaPipe는 RGB 이미지를 사용합니다.
+                rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb_frame)
 
-            if result.pose_landmarks:
-                landmarks = result.pose_landmarks[0]
-                if calibration_profile is None:
-                    current_anchor = get_user_anchor(landmarks, frame.shape[1], frame.shape[0])
-                    if calibration_start_time is None:
-                        calibration_start_time = time.monotonic()
-                        calibration_base_anchor = current_anchor
-                    elif anchor_shift_too_large(calibration_base_anchor, current_anchor):
-                        calibration_samples.clear()
-                        calibration_start_time = time.monotonic()
-                        calibration_base_anchor = current_anchor
+                last_timestamp_ms = get_video_timestamp_ms(start_time, last_timestamp_ms)
+                result = landmarker.detect_for_video(mp_image, last_timestamp_ms)
+                display_stage_index = (
+                    0 if calibration_profile is None else progress_tracker.current_index
+                )
+                current_stage = STAGE_CONFIGS[display_stage_index]
 
-                    calibration_samples.append(landmarks)
-                    if time.monotonic() - calibration_start_time >= CALIBRATION_HOLD_SEC:
-                        calibration_profile = create_calibration_profile(
-                            list(calibration_samples),
+                if result.pose_landmarks:
+                    landmarks = result.pose_landmarks[0]
+
+                    if calibration_profile is None:
+                        quality = evaluate_calibration_frame(landmarks)
+                        current_anchor = get_user_anchor(
+                            landmarks,
                             frame.shape[1],
                             frame.shape[0],
                         )
-                        if calibration_profile is not None:
-                            calibration_profile["caddieset_address_points"] = average_landmark_points(
-                                list(calibration_samples)
+
+                        if not quality["passed"]:
+                            calibration_samples.clear()
+                            calibration_start_time = None
+                            calibration_base_anchor = None
+                            calibration_progress = 0.0
+                            calibration_message = quality["messages"][0]
+                        else:
+                            if calibration_start_time is None:
+                                calibration_start_time = now
+                                calibration_base_anchor = current_anchor
+                                calibration_samples.clear()
+                            elif anchor_shift_too_large(
+                                calibration_base_anchor,
+                                current_anchor,
+                            ):
+                                calibration_start_time = now
+                                calibration_base_anchor = current_anchor
+                                calibration_samples.clear()
+
+                            calibration_samples.append((now, landmarks))
+                            recent_calibration_samples = deque(
+                                sample
+                                for sample in calibration_samples
+                                if now - sample[0] <= CALIBRATION_STABILITY_SEC
                             )
-                        current_stage_index = 0
-                        current_stage = STAGE_CONFIGS[current_stage_index]
-                        pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
+                            calibration_stability = evaluate_pose_stability(
+                                recent_calibration_samples,
+                                min_duration_sec=CALIBRATION_STABILITY_SEC,
+                            )
 
-                draw_guide_skeleton(
-                    frame,
-                    current_stage["key"],
-                    landmarks,
-                    calibration_profile,
-                    get_stage_tolerance_regions(current_stage["key"]),
-                )
-                draw_pose_landmarks(frame, landmarks)
+                            if (
+                                calibration_stability["ready"]
+                                and not calibration_stability["stable"]
+                            ):
+                                calibration_samples.clear()
+                                calibration_samples.append((now, landmarks))
+                                calibration_start_time = now
+                                calibration_base_anchor = current_anchor
+                                calibration_progress = 0.0
+                                calibration_message = calibration_stability["message"]
+                            else:
+                                elapsed = now - calibration_start_time
+                                calibration_progress = min(
+                                    elapsed / CALIBRATION_HOLD_SEC,
+                                    1.0,
+                                )
+                                calibration_message = (
+                                    "어드레스 자세를 움직이지 말고 유지해주세요. "
+                                    f"보정 {calibration_progress * 100:.0f}%"
+                                    if not calibration_stability["stable"]
+                                    else "자세가 안정적입니다. 그대로 유지해주세요. "
+                                    f"보정 {calibration_progress * 100:.0f}%"
+                                )
 
-                now = time.monotonic()
-                if calibration_profile is not None:
-                    update_pose_samples(pose_samples, landmarks, now)
+                                if (
+                                    elapsed >= CALIBRATION_HOLD_SEC
+                                    and calibration_stability["stable"]
+                                ):
+                                    calibration_landmarks = [
+                                        sample[1] for sample in calibration_samples
+                                    ]
+                                    calibration_profile = create_calibration_profile(
+                                        calibration_landmarks,
+                                        frame.shape[1],
+                                        frame.shape[0],
+                                    )
+                                    if calibration_profile is not None:
+                                        calibration_profile[
+                                            "caddieset_address_points"
+                                        ] = average_landmark_points(
+                                            calibration_landmarks
+                                        )
+                                        progress_tracker.reset()
+                                        pose_samples, latest_feedback, last_feedback_key = (
+                                            reset_analysis_state()
+                                        )
+                                        analysis_message = (
+                                            "어드레스 자세를 유지하면 분석을 시작합니다."
+                                        )
 
-                if calibration_profile is not None and len(pose_samples) >= MIN_SAMPLES_FOR_ANALYSIS:
-                    latest_feedback = analyze_stage_pose(
+                    elif not progress_tracker.completed:
+                        visibility = check_full_body_visibility(landmarks)
+                        if not visibility["passed"]:
+                            pose_samples.clear()
+                            latest_feedback = None
+                            analysis_message = visibility["messages"][0]
+                            progress_tracker.update(now, None, stable=False)
+                        else:
+                            update_pose_samples(pose_samples, landmarks, now)
+                            stability = evaluate_pose_stability(
+                                pose_samples,
+                                min_duration_sec=ANALYSIS_STABILITY_SEC,
+                            )
+                            analysis_message = stability["message"]
+
+                            if stability["ready"] and stability["stable"]:
+                                latest_feedback = analyze_stage_pose(
+                                    current_stage["key"],
+                                    [sample[1] for sample in pose_samples],
+                                    calibration_profile,
+                                    frame.shape[1],
+                                    frame.shape[0],
+                                )
+                                last_feedback_key = print_feedback_if_changed(
+                                    latest_feedback,
+                                    last_feedback_key,
+                                )
+                                event = progress_tracker.update(
+                                    now,
+                                    latest_feedback,
+                                    stable=True,
+                                )
+                                if event["advanced"]:
+                                    pose_samples, latest_feedback, last_feedback_key = (
+                                        reset_analysis_state()
+                                    )
+                                    analysis_message = (
+                                        "다음 단계 자세를 잡고 잠시 멈춰주세요."
+                                    )
+                            else:
+                                latest_feedback = None
+                                progress_tracker.update(now, None, stable=False)
+
+                    display_stage_index = (
+                        0 if calibration_profile is None else progress_tracker.current_index
+                    )
+                    current_stage = STAGE_CONFIGS[display_stage_index]
+                    draw_guide_skeleton(
+                        frame,
                         current_stage["key"],
-                        [sample[1] for sample in pose_samples],
+                        landmarks,
                         calibration_profile,
-                        frame.shape[1],
-                        frame.shape[0],
+                        get_stage_tolerance_regions(current_stage["key"]),
                     )
-                    last_feedback_key = print_feedback_if_changed(
-                        latest_feedback,
-                        last_feedback_key,
+                    draw_pose_landmarks(frame, landmarks)
+                    status_text = "Pose detected"
+                    status_color = (0, 255, 0)
+                else:
+                    draw_guide_skeleton(
+                        frame,
+                        current_stage["key"],
+                        calibration_profile=calibration_profile,
+                        tolerance_regions=get_stage_tolerance_regions(
+                            current_stage["key"]
+                        ),
                     )
+                    if calibration_profile is None:
+                        calibration_samples.clear()
+                        calibration_start_time = None
+                        calibration_base_anchor = None
+                        calibration_progress = 0.0
+                        calibration_message = "사람을 인식하지 못했습니다. 전신을 보여주세요."
+                    else:
+                        progress_tracker.update(now, None, stable=False)
+                        analysis_message = "사람을 인식하지 못했습니다. 전신을 보여주세요."
+                    pose_samples.clear()
+                    latest_feedback = None
+                    status_text = "No pose detected"
+                    status_color = (0, 0, 255)
 
-                status_text = "Pose detected"
-                status_color = (0, 255, 0)
-            else:
-                draw_guide_skeleton(
-                    frame,
-                    current_stage["key"],
-                    calibration_profile=calibration_profile,
-                    tolerance_regions=get_stage_tolerance_regions(current_stage["key"]),
+                display_stage_index = (
+                    0 if calibration_profile is None else progress_tracker.current_index
                 )
-                calibration_samples.clear()
-                calibration_start_time = None
-                calibration_base_anchor = None
-                pose_samples.clear()
-                latest_feedback = None
-                status_text = "No pose detected"
-                status_color = (0, 0, 255)
+                current_stage = STAGE_CONFIGS[display_stage_index]
+                draw_status_text(
+                    frame,
+                    status_text,
+                    status_color,
+                    pose_samples,
+                    latest_feedback,
+                    display_stage_index,
+                    progress_tracker.pass_progress(now),
+                )
+                draw_calibration_status(
+                    frame,
+                    calibration_progress,
+                    calibration_profile,
+                    calibration_message,
+                )
+                frame = draw_korean_feedback_panel(
+                    frame,
+                    current_stage,
+                    latest_feedback,
+                    calibration_message
+                    if calibration_profile is None
+                    else analysis_message,
+                    progress_tracker.summary(),
+                    progress_tracker.pass_progress(now),
+                )
+                cv2.imshow(window_name, frame)
 
-            draw_status_text(
-                frame,
-                status_text,
-                status_color,
-                pose_samples,
-                latest_feedback,
-                display_stage_index,
-            )
-            draw_calibration_status(frame, calibration_start_time, calibration_profile)
-            frame = draw_korean_feedback_panel(frame, current_stage, latest_feedback)
-            cv2.imshow(window_name, frame)
+                key = cv2.waitKey(1) & 0xFF
+                if key == ord("c"):
+                    calibration_samples.clear()
+                    calibration_start_time = None
+                    calibration_base_anchor = None
+                    calibration_profile = None
+                    calibration_progress = 0.0
+                    calibration_message = (
+                        "전신을 보이고 어드레스 가이드에 맞춰주세요."
+                    )
+                    progress_tracker.reset()
+                    pose_samples, latest_feedback, last_feedback_key = (
+                        reset_analysis_state()
+                    )
+                    continue
 
-            key = cv2.waitKey(1) & 0xFF
-            if key == ord("c"):
-                calibration_samples.clear()
-                calibration_start_time = None
-                calibration_base_anchor = None
-                calibration_profile = None
-                current_stage_index = 0
-                pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
-                continue
-
-            current_stage_index, should_quit, stage_changed = handle_key(key, current_stage_index)
-            if should_quit:
-                break
-            if stage_changed:
-                pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
-
-    cap.release()
-    cv2.destroyAllWindows()
+                next_stage_index, should_quit, stage_changed = handle_key(
+                    key,
+                    progress_tracker.current_index,
+                )
+                if should_quit:
+                    break
+                if stage_changed and calibration_profile is not None:
+                    progress_tracker.select_stage(next_stage_index)
+                    pose_samples, latest_feedback, last_feedback_key = (
+                        reset_analysis_state()
+                    )
+                    analysis_message = "선택한 단계 자세를 잡고 잠시 멈춰주세요."
+    finally:
+        cap.release()
+        cv2.destroyAllWindows()
 
 
 if __name__ == "__main__":
