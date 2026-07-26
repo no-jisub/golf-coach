@@ -38,8 +38,12 @@ FULL_BODY_LANDMARKS = {
     RIGHT_ANKLE: "오른쪽 발목",
 }
 
+STABILITY_LANDMARKS = tuple(FULL_BODY_LANDMARKS)
 DEFAULT_MIN_VISIBILITY = 0.55
 DEFAULT_FRAME_MARGIN = 0.015
+DEFAULT_STABILITY_DURATION_SEC = 1.5
+DEFAULT_MAX_MEAN_JITTER = 0.012
+DEFAULT_MAX_JOINT_JITTER = 0.035
 CALIBRATION_MIN_ADDRESS_SCORE = 55
 
 
@@ -212,4 +216,88 @@ def evaluate_calibration_frame(landmarks):
         "messages": ["어드레스 자세를 유지해주세요."],
         "visibility": visibility,
         "address": address,
+    }
+
+
+def trim_timed_samples(samples, now, window_sec):
+    """deque에 저장된 시간 기반 샘플에서 오래된 프레임을 제거합니다."""
+    while samples and now - samples[0][0] > window_sec:
+        samples.popleft()
+
+
+def evaluate_pose_stability(
+    timed_samples,
+    *,
+    min_duration_sec=DEFAULT_STABILITY_DURATION_SEC,
+    max_mean_jitter=DEFAULT_MAX_MEAN_JITTER,
+    max_joint_jitter=DEFAULT_MAX_JOINT_JITTER,
+    min_visibility=DEFAULT_MIN_VISIBILITY,
+):
+    """주요 관절의 최근 흔들림이 분석 가능한 수준인지 계산합니다."""
+    if not timed_samples:
+        return {
+            "ready": False,
+            "stable": False,
+            "duration_sec": 0.0,
+            "progress": 0.0,
+            "message": "자세를 잡고 잠시 멈춰주세요.",
+        }
+
+    duration = max(0.0, timed_samples[-1][0] - timed_samples[0][0])
+    progress = min(duration / min_duration_sec, 1.0)
+    if duration < min_duration_sec or len(timed_samples) < 8:
+        return {
+            "ready": False,
+            "stable": False,
+            "duration_sec": duration,
+            "progress": progress,
+            "message": f"자세를 움직이지 말고 {min_duration_sec:.1f}초 유지해주세요.",
+        }
+
+    joint_jitters = {}
+    for index in STABILITY_LANDMARKS:
+        coordinates = []
+        for _, landmarks in timed_samples:
+            if len(landmarks) <= index or not _valid_landmark(
+                landmarks[index],
+                min_visibility,
+            ):
+                continue
+            coordinates.append((landmarks[index].x, landmarks[index].y))
+
+        if len(coordinates) < max(4, len(timed_samples) * 0.6):
+            return {
+                "ready": True,
+                "stable": False,
+                "duration_sec": duration,
+                "progress": progress,
+                "message": f"{FULL_BODY_LANDMARKS[index]} 관절을 안정적으로 인식하지 못했습니다.",
+            }
+
+        values = np.asarray(coordinates, dtype=float)
+        jitter = float(np.hypot(np.std(values[:, 0]), np.std(values[:, 1])))
+        joint_jitters[index] = jitter
+
+    mean_jitter = float(np.mean(list(joint_jitters.values())))
+    max_index = max(joint_jitters, key=joint_jitters.get)
+    max_jitter = joint_jitters[max_index]
+    stable = mean_jitter <= max_mean_jitter and max_jitter <= max_joint_jitter
+    if stable:
+        message = "자세가 안정되었습니다. 분석 중입니다."
+    else:
+        message = (
+            f"{FULL_BODY_LANDMARKS[max_index]} 움직임이 큽니다. "
+            "현재 자세에서 잠시 멈춰주세요."
+        )
+
+    return {
+        "ready": True,
+        "stable": stable,
+        "duration_sec": duration,
+        "progress": progress,
+        "mean_jitter": mean_jitter,
+        "max_joint_jitter": max_jitter,
+        "max_joint_index": max_index,
+        "joint_jitters": joint_jitters,
+        "message": message,
     }

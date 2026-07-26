@@ -6,6 +6,7 @@ from utils.pose_quality import (
     check_address_similarity,
     check_full_body_visibility,
     evaluate_calibration_frame,
+    evaluate_pose_stability,
 )
 
 
@@ -51,6 +52,44 @@ class PoseInputQualityTests(unittest.TestCase):
         result = check_address_similarity(make_landmarks(points))
         self.assertFalse(result["passed"])
         self.assertTrue(result["messages"])
+
+
+class PoseStabilityTests(unittest.TestCase):
+    def test_requires_real_elapsed_time(self):
+        landmarks = make_landmarks(GUIDE_POSES["address"])
+        samples = [(index * 0.05, landmarks) for index in range(20)]
+        result = evaluate_pose_stability(samples, min_duration_sec=1.5)
+        self.assertFalse(result["ready"])
+        self.assertLess(result["duration_sec"], 1.5)
+
+    def test_stable_pose_passes_after_hold_duration(self):
+        samples = []
+        for index in range(31):
+            offset = 0.001 if index % 2 else -0.001
+            points = {
+                joint: (point[0] + offset, point[1])
+                for joint, point in GUIDE_POSES["address"].items()
+            }
+            samples.append((index * 0.05, make_landmarks(points)))
+
+        result = evaluate_pose_stability(samples, min_duration_sec=1.5)
+        self.assertTrue(result["ready"])
+        self.assertTrue(result["stable"])
+
+    def test_moving_wrist_resets_stability(self):
+        samples = []
+        for index in range(31):
+            points = dict(GUIDE_POSES["address"])
+            points[LEFT_WRIST] = (
+                points[LEFT_WRIST][0] + index * 0.004,
+                points[LEFT_WRIST][1],
+            )
+            samples.append((index * 0.05, make_landmarks(points)))
+
+        result = evaluate_pose_stability(samples, min_duration_sec=1.5)
+        self.assertTrue(result["ready"])
+        self.assertFalse(result["stable"])
+        self.assertEqual(result["max_joint_index"], LEFT_WRIST)
 
 
 if __name__ == "__main__":
