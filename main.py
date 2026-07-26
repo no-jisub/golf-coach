@@ -22,6 +22,10 @@ from utils.pose_quality import (
     evaluate_pose_stability,
     trim_timed_samples,
 )
+from utils.runtime_diagnostics import (
+    build_runtime_diagnostics,
+    draw_runtime_diagnostics,
+)
 from utils.session_progress import StageProgressTracker
 
 
@@ -144,7 +148,7 @@ def get_stage_status_text(current_stage, latest_feedback):
 
 def get_help_text():
     """하단 패널에 표시할 단계 조작 안내입니다."""
-    return "통과 2초 유지 시 자동 이동 | 1-8 선택 | n/p 이동 | c 재보정 | q 종료"
+    return "자동 이동 | 1-8 선택 | n/p 이동 | d 진단 | c 재보정 | q 종료"
 
 
 def draw_korean_feedback_panel(
@@ -464,6 +468,7 @@ def main():
     calibration_progress = 0.0
     calibration_message = "전신을 보이고 어드레스 가이드에 맞춰주세요."
     analysis_message = "현재 단계 자세를 잡고 잠시 멈춰주세요."
+    diagnostics_enabled = True
 
     try:
         with create_pose_landmarker() as landmarker:
@@ -488,12 +493,17 @@ def main():
                     0 if calibration_profile is None else progress_tracker.current_index
                 )
                 current_stage = STAGE_CONFIGS[display_stage_index]
+                diagnostic_visibility = None
+                diagnostic_address = None
+                diagnostic_stability = None
 
                 if result.pose_landmarks:
                     landmarks = result.pose_landmarks[0]
 
                     if calibration_profile is None:
                         quality = evaluate_calibration_frame(landmarks)
+                        diagnostic_visibility = quality.get("visibility")
+                        diagnostic_address = quality.get("address")
                         current_anchor = get_user_anchor(
                             landmarks,
                             frame.shape[1],
@@ -529,6 +539,7 @@ def main():
                                 recent_calibration_samples,
                                 min_duration_sec=CALIBRATION_STABILITY_SEC,
                             )
+                            diagnostic_stability = calibration_stability
 
                             if (
                                 calibration_stability["ready"]
@@ -582,6 +593,7 @@ def main():
 
                     elif not progress_tracker.completed:
                         visibility = check_full_body_visibility(landmarks)
+                        diagnostic_visibility = visibility
                         if not visibility["passed"]:
                             pose_samples.clear()
                             latest_feedback = None
@@ -593,6 +605,7 @@ def main():
                                 pose_samples,
                                 min_duration_sec=ANALYSIS_STABILITY_SEC,
                             )
+                            diagnostic_stability = stability
                             analysis_message = stability["message"]
 
                             if stability["ready"] and stability["stable"]:
@@ -679,6 +692,27 @@ def main():
                     calibration_profile,
                     calibration_message,
                 )
+                diagnostic_phase = (
+                    "completed"
+                    if progress_tracker.completed
+                    else "calibration"
+                    if calibration_profile is None
+                    else "analysis"
+                )
+                runtime_diagnostics = build_runtime_diagnostics(
+                    phase=diagnostic_phase,
+                    pose_detected=bool(result.pose_landmarks),
+                    visibility=diagnostic_visibility,
+                    address=diagnostic_address,
+                    stability=diagnostic_stability,
+                    feedback=latest_feedback,
+                    pass_progress=progress_tracker.pass_progress(now),
+                )
+                draw_runtime_diagnostics(
+                    frame,
+                    runtime_diagnostics,
+                    enabled=diagnostics_enabled,
+                )
                 frame = draw_korean_feedback_panel(
                     frame,
                     current_stage,
@@ -692,6 +726,9 @@ def main():
                 cv2.imshow(window_name, frame)
 
                 key = cv2.waitKey(1) & 0xFF
+                if key == ord("d"):
+                    diagnostics_enabled = not diagnostics_enabled
+                    continue
                 if key == ord("c"):
                     calibration_samples.clear()
                     calibration_start_time = None
