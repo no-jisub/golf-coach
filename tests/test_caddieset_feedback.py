@@ -4,6 +4,7 @@ from types import SimpleNamespace
 import main
 from utils.golf_rules import (
     STAGE_CONFIGS,
+    analyze_stage_pose,
     build_caddieset_feedback,
     build_caddieset_messages,
     build_metric_feedback_message,
@@ -23,6 +24,7 @@ from utils.guide_skeleton import (
     RIGHT_KNEE,
     RIGHT_SHOULDER,
     RIGHT_WRIST,
+    create_calibration_profile,
 )
 
 
@@ -144,6 +146,51 @@ class CaddieSetFeedbackTests(unittest.TestCase):
                 )
                 self.assertEqual(len(result["item_results"]), expected_count)
                 self.assertIn(result["status"], {"pass", "warning", "unavailable"})
+
+    def test_runtime_combines_guide_and_i7_reference_scores(self):
+        address_landmarks = make_landmarks(GUIDE_POSES["address"])
+        calibration_profile = create_calibration_profile(
+            [address_landmarks],
+            1000,
+            1000,
+        )
+        calibration_profile["caddieset_address_points"] = GUIDE_POSES["address"]
+
+        result = analyze_stage_pose(
+            "address",
+            [address_landmarks],
+            calibration_profile,
+            1000,
+            1000,
+        )
+
+        self.assertEqual(result["source"], "combined")
+        self.assertEqual(result["metrics"]["profile_id"], "faceon_i7")
+        self.assertIn("final_score", result["metrics"])
+        self.assertIn("guide_score", result["metrics"])
+        self.assertIn("caddieset_score", result["metrics"])
+        self.assertTrue(result["passed"])
+
+    def test_all_visible_runtime_guides_pass_combined_scoring(self):
+        address_landmarks = make_landmarks(GUIDE_POSES["address"])
+        calibration_profile = create_calibration_profile(
+            [address_landmarks],
+            1000,
+            1000,
+        )
+        calibration_profile["caddieset_address_points"] = GUIDE_POSES["address"]
+
+        for stage in STAGE_CONFIGS:
+            with self.subTest(stage=stage["key"]):
+                result = analyze_stage_pose(
+                    stage["key"],
+                    [make_landmarks(GUIDE_POSES[stage["key"]])],
+                    calibration_profile,
+                    1000,
+                    1000,
+                )
+                self.assertTrue(result["passed"], result["messages"])
+                self.assertGreaterEqual(result["metrics"]["final_score"], 70)
 
     def test_screen_title_distinguishes_warning_and_unavailable(self):
         stage = STAGE_CONFIGS[0]

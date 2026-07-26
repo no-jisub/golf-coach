@@ -2,6 +2,7 @@ import math
 
 import numpy as np
 
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 from utils.caddieset_evaluator import (
     CaddieSetProfileError,
     classify_stage_comparisons,
@@ -103,8 +104,8 @@ BODY_PART_GROUPS = {
     "lower": [LEFT_KNEE, RIGHT_KNEE, LEFT_ANKLE, RIGHT_ANKLE],
 }
 
-CADDIESET_VIEW = "FACEON"
-CADDIESET_CLUB_TYPE = None
+CADDIESET_VIEW = MVP_VIEW
+CADDIESET_CLUB_TYPE = MVP_CLUB_TYPE
 CADDIESET_DIRECTION_MULTIPLIER = -1.0 if SWING_HAND == "right" else 1.0
 
 METRIC_CORRECTION_TEMPLATES = {
@@ -363,6 +364,31 @@ def build_caddieset_feedback(stage_key, landmark_samples, calibration_profile):
     return result
 
 
+def calculate_caddieset_score(classified_result):
+    """관찰 범위 관계를 0~100 점수와 큰 이상치 여부로 변환합니다."""
+    relation_scores = {
+        "within_reference": 100,
+        "below_reference": 75,
+        "above_reference": 75,
+        "below_outer": 25,
+        "above_outer": 25,
+        "unavailable": 0,
+    }
+    comparisons = list(classified_result.get("item_results", {}).values())
+    if not comparisons:
+        return 0, False
+
+    scores = [
+        relation_scores.get(comparison.get("relation"), 0)
+        for comparison in comparisons
+    ]
+    has_outer_warning = any(
+        comparison.get("relation") in {"below_outer", "above_outer"}
+        for comparison in comparisons
+    )
+    return int(round(float(np.mean(scores)))), has_outer_warning
+
+
 def build_guide_feedback(stage_key, points):
     """보조 스켈레톤과 사용자 관절을 비교해 점수와 피드백을 만듭니다."""
     guide_points = GUIDE_POSES.get(stage_key)
@@ -508,8 +534,97 @@ def build_calibrated_guide_feedback(stage_key, landmark_samples, calibration_pro
     return make_result(stage_key, passed, messages, metrics)
 
 
+def build_combined_feedback(
+    stage_key,
+    landmark_samples,
+    calibration_profile,
+    image_width,
+    image_height,
+):
+    """화면 가이드와 CaddieSet 지표를 하나의 최종 판정으로 합칩니다."""
+    guide_result = build_calibrated_guide_feedback(
+        stage_key,
+        landmark_samples,
+        calibration_profile,
+        image_width,
+        image_height,
+    )
+    caddieset_result = build_caddieset_feedback(
+        stage_key,
+        landmark_samples,
+        calibration_profile,
+    )
+
+    guide_metrics = guide_result.get("metrics", {})
+    guide_score = int(guide_metrics.get("guide_score", 0))
+    caddieset_score, has_outer_warning = calculate_caddieset_score(caddieset_result)
+    final_score = int(round(guide_score * 0.55 + caddieset_score * 0.45))
+    caddieset_unavailable = caddieset_result.get("status") == "unavailable"
+    guide_unavailable = "guide_score" not in guide_metrics
+
+    passed = (
+        not caddieset_unavailable
+        and not guide_unavailable
+        and not has_outer_warning
+        and guide_result["passed"]
+        and caddieset_score >= 70
+        and final_score >= 70
+    )
+
+    if caddieset_unavailable or guide_unavailable:
+        status = "unavailable"
+        messages = (
+            caddieset_result["messages"]
+            if caddieset_unavailable
+            else guide_result["messages"]
+        )
+    elif passed:
+        status = "pass"
+        stage = get_stage_config(stage_key)
+        messages = [
+            f"{stage['korean']} 자세가 가이드와 7번 아이언 참조 기준을 모두 충족했습니다."
+        ]
+    else:
+        status = "warning"
+        messages = []
+        if not guide_result["passed"]:
+            messages.extend(guide_result["messages"])
+        if caddieset_result.get("status") != "pass":
+            messages.extend(caddieset_result["messages"])
+        messages = list(dict.fromkeys(messages))[:3]
+        if not messages:
+            messages = ["전체 자세를 가이드 허용 범위에 조금 더 가깝게 맞춰주세요."]
+
+    caddieset_metrics = caddieset_result.get("metrics", {})
+    result = make_result(
+        stage_key,
+        passed,
+        messages,
+        {
+            "final_score": final_score,
+            "guide_score": guide_score,
+            "caddieset_score": caddieset_score,
+            "has_outer_warning": has_outer_warning,
+            "profile_id": caddieset_metrics.get("profile_id"),
+            "pass_count": caddieset_metrics.get("pass_count", 0),
+            "measured_count": caddieset_metrics.get("measured_count", 0),
+            **guide_metrics,
+        },
+    )
+    result.update(
+        {
+            "status": status,
+            "source": "combined",
+            "guide_result": guide_result,
+            "caddieset_result": caddieset_result,
+            "item_results": caddieset_result.get("item_results", {}),
+        }
+    )
+    return result
+
+
 def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, image_width=None, image_height=None):
-    """보정 후에는 CaddieSet 단계 지표를, 보정 전에는 기존 가이드를 사용합니다."""
+    """보정 후에는 화면 가이드와 CaddieSet 지표를 통합해 판정합니다."""
     if not landmark_samples:
         return make_result(
             stage_key,
@@ -519,7 +634,13 @@ def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, im
 
     if calibration_profile is not None and image_width is not None and image_height is not None:
         try:
-            return build_caddieset_feedback(stage_key, landmark_samples, calibration_profile)
+            return build_combined_feedback(
+                stage_key,
+                landmark_samples,
+                calibration_profile,
+                image_width,
+                image_height,
+            )
         except CaddieSetProfileError as error:
             result = make_result(
                 stage_key,
@@ -527,7 +648,7 @@ def analyze_stage_pose(stage_key, landmark_samples, calibration_profile=None, im
                 [f"CaddieSet 평가 기준을 불러오지 못했습니다: {error}"],
             )
             result["status"] = "unavailable"
-            result["source"] = "caddieset"
+            result["source"] = "combined"
             return result
 
     points = get_average_points(landmark_samples)
