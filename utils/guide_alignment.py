@@ -68,7 +68,7 @@ METRIC_JOINTS = {
 }
 
 DEFAULT_OPTIMIZATION_STEPS = (0.04, 0.02, 0.01, 0.005, 0.0025)
-MAX_JOINT_DISPLACEMENT = 0.12
+MAX_JOINT_DISPLACEMENT = 0.20
 MIN_COORDINATE = 0.02
 MAX_COORDINATE = 0.98
 
@@ -213,10 +213,15 @@ def stage_alignment_objective(
     )
 
 
-def _candidate_coordinate(original_value, current_value, delta):
-    lower = max(MIN_COORDINATE, original_value - MAX_JOINT_DISPLACEMENT)
-    upper = min(MAX_COORDINATE, original_value + MAX_JOINT_DISPLACEMENT)
-    return max(lower, min(upper, current_value + delta))
+def _candidate_coordinate(original_point, current_point, axis, delta):
+    candidate = list(current_point)
+    candidate[axis] = max(
+        MIN_COORDINATE,
+        min(MAX_COORDINATE, current_point[axis] + delta),
+    )
+    if _distance(candidate, original_point) > MAX_JOINT_DISPLACEMENT:
+        return current_point[axis]
+    return candidate[axis]
 
 
 def optimize_stage_pose(
@@ -257,8 +262,9 @@ def optimize_stage_pose(
                     local_best = best_objective
                     for delta in (-step, step):
                         candidate_value = _candidate_coordinate(
-                            original_pose[index][axis],
-                            current_point[axis],
+                            original_pose[index],
+                            current_point,
+                            axis,
                             delta,
                         )
                         if abs(candidate_value - current_point[axis]) <= 1e-12:

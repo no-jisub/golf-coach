@@ -8,6 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 from utils.guide_alignment import STAGE_KEYS, calculate_guide_stage_metrics
 from utils.guide_skeleton import GUIDE_POSES, SWING_HAND
 
@@ -28,6 +29,7 @@ def build_metric_snapshot(guide_poses=GUIDE_POSES, swing_hand=SWING_HAND):
         "swing_hand": swing_hand,
         "coordinate_space": "runtime_guide_after_swing_hand",
         "direction_multiplier": direction_multiplier,
+        "profile_id": f"{MVP_VIEW.lower()}_{MVP_CLUB_TYPE.lower()}",
         "stage_order": list(STAGE_KEYS),
         "stages": calculate_guide_stage_metrics(
             guide_poses,
@@ -64,4 +66,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

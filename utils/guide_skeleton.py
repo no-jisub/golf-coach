@@ -3,6 +3,7 @@ from pathlib import Path
 
 import cv2
 
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 
 SWING_HAND = "right"  # "right": 우타 기준, "left": 좌타 기준
 
@@ -200,7 +201,11 @@ def load_generated_guide_data():
     return loaded_poses, loaded_shafts
 
 
-def load_caddieset_aligned_guide_data(expected_swing_hand, expected_stages, path=None):
+def load_caddieset_aligned_guide_data(
+    expected_swing_hand,
+    expected_stages,
+    path=None,
+):
     """Load the audited runtime guide poses produced by the CaddieSet aligner."""
     guide_path = path or (
         Path(__file__).resolve().parents[1]
@@ -220,6 +225,9 @@ def load_caddieset_aligned_guide_data(expected_swing_hand, expected_stages, path
             "CaddieSet 가이드의 스윙 방향이 현재 SWING_HAND와 다릅니다: "
             f"{data.get('swing_hand')} != {expected_swing_hand}"
         )
+    expected_profile_id = f"{MVP_VIEW.lower()}_{MVP_CLUB_TYPE.lower()}"
+    if data.get("profile_id") != expected_profile_id:
+        return None
 
     stages = data.get("stages", {})
     if set(stages) != set(expected_stages):

@@ -3,6 +3,7 @@ import unittest
 from tools.analyze_guide_caddieset_alignment import build_metric_snapshot
 from tools.audit_guide_caddieset_alignment import build_alignment_report
 from tools.align_guide_poses_to_caddieset import build_aligned_guide
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 from utils.guide_alignment import (
     STAGE_KEYS,
     MAX_JOINT_DISPLACEMENT,
@@ -57,7 +58,11 @@ class GuideCaddieSetAuditTests(unittest.TestCase):
             GUIDE_POSES,
             direction_multiplier=direction_multiplier,
         )
-        audit = audit_guide_stage_metrics(metrics)
+        audit = audit_guide_stage_metrics(
+            metrics,
+            view=MVP_VIEW,
+            club_type=MVP_CLUB_TYPE,
+        )
         self.assertEqual(audit["summary"]["total_count"], 40)
         self.assertEqual(
             audit["summary"]["pass_count"] + audit["summary"]["warning_count"],
@@ -95,6 +100,8 @@ class GuideCaddieSetOptimizationTests(unittest.TestCase):
         cls.direction_multiplier = -1.0 if SWING_HAND == "right" else 1.0
         cls.aligned, cls.report = align_guide_poses_to_caddieset(
             REFERENCE_GUIDE_POSES,
+            view=MVP_VIEW,
+            club_type=MVP_CLUB_TYPE,
             direction_multiplier=cls.direction_multiplier,
         )
 
@@ -149,7 +156,11 @@ class RuntimeAlignedGuideTests(unittest.TestCase):
             GUIDE_POSES,
             direction_multiplier=direction_multiplier,
         )
-        audit = audit_guide_stage_metrics(metrics)
+        audit = audit_guide_stage_metrics(
+            metrics,
+            view=MVP_VIEW,
+            club_type=MVP_CLUB_TYPE,
+        )
         self.assertEqual(audit["summary"]["pass_count"], 40)
         self.assertEqual(audit["summary"]["warning_count"], 0)
 

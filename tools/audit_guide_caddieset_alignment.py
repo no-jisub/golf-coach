@@ -8,6 +8,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 from utils.guide_alignment import (
     STAGE_KEYS,
     audit_guide_stage_metrics,
@@ -31,12 +32,16 @@ def build_alignment_report(guide_poses=GUIDE_POSES, swing_hand=SWING_HAND):
         guide_poses,
         direction_multiplier=direction_multiplier,
     )
-    audit = audit_guide_stage_metrics(metrics, view="FACEON")
+    audit = audit_guide_stage_metrics(
+        metrics,
+        view=MVP_VIEW,
+        club_type=MVP_CLUB_TYPE,
+    )
     return {
         "schema": SCHEMA,
         "swing_hand": swing_hand,
         "coordinate_space": "runtime_guide_after_swing_hand",
-        "profile_id": "faceon_all",
+        "profile_id": f"{MVP_VIEW.lower()}_{MVP_CLUB_TYPE.lower()}",
         "summary": audit["summary"],
         "stages": {
             stage_key: {
@@ -86,4 +91,3 @@ def main():
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

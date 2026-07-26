@@ -1,6 +1,7 @@
 from copy import deepcopy
 from functools import lru_cache
 
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
 from utils.caddieset_evaluator import (
     load_evaluation_profiles,
     select_stage_evaluation_items,
@@ -65,8 +66,8 @@ def calculate_stage_tolerance_regions(
     guide_poses=GUIDE_POSES,
     *,
     profile_data=None,
-    view="FACEON",
-    club_type=None,
+    view=MVP_VIEW,
+    club_type=MVP_CLUB_TYPE,
     direction_multiplier=None,
     max_offset=DEFAULT_MAX_OFFSET,
     sample_step=DEFAULT_SAMPLE_STEP,

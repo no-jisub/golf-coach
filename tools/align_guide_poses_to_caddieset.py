@@ -8,7 +8,12 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from utils.guide_alignment import STAGE_KEYS, align_guide_poses_to_caddieset
+from utils.app_config import MVP_CLUB_TYPE, MVP_VIEW
+from utils.guide_alignment import (
+    MAX_JOINT_DISPLACEMENT,
+    STAGE_KEYS,
+    align_guide_poses_to_caddieset,
+)
 from utils.guide_skeleton import REFERENCE_GUIDE_POSES, SWING_HAND
 
 
@@ -32,15 +37,16 @@ def build_aligned_guide(guide_poses=REFERENCE_GUIDE_POSES, swing_hand=SWING_HAND
     direction_multiplier = -1.0 if swing_hand == "right" else 1.0
     aligned, report = align_guide_poses_to_caddieset(
         guide_poses,
-        view="FACEON",
+        view=MVP_VIEW,
+        club_type=MVP_CLUB_TYPE,
         direction_multiplier=direction_multiplier,
     )
     return {
         "schema": SCHEMA,
-        "profile_id": "faceon_all",
+        "profile_id": f"{MVP_VIEW.lower()}_{MVP_CLUB_TYPE.lower()}",
         "swing_hand": swing_hand,
         "coordinate_space": "runtime_guide_after_swing_hand",
-        "max_joint_displacement_limit": 0.12,
+        "max_joint_displacement_limit": MAX_JOINT_DISPLACEMENT,
         "stage_order": list(STAGE_KEYS),
         "stages": {
             stage_key: serialize_pose(aligned[stage_key]) for stage_key in STAGE_KEYS
