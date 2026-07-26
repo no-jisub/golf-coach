@@ -12,6 +12,7 @@ from mediapipe.tasks.python import vision
 
 from utils.app_config import MVP_CLUB_LABEL, MVP_VIEW_LABEL
 from utils.caddieset_metrics import average_landmark_points
+from utils.diagnostic_capture import save_runtime_sample
 from utils.golf_rules import STAGE_CONFIGS, analyze_stage_pose
 from utils.guide_skeleton import SWING_HAND, create_calibration_profile, draw_guide_skeleton, get_user_anchor
 from utils.guide_tolerance import get_stage_tolerance_regions
@@ -148,7 +149,7 @@ def get_stage_status_text(current_stage, latest_feedback):
 
 def get_help_text():
     """하단 패널에 표시할 단계 조작 안내입니다."""
-    return "자동 이동 | 1-8 선택 | n/p 이동 | d 진단 | c 재보정 | q 종료"
+    return "d 진단 | s 저장 | g 좋은자세 | b 나쁜자세 | c 재보정 | q 종료"
 
 
 def draw_korean_feedback_panel(
@@ -469,6 +470,8 @@ def main():
     calibration_message = "전신을 보이고 어드레스 가이드에 맞춰주세요."
     analysis_message = "현재 단계 자세를 잡고 잠시 멈춰주세요."
     diagnostics_enabled = True
+    capture_notice = None
+    capture_notice_until = 0.0
 
     try:
         with create_pose_landmarker() as landmarker:
@@ -482,6 +485,7 @@ def main():
 
                 # 거울처럼 보이도록 좌우 반전합니다.
                 frame = cv2.flip(frame, 1)
+                raw_camera_frame = frame.copy()
 
                 # OpenCV는 BGR, MediaPipe는 RGB 이미지를 사용합니다.
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -723,9 +727,51 @@ def main():
                     progress_tracker.summary(),
                     progress_tracker.pass_progress(now),
                 )
+                if capture_notice and now < capture_notice_until:
+                    cv2.putText(
+                        frame,
+                        capture_notice,
+                        (24, frame.shape[0] - 12),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.55,
+                        (80, 255, 120),
+                        2,
+                        cv2.LINE_AA,
+                    )
                 cv2.imshow(window_name, frame)
 
                 key = cv2.waitKey(1) & 0xFF
+                capture_labels = {
+                    ord("s"): "pending",
+                    ord("g"): "expected_pass",
+                    ord("b"): "expected_fail",
+                }
+                if key in capture_labels:
+                    try:
+                        capture = save_runtime_sample(
+                            raw_frame=raw_camera_frame,
+                            overlay_frame=frame,
+                            stage_key=current_stage["key"],
+                            landmarks=(
+                                result.pose_landmarks[0]
+                                if result.pose_landmarks
+                                else []
+                            ),
+                            diagnostics=runtime_diagnostics,
+                            feedback=latest_feedback,
+                            expected_label=capture_labels[key],
+                        )
+                        capture_notice = (
+                            f"Saved: {capture['expected_label']} / "
+                            f"{capture['discrepancy']}"
+                        )
+                        capture_notice_until = time.monotonic() + 2.0
+                        print(f"[진단 샘플 저장] {capture['sample_dir']}")
+                    except (OSError, ValueError) as error:
+                        capture_notice = f"Save failed: {error}"
+                        capture_notice_until = time.monotonic() + 3.0
+                        print(f"[진단 샘플 저장 실패] {error}")
+                    continue
                 if key == ord("d"):
                     diagnostics_enabled = not diagnostics_enabled
                     continue

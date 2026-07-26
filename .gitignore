@@ -31,3 +31,4 @@ reference_data/extracted_landmarks/**/*_video_*_auto.json
 reference_data/extracted_landmarks/**/*.json
 reference_data/guide_poses/generated_guide_poses.json
 reference_data/caddieset/source/
+reference_data/runtime_samples/
