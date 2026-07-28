@@ -478,11 +478,24 @@ AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 
 python tools\extract_stage_candidates.py
 ```
 
+후보 이미지에서 영상별 8단계 정답 프레임을 선택:
+
+```powershell
+python tools\review_stage_candidates.py pro01 --reviewer coach-id
+```
+
 현재 런타임 회귀 결과의 단계·관절 병목과 코치 정답의 점수 임계값별
 오탐·미탐·정밀도·재현율을 분석:
 
 ```powershell
 python tools\analyze_scoring_thresholds.py
+```
+
+검수 매니페스트가 갱신된 뒤 단계 정확도, 런타임 회귀, 병목 보고서,
+단계 후보와 `automatic vs reviewed` 비교 이미지를 모두 재생성:
+
+```powershell
+python tools\run_reviewed_regression_pipeline.py --progress
 ```
 
 ## 개발 원칙

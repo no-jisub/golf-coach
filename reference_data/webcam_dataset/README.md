@@ -68,3 +68,6 @@ python tools\review_webcam_samples.py --reviewer coach-id
 ```powershell
 python tools\export_coach_ground_truth.py
 ```
+
+정답 JSON은 이후 `tools/analyze_scoring_thresholds.py`와 통합 회귀 파이프라인에서
+임계값별 오탐·미탐 계산에 자동으로 사용됩니다.
