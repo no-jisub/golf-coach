@@ -40,3 +40,31 @@ python tools\configure_webcam_collection.py `
 ```powershell
 python tools\configure_webcam_collection.py --deactivate
 ```
+
+## 코치 검수와 정답 변환
+
+검수 대상과 우선순위만 먼저 확인:
+
+```powershell
+python tools\review_webcam_samples.py --list
+```
+
+이미지 검수 화면:
+
+```powershell
+python tools\review_webcam_samples.py --reviewer coach-id
+```
+
+- `g`: 좋은 자세
+- `b`: 나쁜 자세
+- `u`: 판단 보류
+- `p`: 미검수로 되돌리기
+- `j` / `k`: 이전 / 다음
+- `q`: 종료
+
+수집자 라벨과 런타임 판정이 충돌하거나 70점 임계값에 가까운 샘플이 먼저 표시됩니다.
+코치 검수를 비식별 정답 JSON으로 변환:
+
+```powershell
+python tools\export_coach_ground_truth.py
+```
