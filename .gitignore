@@ -32,3 +32,9 @@ reference_data/extracted_landmarks/**/*.json
 reference_data/guide_poses/generated_guide_poses.json
 reference_data/caddieset/source/
 reference_data/runtime_samples/
+reference_data/webcam_dataset/private/
+reference_data/webcam_dataset/sessions/
+reference_data/webcam_dataset/captures/
+reference_data/webcam_dataset/reviews/
+reference_data/webcam_dataset/exports/
+reference_data/webcam_dataset/active_session.json
