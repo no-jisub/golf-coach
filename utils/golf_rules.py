@@ -402,6 +402,10 @@ def build_guide_feedback(stage_key, points):
         return make_result(stage_key, False, ["어깨 너비를 기준으로 자세를 정규화할 수 없습니다. 전신이 보이게 서주세요."])
 
     all_distances = [distance(user_pose[index], guide_pose[index]) for index in REQUIRED_LANDMARKS]
+    joint_distances = {
+        str(index): distance(user_pose[index], guide_pose[index])
+        for index in REQUIRED_LANDMARKS
+    }
     group_distances = {
         name: get_group_distance(user_pose, guide_pose, indexes)
         for name, indexes in BODY_PART_GROUPS.items()
@@ -441,6 +445,7 @@ def build_guide_feedback(stage_key, points):
         "arms_distance": group_distances["arms"],
         "body_distance": group_distances["body"],
         "lower_distance": group_distances["lower"],
+        "joint_distances": joint_distances,
     }
     return make_result(stage_key, passed, messages, metrics)
 
@@ -492,6 +497,10 @@ def build_calibrated_guide_feedback(stage_key, landmark_samples, calibration_pro
         return make_result(stage_key, False, ["캘리브레이션 기준으로 자세를 비교할 수 없습니다. c 키로 다시 보정해주세요."])
 
     all_distances = [distance(user_pose[index], guide_pose[index]) for index in REQUIRED_LANDMARKS]
+    joint_distances = {
+        str(index): distance(user_pose[index], guide_pose[index])
+        for index in REQUIRED_LANDMARKS
+    }
     group_distances = {
         name: get_group_distance(user_pose, guide_pose, indexes)
         for name, indexes in BODY_PART_GROUPS.items()
@@ -530,6 +539,7 @@ def build_calibrated_guide_feedback(stage_key, landmark_samples, calibration_pro
         "arms_distance": group_distances["arms"],
         "body_distance": group_distances["body"],
         "lower_distance": group_distances["lower"],
+        "joint_distances": joint_distances,
     }
     return make_result(stage_key, passed, messages, metrics)
 

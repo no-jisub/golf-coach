@@ -139,6 +139,7 @@ def evaluate_cached_video(video_id, manifest_video, landmark_payload, automatic_
             image_height,
         )
         metrics = result.get("metrics", {})
+        item_results = result.get("item_results", {})
         stages[stage_key] = {
             "label": _stage_label(stage_key),
             "requested_frame_index": selection["requested_frame_index"],
@@ -151,6 +152,26 @@ def evaluate_cached_video(video_id, manifest_video, landmark_payload, automatic_
             "guide_score": _score(metrics, "guide_score"),
             "caddieset_score": _score(metrics, "caddieset_score"),
             "has_outer_warning": bool(metrics.get("has_outer_warning", False)),
+            "guide_group_distances": {
+                group: _score(metrics, f"{group}_distance")
+                for group in ("head", "arms", "body", "lower")
+            },
+            "joint_distances": {
+                str(index): round(float(value), 6)
+                for index, value in (metrics.get("joint_distances") or {}).items()
+                if value is not None and math.isfinite(float(value))
+            },
+            "caddieset_items": {
+                metric_key: {
+                    "relation": comparison.get("relation"),
+                    "status": comparison.get("status"),
+                    "normalized_delta": _score(
+                        {"value": comparison.get("normalized_delta")},
+                        "value",
+                    ),
+                }
+                for metric_key, comparison in item_results.items()
+            },
             "messages": list(result.get("messages", [])),
         }
 

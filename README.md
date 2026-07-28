@@ -466,6 +466,25 @@ AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 
 현재 자동 테스트는 `py -3.12 -m unittest discover -s tests -v`로 실행하며,
 보정·정지 검사·통합 판정·자동 진행·회귀 분석을 포함한 115개 테스트가 있습니다.
 
+## 웹캠 데이터셋 수집과 판정 분석
+
+실제 사용자 샘플은 `reference_data/webcam_dataset` 아래에서 개인정보, 비식별 세션,
+원본 캡처, 코치 검수와 분석 결과를 분리합니다. 수집·검수 절차는
+`reference_data/webcam_dataset/README.md`에 정리되어 있습니다.
+
+기존 프로 영상에서 자동 검출 프레임 주변의 단계별 후보를 추출:
+
+```powershell
+python tools\extract_stage_candidates.py
+```
+
+현재 런타임 회귀 결과의 단계·관절 병목과 코치 정답의 점수 임계값별
+오탐·미탐·정밀도·재현율을 분석:
+
+```powershell
+python tools\analyze_scoring_thresholds.py
+```
+
 ## 개발 원칙
 
 - 처음부터 빠른 풀스윙 실시간 분석으로 가지 않는다.
