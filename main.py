@@ -27,6 +27,7 @@ from utils.runtime_diagnostics import (
     build_runtime_diagnostics,
     draw_runtime_diagnostics,
 )
+from utils.runtime_provenance import build_runtime_provenance
 from utils.session_progress import StageProgressTracker
 
 
@@ -43,6 +44,11 @@ CALIBRATION_HOLD_SEC = 5.0
 CALIBRATION_STABILITY_SEC = 1.5
 CALIBRATION_MAX_ANCHOR_SHIFT_PX = 35
 AUTO_PASS_HOLD_SEC = 2.0
+CAPTURE_FRAME_INTERVAL_SEC = 0.2
+CAPTURE_JPEG_QUALITY = 88
+POSE_MIN_DETECTION_CONFIDENCE = 0.5
+POSE_MIN_PRESENCE_CONFIDENCE = 0.5
+POSE_MIN_TRACKING_CONFIDENCE = 0.5
 
 # Windows 기본 한글 폰트입니다.
 KOREAN_FONT_PATH = Path("C:/Windows/Fonts/malgun.ttf")
@@ -54,9 +60,9 @@ def create_pose_landmarker():
         base_options=python.BaseOptions(model_asset_path=str(MODEL_PATH)),
         running_mode=vision.RunningMode.VIDEO,
         num_poses=1,
-        min_pose_detection_confidence=0.5,
-        min_pose_presence_confidence=0.5,
-        min_tracking_confidence=0.5,
+        min_pose_detection_confidence=POSE_MIN_DETECTION_CONFIDENCE,
+        min_pose_presence_confidence=POSE_MIN_PRESENCE_CONFIDENCE,
+        min_tracking_confidence=POSE_MIN_TRACKING_CONFIDENCE,
     )
     return vision.PoseLandmarker.create_from_options(options)
 
@@ -73,6 +79,22 @@ def update_pose_samples(pose_samples, landmarks, now):
     """최근 분석 구간 안의 랜드마크만 유지합니다."""
     pose_samples.append((now, landmarks))
     trim_timed_samples(pose_samples, now, ANALYSIS_WINDOW_SEC)
+
+
+def update_capture_frame_samples(frame_samples, frame, now):
+    """판정 구간의 대표 원본 프레임을 JPEG로 압축해 제한된 메모리에 보관합니다."""
+    if (
+        not frame_samples
+        or now - frame_samples[-1][0] >= CAPTURE_FRAME_INTERVAL_SEC
+    ):
+        ok, encoded = cv2.imencode(
+            ".jpg",
+            frame,
+            [cv2.IMWRITE_JPEG_QUALITY, CAPTURE_JPEG_QUALITY],
+        )
+        if ok:
+            frame_samples.append((now, encoded.tobytes()))
+    trim_timed_samples(frame_samples, now, ANALYSIS_WINDOW_SEC)
 
 
 def print_feedback_if_changed(feedback, last_feedback_key):
@@ -462,6 +484,7 @@ def main():
     stage_keys = [stage["key"] for stage in STAGE_CONFIGS]
     progress_tracker = StageProgressTracker(stage_keys, AUTO_PASS_HOLD_SEC)
     pose_samples, latest_feedback, last_feedback_key = reset_analysis_state()
+    capture_frame_samples = deque()
     calibration_samples = deque()
     calibration_start_time = None
     calibration_base_anchor = None
@@ -472,6 +495,23 @@ def main():
     diagnostics_enabled = True
     capture_notice = None
     capture_notice_until = 0.0
+    runtime_provenance = build_runtime_provenance(
+        model_path=MODEL_PATH,
+        runtime_settings={
+            "camera_index": CAMERA_INDEX,
+            "analysis_window_sec": ANALYSIS_WINDOW_SEC,
+            "analysis_stability_sec": ANALYSIS_STABILITY_SEC,
+            "calibration_hold_sec": CALIBRATION_HOLD_SEC,
+            "calibration_stability_sec": CALIBRATION_STABILITY_SEC,
+            "calibration_max_anchor_shift_px": CALIBRATION_MAX_ANCHOR_SHIFT_PX,
+            "auto_pass_hold_sec": AUTO_PASS_HOLD_SEC,
+            "pose_min_detection_confidence": POSE_MIN_DETECTION_CONFIDENCE,
+            "pose_min_presence_confidence": POSE_MIN_PRESENCE_CONFIDENCE,
+            "pose_min_tracking_confidence": POSE_MIN_TRACKING_CONFIDENCE,
+            "capture_frame_interval_sec": CAPTURE_FRAME_INTERVAL_SEC,
+            "capture_jpeg_quality": CAPTURE_JPEG_QUALITY,
+        },
+    )
 
     try:
         with create_pose_landmarker() as landmarker:
@@ -486,6 +526,11 @@ def main():
                 # 거울처럼 보이도록 좌우 반전합니다.
                 frame = cv2.flip(frame, 1)
                 raw_camera_frame = frame.copy()
+                update_capture_frame_samples(
+                    capture_frame_samples,
+                    raw_camera_frame,
+                    now,
+                )
 
                 # OpenCV는 BGR, MediaPipe는 RGB 이미지를 사용합니다.
                 rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
@@ -748,6 +793,21 @@ def main():
                 }
                 if key in capture_labels:
                     try:
+                        replay_landmark_samples = list(pose_samples)
+                        if not replay_landmark_samples and result.pose_landmarks:
+                            replay_landmark_samples = [
+                                (now, result.pose_landmarks[0])
+                            ]
+                        window_start = (
+                            replay_landmark_samples[0][0]
+                            if replay_landmark_samples
+                            else now
+                        )
+                        replay_decision_frames = [
+                            sample
+                            for sample in capture_frame_samples
+                            if sample[0] >= window_start
+                        ]
                         capture = save_runtime_sample(
                             raw_frame=raw_camera_frame,
                             overlay_frame=frame,
@@ -760,6 +820,10 @@ def main():
                             diagnostics=runtime_diagnostics,
                             feedback=latest_feedback,
                             expected_label=capture_labels[key],
+                            landmark_samples=replay_landmark_samples,
+                            decision_frames=replay_decision_frames,
+                            calibration_profile=calibration_profile,
+                            runtime_provenance=runtime_provenance,
                         )
                         capture_notice = (
                             f"Saved: {capture['expected_label']} / "

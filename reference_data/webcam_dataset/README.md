@@ -35,6 +35,20 @@ python tools\configure_webcam_collection.py `
 출력된 익명 참가자 ID를 같은 참가자의 후속 촬영에서 `--participant-id`로 재사용합니다.
 그 다음 `main.py`를 실행하면 `s`, `g`, `b`로 저장한 샘플에 참가자·세션·촬영 조건이 함께 기록됩니다.
 
+보정 완료 뒤 저장한 샘플은 `golf-coach-runtime-sample-v3` 형식입니다. 이 형식은
+화면 한 장뿐 아니라 실제 판정에 사용한 전체 관절 시간창, 5fps 대표 원본 프레임,
+평균 관절, 캘리브레이션 프로필, 런타임 임계값, 패키지 버전, Git SHA와
+MediaPipe·가이드·CaddieSet 파일 SHA-256을 함께 기록합니다.
+
+저장 당시 결과를 현재 코드로 다시 판정:
+
+```powershell
+python tools\replay_runtime_samples.py
+```
+
+결과는 `analysis_sessions/runtime_sample_replay/replay_report.json`에 저장되며,
+통과 여부 변경과 점수 변화, 모델·가이드·코드 버전 차이를 분리해서 보여줍니다.
+
 활성 세션 해제:
 
 ```powershell

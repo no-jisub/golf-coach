@@ -14,6 +14,7 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_CAPTURE_ROOT = PROJECT_ROOT / "reference_data" / "runtime_samples"
 CAPTURE_SCHEMA = "golf-coach-runtime-sample-v1"
 COLLECTION_CAPTURE_SCHEMA = "golf-coach-runtime-sample-v2"
+REPRODUCIBLE_CAPTURE_SCHEMA = "golf-coach-runtime-sample-v3"
 EXPECTED_LABELS = {"pending", "expected_pass", "expected_fail"}
 
 
@@ -32,6 +33,75 @@ def serialize_landmarks(landmarks):
                 item[field] = round(float(value), 7)
         serialized.append(item)
     return serialized
+
+
+def serialize_timed_landmark_samples(landmark_samples, fallback_landmarks=None):
+    """monotonic 시간 기반 판정 구간을 마지막 프레임 기준 상대 시간으로 직렬화합니다."""
+    samples = list(landmark_samples or [])
+    if not samples and fallback_landmarks is not None:
+        samples = [(0.0, fallback_landmarks)]
+    if not samples:
+        return []
+
+    reference_time = float(samples[-1][0])
+    return [
+        {
+            "sample_index": index,
+            "offset_ms": round((float(sample[0]) - reference_time) * 1000.0, 3),
+            "landmarks": serialize_landmarks(sample[1]),
+        }
+        for index, sample in enumerate(samples)
+    ]
+
+
+def average_serialized_landmarks(serialized_samples, min_visibility=0.5):
+    """실제 판정과 같은 visibility 기준으로 시간창의 평균 관절 좌표를 만듭니다."""
+    by_index = {}
+    for sample in serialized_samples:
+        for landmark in sample.get("landmarks", []):
+            if float(landmark.get("visibility", 1.0)) < min_visibility:
+                continue
+            by_index.setdefault(int(landmark["index"]), []).append(landmark)
+
+    averaged = []
+    for index in sorted(by_index):
+        records = by_index[index]
+        item = {"index": index}
+        for field in ("x", "y", "z", "visibility", "presence"):
+            item[field] = round(
+                sum(float(record.get(field, 0.0)) for record in records)
+                / len(records),
+                7,
+            )
+        averaged.append(item)
+    return averaged
+
+
+def _write_decision_frames(sample_dir, decision_frames):
+    """메모리에 보관한 JPEG bytes 또는 ndarray 대표 프레임을 로컬에 저장합니다."""
+    records = list(decision_frames or [])
+    if not records:
+        return []
+    reference_time = float(records[-1][0])
+    frame_dir = sample_dir / "decision_frames"
+    frame_dir.mkdir(parents=True, exist_ok=True)
+    artifacts = []
+    for index, record in enumerate(records):
+        timestamp = float(record[0])
+        frame = record[1]
+        path = frame_dir / f"frame_{index:03d}.jpg"
+        if isinstance(frame, (bytes, bytearray, memoryview)):
+            path.write_bytes(bytes(frame))
+        elif not cv2.imwrite(str(path), frame):
+            raise OSError(f"판정 프레임을 저장하지 못했습니다: {path}")
+        artifacts.append(
+            {
+                "sample_index": index,
+                "offset_ms": round((timestamp - reference_time) * 1000.0, 3),
+                "path": str(Path("decision_frames") / path.name),
+            }
+        )
+    return artifacts
 
 
 def _json_safe(value):
@@ -71,6 +141,10 @@ def save_runtime_sample(
     output_root=None,
     captured_at=None,
     collection_context=None,
+    landmark_samples=None,
+    decision_frames=None,
+    calibration_profile=None,
+    runtime_provenance=None,
 ):
     """화면과 구조화된 판정 정보를 충돌 없는 로컬 폴더에 저장합니다."""
     if expected_label not in EXPECTED_LABELS:
@@ -107,6 +181,13 @@ def save_runtime_sample(
     else:
         sample_dir = Path(output_root or DEFAULT_CAPTURE_ROOT) / stage_key / sample_id
         capture_schema = CAPTURE_SCHEMA
+    reproducible = (
+        landmark_samples is not None
+        and calibration_profile is not None
+        and runtime_provenance is not None
+    )
+    if reproducible:
+        capture_schema = REPRODUCIBLE_CAPTURE_SCHEMA
     sample_dir.mkdir(parents=True, exist_ok=False)
 
     raw_path = sample_dir / "raw.jpg"
@@ -116,6 +197,15 @@ def save_runtime_sample(
         raise OSError(f"원본 프레임을 저장하지 못했습니다: {raw_path}")
     if not cv2.imwrite(str(overlay_path), overlay_frame):
         raise OSError(f"오버레이 프레임을 저장하지 못했습니다: {overlay_path}")
+
+    decision_frame_artifacts = _write_decision_frames(
+        sample_dir,
+        decision_frames,
+    )
+    serialized_window = serialize_timed_landmark_samples(
+        landmark_samples,
+        fallback_landmarks=landmarks,
+    )
 
     discrepancy = classify_discrepancy(expected_label, feedback)
     metadata = {
@@ -133,8 +223,36 @@ def save_runtime_sample(
         "artifacts": {
             "raw_frame": raw_path.name,
             "overlay_frame": overlay_path.name,
+            "decision_frames": decision_frame_artifacts,
         },
     }
+    if reproducible:
+        duration_ms = (
+            round(
+                serialized_window[-1]["offset_ms"]
+                - serialized_window[0]["offset_ms"],
+                3,
+            )
+            if serialized_window
+            else 0.0
+        )
+        metadata["reproducibility"] = {
+            "replay_supported": True,
+            "image_size": {
+                "width": int(raw_frame.shape[1]),
+                "height": int(raw_frame.shape[0]),
+            },
+            "decision_window": {
+                "sample_count": len(serialized_window),
+                "duration_ms": duration_ms,
+                "samples": serialized_window,
+                "average_landmarks": average_serialized_landmarks(
+                    serialized_window
+                ),
+            },
+            "calibration_profile": _json_safe(calibration_profile),
+            "runtime_provenance": _json_safe(runtime_provenance),
+        }
     if collection_context:
         metadata["collection"] = {
             "participant_id": collection_context["participant_id"],

@@ -252,6 +252,9 @@ def export_coach_ground_truth(review_manifest, *, include_uncertain=False):
                     "caddieset_score": metrics.get("caddieset_score"),
                     "messages": feedback.get("messages", []),
                 },
+                "replay_supported": bool(
+                    sample.get("reproducibility", {}).get("replay_supported")
+                ),
                 "landmarks": sample.get("landmarks", []),
                 "artifacts": review_item.get("artifacts", {}),
                 "source_metadata": review_item["metadata_path"],
