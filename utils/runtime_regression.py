@@ -10,6 +10,8 @@ from utils.guide_skeleton import create_calibration_profile
 
 
 REGRESSION_SCHEMA = "golf-coach-runtime-regression-v1"
+REVIEWED_REGRESSION_SCHEMA = "golf-coach-reviewed-runtime-regression-v1"
+DEFAULT_MIN_REVIEWED_VIDEOS = 5
 STRICT_SCORE_THRESHOLD = 70.0
 STRICT_PASS_RATE_THRESHOLD = 0.5
 LENIENT_SCORE_THRESHOLD = 90.0
@@ -273,7 +275,11 @@ def summarize_runtime_regression(videos):
 def build_runtime_regression(manifest, audit_root, video_ids=None):
     """기존 stage_audit 캐시를 읽어 현재 런타임 판정 회귀 보고서를 만듭니다."""
     audit_root = Path(audit_root)
-    selected_ids = list(video_ids or manifest.get("videos", {}).keys())
+    selected_ids = list(
+        manifest.get("videos", {}).keys()
+        if video_ids is None
+        else video_ids
+    )
     unknown = set(selected_ids) - set(manifest.get("videos", {}))
     if unknown:
         raise ValueError(f"매니페스트에 없는 영상 ID입니다: {', '.join(sorted(unknown))}")
@@ -317,6 +323,8 @@ def build_runtime_regression(manifest, audit_root, video_ids=None):
             "club_type": "I7",
             "swing_hand": "right",
             "scoring": "guide_55_percent_plus_caddieset_45_percent",
+            "event_scope": "reviewed_and_automatic",
+            "criterion_tuning_allowed": False,
         },
         "limitations": [
             "정지 자세용 판정을 풀스윙의 단일 프레임에 적용한 진단 결과입니다.",
@@ -328,13 +336,83 @@ def build_runtime_regression(manifest, audit_root, video_ids=None):
     }
 
 
+def build_reviewed_runtime_regression(
+    manifest,
+    audit_root,
+    video_ids=None,
+    *,
+    minimum_reviewed_videos=DEFAULT_MIN_REVIEWED_VIDEOS,
+):
+    """코치 검수 완료 프레임만 포함한 기준 조정용 별도 회귀 보고서를 만듭니다."""
+    requested_ids = list(
+        manifest.get("videos", {}).keys()
+        if video_ids is None
+        else video_ids
+    )
+    unknown = set(requested_ids) - set(manifest.get("videos", {}))
+    if unknown:
+        raise ValueError(f"매니페스트에 없는 영상 ID입니다: {', '.join(sorted(unknown))}")
+    reviewed_ids = [
+        video_id
+        for video_id in requested_ids
+        if manifest["videos"][video_id].get("review_status") == "reviewed"
+    ]
+    report = build_runtime_regression(
+        manifest,
+        audit_root,
+        video_ids=reviewed_ids,
+    )
+    reviewed_count = len(reviewed_ids)
+    criterion_tuning_allowed = reviewed_count >= int(minimum_reviewed_videos)
+    warnings = []
+    if reviewed_count == 0:
+        warnings.append("검수 완료 영상이 없어 기준 조정에 사용할 수 없습니다.")
+    elif not criterion_tuning_allowed:
+        warnings.append(
+            f"검수 완료 영상이 {reviewed_count}개뿐입니다. "
+            f"최소 {minimum_reviewed_videos}개가 되기 전에는 임계값이나 가이드를 조정하지 마세요."
+        )
+    report["schema"] = REVIEWED_REGRESSION_SCHEMA
+    report["scope"].update(
+        {
+            "event_scope": "reviewed_only",
+            "criterion_tuning_allowed": criterion_tuning_allowed,
+        }
+    )
+    report["dataset_quality"] = {
+        "requested_video_count": len(requested_ids),
+        "reviewed_video_count": reviewed_count,
+        "unreviewed_video_count": len(requested_ids) - reviewed_count,
+        "minimum_reviewed_videos": int(minimum_reviewed_videos),
+        "criterion_tuning_allowed": criterion_tuning_allowed,
+        "warnings": warnings,
+    }
+    report["limitations"] = [
+        "코치 검수 완료로 표시된 8단계 프레임만 포함합니다.",
+        "정지 자세용 판정을 풀스윙의 단일 프레임에 적용한 진단 결과입니다.",
+        "최소 검수 영상 수를 충족해도 실제 사용자 웹캠 샘플 검증을 대체하지 않습니다.",
+    ]
+    return report
+
+
 def render_runtime_regression_markdown(report):
     summary = report["summary"]
+    reviewed_only = (
+        report.get("scope", {}).get("event_scope") == "reviewed_only"
+    )
     lines = [
-        "# Runtime Regression Report",
+        (
+            "# Reviewed-only Runtime Regression Report"
+            if reviewed_only
+            else "# Runtime Regression Report"
+        ),
         "",
         "현재 웹캠 통합 판정을 기존 프로 영상의 8단계 대표 프레임에 적용한 진단 보고서입니다.",
-        "자동 검출 프레임은 정답 데이터가 아니며, 이 결과만으로 판정 기준을 자동 변경하지 않습니다.",
+        (
+            "이 보고서는 코치 검수 완료 프레임만 포함합니다."
+            if reviewed_only
+            else "자동 검출 프레임은 정답 데이터가 아니며, 이 결과만으로 판정 기준을 자동 변경하지 않습니다."
+        ),
         "",
         "## Summary",
         "",
@@ -343,12 +421,33 @@ def render_runtime_regression_markdown(report):
         f"- 평가 실패 영상: {summary['failed_video_count']}",
         f"- 검수 확정 프레임 사용: {summary['reviewed_event_video_count']}",
         f"- 자동 검출 프레임 사용: {summary['automatic_event_video_count']}",
-        "",
-        "## Stage Diagnostics",
-        "",
-        "| Stage | Samples | Final | Guide | I7 | Pass rate | Diagnosis |",
-        "|---|---:|---:|---:|---:|---:|---|",
     ]
+    dataset_quality = report.get("dataset_quality")
+    if dataset_quality:
+        lines.extend(
+            [
+                "",
+                "## Dataset Quality Gate",
+                "",
+                f"- 검수 완료 영상: {dataset_quality['reviewed_video_count']}",
+                f"- 권장 최소 검수 영상: {dataset_quality['minimum_reviewed_videos']}",
+                "- 기준 조정 허용: "
+                + ("yes" if dataset_quality["criterion_tuning_allowed"] else "no"),
+            ]
+        )
+        lines.extend(
+            f"- 경고: {warning}"
+            for warning in dataset_quality.get("warnings", [])
+        )
+    lines.extend(
+        [
+            "",
+            "## Stage Diagnostics",
+            "",
+            "| Stage | Samples | Final | Guide | I7 | Pass rate | Diagnosis |",
+            "|---|---:|---:|---:|---:|---:|---|",
+        ]
+    )
     for stage_key in STAGE_KEYS:
         stage = summary["stages"][stage_key]
         pass_rate = (

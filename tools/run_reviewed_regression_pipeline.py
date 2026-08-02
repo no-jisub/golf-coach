@@ -12,6 +12,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 from utils.regression_comparison import build_stage_comparison_sheet  # noqa: E402
 from utils.runtime_regression import (  # noqa: E402
+    build_reviewed_runtime_regression,
     build_runtime_regression,
     render_runtime_regression_markdown,
 )
@@ -84,6 +85,9 @@ def main():
     audit_root = output_root / "stage_audit"
     regression_root = output_root / "runtime_regression"
     scoring_root = output_root / "scoring_analysis"
+    reviewed_root = output_root / "reviewed_only"
+    reviewed_regression_root = reviewed_root / "runtime_regression"
+    reviewed_scoring_root = reviewed_root / "scoring_analysis"
     candidate_root = output_root / "stage_candidates"
     comparison_root = output_root / "comparisons"
 
@@ -126,6 +130,19 @@ def main():
     write_text(
         regression_root / "runtime_regression.md",
         render_runtime_regression_markdown(regression),
+    )
+    reviewed_regression = build_reviewed_runtime_regression(
+        manifest,
+        audit_root,
+        video_ids=selected_ids,
+    )
+    write_json(
+        reviewed_regression_root / "runtime_regression.json",
+        reviewed_regression,
+    )
+    write_text(
+        reviewed_regression_root / "runtime_regression.md",
+        render_runtime_regression_markdown(reviewed_regression),
     )
 
     candidate_results = {}
@@ -196,6 +213,18 @@ def main():
         scoring_root / "scoring_analysis.md",
         render_scoring_analysis_markdown(scoring),
     )
+    reviewed_scoring = build_scoring_analysis(
+        reviewed_regression,
+        webcam_ground_truth,
+    )
+    write_json(
+        reviewed_scoring_root / "scoring_analysis.json",
+        reviewed_scoring,
+    )
+    write_text(
+        reviewed_scoring_root / "scoring_analysis.md",
+        render_scoring_analysis_markdown(reviewed_scoring),
+    )
 
     state = {
         "schema": "golf-coach-reviewed-regression-pipeline-v1",
@@ -212,6 +241,10 @@ def main():
             "audit": audit["summary"],
             "accuracy": accuracy["summary"],
             "regression": regression["summary"],
+            "reviewed_only_regression": reviewed_regression["summary"],
+            "reviewed_only_dataset_quality": reviewed_regression[
+                "dataset_quality"
+            ],
             "candidate_count": len(candidate_results),
             "comparison_count": len(comparison_results),
             "artifact_failure_count": len(artifact_failures),
@@ -223,6 +256,12 @@ def main():
                 regression_root / "runtime_regression.json"
             ),
             "scoring_analysis": str(scoring_root / "scoring_analysis.json"),
+            "reviewed_only_runtime_regression": str(
+                reviewed_regression_root / "runtime_regression.json"
+            ),
+            "reviewed_only_scoring_analysis": str(
+                reviewed_scoring_root / "scoring_analysis.json"
+            ),
             "candidates": candidate_results,
             "comparisons": comparison_results,
         },
@@ -233,6 +272,7 @@ def main():
         f"감사={audit['summary']['processed_count']} "
         f"검수완료={accuracy['summary']['reviewed_count']} "
         f"회귀={regression['summary']['evaluated_video_count']} "
+        f"검수전용회귀={reviewed_regression['summary']['evaluated_video_count']} "
         f"후보={len(candidate_results)} 비교={len(comparison_results)} "
         f"아티팩트실패={len(artifact_failures)}"
     )

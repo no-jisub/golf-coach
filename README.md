@@ -517,6 +517,20 @@ python tools\analyze_scoring_thresholds.py
 python tools\run_reviewed_regression_pipeline.py --progress
 ```
 
+통합 파이프라인은 결과를 두 범위로 분리합니다.
+
+- `runtime_regression`, `scoring_analysis`: 자동 후보를 포함한 전체 진단용 결과
+- `reviewed_only/runtime_regression`, `reviewed_only/scoring_analysis`: 코치 검수 완료 영상만 포함한 기준 조정용 결과
+
+검수 완료 전용 회귀만 직접 실행:
+
+```powershell
+python tools\run_runtime_regression.py --reviewed-only
+```
+
+`reviewed_only` 보고서는 검수 영상이 5개 미만이면 `기준 조정 허용: no`로 표시합니다.
+자동 프레임을 포함한 전체 보고서는 임계값이나 가이드 변경 근거로 사용하지 않습니다.
+
 ## 개발 원칙
 
 - 처음부터 빠른 풀스윙 실시간 분석으로 가지 않는다.

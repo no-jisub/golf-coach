@@ -9,6 +9,7 @@ from utils.guide_alignment import STAGE_KEYS
 from utils.scoring_analysis import (
     analyze_regression_bottlenecks,
     analyze_thresholds,
+    build_scoring_analysis,
     confusion_metrics,
 )
 from utils.stage_candidate_extractor import extract_stage_candidates
@@ -92,6 +93,23 @@ class ScoringAnalysisTests(unittest.TestCase):
             finish["top_joint_bottlenecks"][0]["label"],
             "left_wrist",
         )
+
+    def test_scoring_report_preserves_reviewed_only_quality_gate(self):
+        regression = make_regression_report()
+        regression["scope"] = {
+            "event_scope": "reviewed_only",
+            "criterion_tuning_allowed": False,
+        }
+        regression["dataset_quality"] = {
+            "criterion_tuning_allowed": False,
+            "warnings": ["insufficient"],
+        }
+        report = build_scoring_analysis(regression)
+        self.assertEqual(
+            report["scope"]["regression_event_scope"],
+            "reviewed_only",
+        )
+        self.assertEqual(report["dataset_quality"]["warnings"], ["insufficient"])
 
 
 class StageCandidateExtractorTests(unittest.TestCase):

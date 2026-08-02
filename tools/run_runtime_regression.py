@@ -9,6 +9,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from utils.runtime_regression import (  # noqa: E402
+    build_reviewed_runtime_regression,
     build_runtime_regression,
     load_json,
     render_runtime_regression_markdown,
@@ -34,7 +35,7 @@ def parse_args():
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=PROJECT_ROOT / "analysis_sessions" / "runtime_regression",
+        default=None,
         help="JSON과 Markdown 보고서를 저장할 폴더",
     )
     parser.add_argument(
@@ -43,21 +44,36 @@ def parse_args():
         dest="video_ids",
         help="분석할 영상 ID. 여러 번 지정할 수 있습니다. 생략하면 전체를 분석합니다.",
     )
+    parser.add_argument(
+        "--reviewed-only",
+        action="store_true",
+        help="코치 검수 완료 영상만 포함한 기준 조정용 별도 보고서를 생성합니다.",
+    )
     return parser.parse_args()
 
 
 def main():
     args = parse_args()
     manifest = load_json(args.manifest)
-    report = build_runtime_regression(
+    builder = (
+        build_reviewed_runtime_regression
+        if args.reviewed_only
+        else build_runtime_regression
+    )
+    report = builder(
         manifest,
         args.audit_root,
         video_ids=args.video_ids,
     )
 
-    args.output_dir.mkdir(parents=True, exist_ok=True)
-    json_path = args.output_dir / "runtime_regression.json"
-    markdown_path = args.output_dir / "runtime_regression.md"
+    output_dir = args.output_dir or (
+        PROJECT_ROOT
+        / "analysis_sessions"
+        / ("reviewed_only/runtime_regression" if args.reviewed_only else "runtime_regression")
+    )
+    output_dir.mkdir(parents=True, exist_ok=True)
+    json_path = output_dir / "runtime_regression.json"
+    markdown_path = output_dir / "runtime_regression.md"
     json_path.write_text(
         json.dumps(report, ensure_ascii=False, indent=2) + "\n",
         encoding="utf-8",

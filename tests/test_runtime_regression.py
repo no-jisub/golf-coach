@@ -6,6 +6,7 @@ from pathlib import Path
 from utils.guide_alignment import STAGE_KEYS
 from utils.guide_skeleton import GUIDE_POSES
 from utils.runtime_regression import (
+    build_reviewed_runtime_regression,
     build_runtime_regression,
     diagnose_stage,
     render_runtime_regression_markdown,
@@ -138,6 +139,70 @@ class RuntimeRegressionTests(unittest.TestCase):
         markdown = render_runtime_regression_markdown(report)
         self.assertIn("Stage Diagnostics", markdown)
         self.assertIn("balanced_candidate", markdown)
+
+    def test_reviewed_only_report_excludes_automatic_videos(self):
+        manifest = {
+            "view": "FACEON",
+            "videos": {
+                "reviewed_video": {
+                    "source": "reviewed.mp4",
+                    "review_status": "reviewed",
+                    "events": {
+                        stage_key: order * 10
+                        for order, stage_key in enumerate(STAGE_KEYS)
+                    },
+                },
+                "pending_video": {
+                    "source": "pending.mp4",
+                    "review_status": "pending",
+                    "events": {stage_key: None for stage_key in STAGE_KEYS},
+                },
+            },
+        }
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            session = Path(temporary_directory) / "reviewed_video"
+            session.mkdir()
+            (session / "frame_landmarks.json").write_text(
+                json.dumps(make_landmark_payload()),
+                encoding="utf-8",
+            )
+            (session / "stage_events.json").write_text(
+                json.dumps(make_events()),
+                encoding="utf-8",
+            )
+            report = build_reviewed_runtime_regression(
+                manifest,
+                temporary_directory,
+            )
+
+        self.assertEqual(set(report["videos"]), {"reviewed_video"})
+        self.assertEqual(report["scope"]["event_scope"], "reviewed_only")
+        self.assertEqual(report["summary"]["automatic_event_video_count"], 0)
+        self.assertFalse(report["dataset_quality"]["criterion_tuning_allowed"])
+        self.assertIn("최소 5개", report["dataset_quality"]["warnings"][0])
+        markdown = render_runtime_regression_markdown(report)
+        self.assertIn("Reviewed-only", markdown)
+        self.assertIn("기준 조정 허용: no", markdown)
+
+    def test_reviewed_only_report_handles_zero_reviewed_videos(self):
+        manifest = {
+            "view": "FACEON",
+            "videos": {
+                "pending_video": {
+                    "source": "pending.mp4",
+                    "review_status": "pending",
+                    "events": {stage_key: None for stage_key in STAGE_KEYS},
+                }
+            },
+        }
+        with tempfile.TemporaryDirectory() as temporary_directory:
+            report = build_reviewed_runtime_regression(
+                manifest,
+                temporary_directory,
+            )
+        self.assertEqual(report["summary"]["video_count"], 0)
+        self.assertEqual(report["videos"], {})
+        self.assertIn("검수 완료 영상이 없어", report["dataset_quality"]["warnings"][0])
 
 
 if __name__ == "__main__":

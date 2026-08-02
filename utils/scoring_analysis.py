@@ -214,6 +214,15 @@ def analyze_thresholds(ground_truth, thresholds=None):
 def build_scoring_analysis(regression_report, ground_truth=None):
     return {
         "schema": SCORING_ANALYSIS_SCHEMA,
+        "scope": {
+            "regression_event_scope": regression_report.get("scope", {}).get(
+                "event_scope", "unknown"
+            ),
+            "criterion_tuning_allowed": regression_report.get("scope", {}).get(
+                "criterion_tuning_allowed", False
+            ),
+        },
+        "dataset_quality": regression_report.get("dataset_quality"),
         "bottlenecks": analyze_regression_bottlenecks(regression_report),
         "threshold_analysis": (
             analyze_thresholds(ground_truth) if ground_truth is not None else None
@@ -226,14 +235,41 @@ def _format_metric(value):
 
 
 def render_scoring_analysis_markdown(report):
+    reviewed_only = (
+        report.get("scope", {}).get("regression_event_scope")
+        == "reviewed_only"
+    )
     lines = [
-        "# Scoring and Bottleneck Analysis",
+        (
+            "# Reviewed-only Scoring and Bottleneck Analysis"
+            if reviewed_only
+            else "# Scoring and Bottleneck Analysis"
+        ),
         "",
-        "## Stage bottlenecks",
-        "",
-        "| Stage | Samples | Final | Guide | I7 | Pass | Primary | Top joints |",
-        "|---|---:|---:|---:|---:|---:|---|---|",
     ]
+    dataset_quality = report.get("dataset_quality")
+    if dataset_quality:
+        lines.extend(
+            [
+                "## Dataset Quality Gate",
+                "",
+                "- 기준 조정 허용: "
+                + ("yes" if dataset_quality["criterion_tuning_allowed"] else "no"),
+            ]
+        )
+        lines.extend(
+            f"- 경고: {warning}"
+            for warning in dataset_quality.get("warnings", [])
+        )
+        lines.append("")
+    lines.extend(
+        [
+            "## Stage bottlenecks",
+            "",
+            "| Stage | Samples | Final | Guide | I7 | Pass | Primary | Top joints |",
+            "|---|---:|---:|---:|---:|---:|---|---|",
+        ]
+    )
     bottlenecks = report["bottlenecks"]
     for stage_key in STAGE_KEYS:
         stage = bottlenecks["stages"][stage_key]
