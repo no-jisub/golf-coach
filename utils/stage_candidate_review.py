@@ -50,6 +50,50 @@ def finalize_stage_candidate_review(
             )
         events[stage_key] = frame_index
 
+    return finalize_stage_frame_review(
+        ground_truth_manifest,
+        video_id=video_id,
+        selections=events,
+        reviewed_by=reviewed_by,
+        note=note,
+        reviewed_at=reviewed_at,
+        project_root=project_root,
+        review_source={
+            "type": "stage_candidate_selection",
+            "candidate_schema": candidate_manifest.get("schema"),
+            "source_video": candidate_manifest.get("source_video"),
+        },
+    )
+
+
+def finalize_stage_frame_review(
+    ground_truth_manifest,
+    *,
+    video_id,
+    selections,
+    reviewed_by,
+    note="",
+    reviewed_at=None,
+    project_root=None,
+    total_frames=None,
+    review_source=None,
+):
+    """영상 전체에서 직접 고른 8단계 프레임을 검증해 정답으로 확정합니다."""
+    if video_id not in ground_truth_manifest.get("videos", {}):
+        raise KeyError(f"정답 매니페스트에 없는 영상 ID입니다: {video_id}")
+    if not str(reviewed_by or "").strip():
+        raise ValueError("reviewed_by가 필요합니다.")
+    missing = [stage for stage in STAGE_KEYS if stage not in selections]
+    if missing:
+        raise ValueError(f"선택하지 않은 단계가 있습니다: {', '.join(missing)}")
+    events = {stage: int(selections[stage]) for stage in STAGE_KEYS}
+    if any(frame < 0 for frame in events.values()):
+        raise ValueError("정답 프레임은 0 이상이어야 합니다.")
+    if total_frames is not None and any(
+        frame >= int(total_frames) for frame in events.values()
+    ):
+        raise ValueError("영상 전체 프레임 범위를 벗어난 정답이 있습니다.")
+
     updated = deepcopy(ground_truth_manifest)
     video = updated["videos"][video_id]
     video.update(
@@ -61,11 +105,8 @@ def finalize_stage_candidate_review(
                 reviewed_at or datetime.now().astimezone()
             ).isoformat(),
             "note": str(note or "").strip(),
-            "review_source": {
-                "type": "stage_candidate_selection",
-                "candidate_schema": candidate_manifest.get("schema"),
-                "source_video": candidate_manifest.get("source_video"),
-            },
+            "review_source": review_source
+            or {"type": "full_timeline_frame_selection"},
         }
     )
     update_manifest_summary(updated)
