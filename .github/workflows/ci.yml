@@ -33,6 +33,9 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -r requirements.txt
 
+      - name: Check repository safety
+        run: python tools/check_repository_safety.py
+
       - name: Compile Python sources
         run: python -m compileall -q main.py utils tools tests
 
