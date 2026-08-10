@@ -465,7 +465,7 @@ AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 
 
 현재 자동 테스트는 `py -3.12 -m unittest discover -s tests -v`로 실행하며,
 보정·정지 검사·통합 판정·데이터 수집·코치 검수·임계값 분석·자동 회귀를 포함한
-136개 테스트가 있습니다.
+144개 테스트가 있습니다.
 
 GitHub Actions의 `CI` 워크플로도 `main` 푸시와 pull request마다 Python 3.12에서
 문법 검사와 전체 테스트를 실행합니다. 워크플로 권한은 저장소 콘텐츠 읽기로
@@ -480,6 +480,18 @@ python tools\check_repository_safety.py
 이 검사는 Git이 추적하는 파일 중 개인정보용 데이터셋 경로, 원본 영상·음성,
 고신뢰도 비밀키·연락처 패턴, 허용 목록에 없는 5 MiB 초과 파일을 차단합니다.
 파일 내용이나 발견한 비밀값 자체는 출력하지 않습니다.
+
+개인정보 없는 고정 가이드 좌표를 실제 런타임 판정에 통과시켜 점수·상태 변경을
+검사하는 회귀 기준선도 CI에서 실행합니다.
+
+```powershell
+python tools\check_regression_baseline.py
+```
+
+의도적으로 판정 로직이나 가이드를 변경한 경우에만 전체 테스트와 변경 내용을
+검토한 뒤 `python tools\check_regression_baseline.py --update`로 기준선을 갱신합니다.
+이 합성 기준선은 코드 일관성 검사 전용이며 실제 사용자 정확도나 임계값 조정
+근거로 사용하지 않습니다.
 
 ## 웹캠 데이터셋 수집과 판정 분석
 

@@ -1,0 +1,101 @@
+{
+  "schema": "golf-coach-runtime-scoring-baseline-v1",
+  "kind": "synthetic_runtime_scoring",
+  "scope": {
+    "view": "FACEON",
+    "club_type": "I7",
+    "swing_hand": "right",
+    "image_size": [
+      1000,
+      1000
+    ]
+  },
+  "limitations": [
+    "개인정보 없는 고정 가이드 좌표로 코드 회귀만 감시합니다.",
+    "실제 사용자 정확도나 임계값 조정 근거로 사용할 수 없습니다."
+  ],
+  "stage_order": [
+    "address",
+    "takeaway",
+    "backswing",
+    "top",
+    "downswing",
+    "impact",
+    "follow_through",
+    "finish"
+  ],
+  "stages": {
+    "address": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 99,
+      "guide_score": 99,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 3
+    },
+    "takeaway": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 92,
+      "guide_score": 85,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 6
+    },
+    "backswing": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 90,
+      "guide_score": 81,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 6
+    },
+    "top": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 87,
+      "guide_score": 76,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 5
+    },
+    "downswing": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 97,
+      "guide_score": 95,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 6
+    },
+    "impact": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 97,
+      "guide_score": 94,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 7
+    },
+    "follow_through": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 98,
+      "guide_score": 96,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 5
+    },
+    "finish": {
+      "passed": true,
+      "status": "pass",
+      "final_score": 97,
+      "guide_score": 95,
+      "caddieset_score": 100,
+      "profile_id": "faceon_i7",
+      "measured_count": 2
+    }
+  }
+}
