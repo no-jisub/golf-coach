@@ -467,6 +467,10 @@ AIHub 데이터를 실제로 쓰게 되면 `tools/import_aihub_golf_dataset.py` 
 보정·정지 검사·통합 판정·데이터 수집·코치 검수·임계값 분석·자동 회귀를 포함한
 136개 테스트가 있습니다.
 
+GitHub Actions의 `CI` 워크플로도 `main` 푸시와 pull request마다 Python 3.12에서
+문법 검사와 전체 테스트를 실행합니다. 워크플로 권한은 저장소 콘텐츠 읽기로
+제한되며 외부 서비스 토큰을 사용하지 않습니다.
+
 ## 웹캠 데이터셋 수집과 판정 분석
 
 실제 사용자 샘플은 `reference_data/webcam_dataset` 아래에서 개인정보, 비식별 세션,
